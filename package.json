@@ -13,6 +13,8 @@
 		"emulators": "firebase emulators:start --only firestore,auth --import=./.firebase_emulators --export-on-exit=./.firebase_emulators"
 	},
 	"devDependencies": {
+		"@iconify-json/mdi": "^1.1.67",
+		"@iconify/tailwind": "^1.1.1",
 		"@sveltejs/adapter-auto": "^3.0.0",
 		"@sveltejs/kit": "^2.0.0",
 		"@sveltejs/vite-plugin-svelte": "^3.0.0",

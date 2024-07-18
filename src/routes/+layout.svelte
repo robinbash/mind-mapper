@@ -14,21 +14,24 @@
 	});
 </script>
 
-<div>
+<div class="app">
 	{#if $user === undefined}
 		<div class="loading-screen">
 			<span class="loader" />
 		</div>
 	{:else if $user === null}
 		<Login />
-	{:else} 
-			<slot />
+	{:else}
+		<slot />
 	{/if}
 </div>
 
 <style>
 	:global(.firebase-emulator-warning) {
 		display: none;
+	}
+	.app {
+		@apply flex w-screen h-screen bg-neutral-200 dark:bg-slate-800;
 	}
 	.loading-screen {
 		width: 100vw;

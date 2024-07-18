@@ -1,4 +1,6 @@
 /** @type {import('tailwindcss').Config} */
+const { addIconSelectors } = require('@iconify/tailwind');
+
 export default {
   content: ['./src/**/*.{html,js,svelte,ts}'],
   theme: {
@@ -6,6 +8,7 @@ export default {
   },
   plugins: [
     require('daisyui'),
+    addIconSelectors(['mdi']),
   ],
 
 }
