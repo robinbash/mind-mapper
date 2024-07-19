@@ -1,30 +1,35 @@
 <script lang="ts">
 	import { Breadcrumbs } from '$lib/components';
-	import { page } from '$app/stores';
-	export let description: string;
+	import { mindmap } from '$lib/stores';
+	import { goto } from '$app/navigation';
+
+	export let nodeId: string;
+
+	$: node = $mindmap.find((n) => n.id === nodeId);
+	$: children = $mindmap.filter((n) => n.parentId === nodeId);
+
+	$: if (node && !children.length) {
+		goto(`/${node.id}/details`, { replaceState: true });
+	}
 </script>
 
 <div class="container">
-	<div class="md:w-[40rem] h-full p-5">
-		<Breadcrumbs />
+	<div class="md:w-[40rem] w-full h-full p-5">
+		<Breadcrumbs {nodeId} />
 		<a
-			href={`${$page.route.id}/details`}
+			href={`${nodeId}/details`}
 			class="btn btn-lg btn-outline w-full font-normal text-base border-slate-400"
 		>
 			<div>
-				<span class="iconify mdi--edit h-[0.85rem] w-[0.85rem] mr-1" />{description}
+				<span class="iconify mdi--edit h-[0.85rem] w-[0.85rem] mr-1" />{node?.title}
 			</div>
 		</a>
-		<!-- <div class="rounded-md border p-2 border-slate-400">
-			<span class="iconify mdi--edit h-[0.85rem] w-[0.85rem] mr-1" />{description}
-		</div> -->
 		<div class="flex justify-center pt-4 flex-col gap-4">
-			<button class="btn btn-lg w-full font-normal text-base">Goal number one of Robin</button>
-			<button class="btn btn-lg w-full font-normal text-base"
-				>Another goal which is so long it breaks the line</button
-			>
-			<button class="btn btn-lg w-full font-normal text-base">Goal number two</button>
-			<button class="btn btn-lg w-full font-normal text-base">Goal number three</button>
+			{#each children as child}
+				<a href={`/${child.id}`} class="btn btn-lg w-full font-normal text-base">
+					{child.title}
+				</a>
+			{/each}
 		</div>
 	</div>
 </div>

@@ -39,6 +39,6 @@ export const logOut = () => signOut(auth);
 export const db = getFirestore();
 
 if (dev) {
-	connectFirestoreEmulator(db, 'localhost', 8080);
-	connectAuthEmulator(auth, 'http://localhost:9099');
+	connectFirestoreEmulator(db, 'robins-macbook.local', 8080);
+	connectAuthEmulator(auth, 'http://robins-macbook.local:9099');
 }

@@ -1,29 +1,37 @@
 <script lang="ts">
 	import '../app.css';
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import { Login } from '$lib/components';
 	import { auth } from '$lib/firebase';
-	import { user } from '$lib/stores/auth';
+	import { user, mindmap } from '$lib/stores';
 	import { onAuthStateChanged } from 'firebase/auth';
 
 	onMount(() => {
 		const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+			if (currentUser && currentUser.uid != $user?.uid) {
+				mindmap.init(currentUser.uid);
+			}
 			user.set(currentUser);
 		});
 		return unsubscribe;
 	});
+	onMount(() => {});
+
+	onDestroy(() => {
+		mindmap.destroy();
+	});
 </script>
 
 <div class="app">
-	<!-- {#if $user === undefined}
+	{#if $user === undefined}
 		<div class="loading-screen">
 			<span class="loader" />
 		</div>
 	{:else if $user === null}
 		<Login />
-	{:else} -->
-	<slot />
-	<!-- {/if} -->
+	{:else}
+		<slot />
+	{/if}
 </div>
 
 <style>
