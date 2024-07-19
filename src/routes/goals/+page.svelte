@@ -2,4 +2,4 @@
 	import { MindNode } from '$lib/pages';
 </script>
 
-<MindNode description="Goals" />
+<MindNode description="Everything I want to have done at some point" />

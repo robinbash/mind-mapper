@@ -15,15 +15,15 @@
 </script>
 
 <div class="app">
-	{#if $user === undefined}
+	<!-- {#if $user === undefined}
 		<div class="loading-screen">
 			<span class="loader" />
 		</div>
 	{:else if $user === null}
 		<Login />
-	{:else}
-		<slot />
-	{/if}
+	{:else} -->
+	<slot />
+	<!-- {/if} -->
 </div>
 
 <style>
@@ -32,6 +32,7 @@
 	}
 	.app {
 		@apply flex w-screen h-screen bg-neutral-200 dark:bg-slate-800;
+		font-family: 'Roboto slab';
 	}
 	.loading-screen {
 		width: 100vw;
