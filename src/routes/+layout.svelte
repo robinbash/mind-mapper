@@ -39,7 +39,7 @@
 		display: none;
 	}
 	.app {
-		@apply flex w-screen h-screen bg-neutral-200 dark:bg-slate-800;
+		@apply flex w-screen h-screen;
 		font-family: 'Roboto slab';
 	}
 	.loading-screen {

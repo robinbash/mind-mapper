@@ -21,6 +21,10 @@
 	};
 	$: paths = getPaths(node);
 	$: category = CATEGORIES.find((cat) => cat.id === paths?.root.id);
+	$: isDetails = $page.route.id?.endsWith('/details');
+	$: pathLen = paths?.nodes?.length ?? 0;
+	let showAll: boolean;
+	$: showAll = pathLen < 3 && (!isDetails || pathLen < 2);
 </script>
 
 <div class="breadcrumbs max-w-full text-sm pb-6 font-sans">
@@ -31,14 +35,32 @@
 				<a href={`/${category?.id}`} class="flex items-center">{category?.title}</a>
 			</div>
 		</li>
-		{#each paths?.nodes ?? [] as path}
+		{#if showAll}
+			{#each paths?.nodes ?? [] as path}
+				<li>
+					<a href={`/${path.id}`} class="flex items-center"
+						><span class="max-w-20 truncate">{path.title}</span></a
+					>
+				</li>
+			{/each}
+		{:else}
 			<li>
-				<a href={`/${path.id}`} class="flex items-center"
-					><span class="max-w-20 truncate">{path.title}</span></a
+				<button
+					on:click={() => {
+						showAll = true;
+					}}
+				>
+					...
+				</button>
+			</li>
+			<li>
+				<a href={`/${paths?.nodes.at(-1)?.id}`} class="flex items-center"
+					><span class="max-w-20 truncate">{paths?.nodes.at(-1)?.title}</span></a
 				>
 			</li>
-		{/each}
-		{#if $page.route.id?.endsWith('/details')}
+		{/if}
+
+		{#if isDetails}
 			<li>Details</li>{/if}
 	</ul>
 </div>
