@@ -15,7 +15,6 @@
 		});
 		return unsubscribe;
 	});
-	onMount(() => {});
 
 	onDestroy(() => {
 		mindmap.destroy();

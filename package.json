@@ -41,6 +41,7 @@
 	"dependencies": {
 		"@firebase/auth": "^1.7.4",
 		"firebase": "^10.12.2",
-		"firebase-admin": "^12.2.0"
+		"firebase-admin": "^12.2.0",
+		"theme-change": "^2.5.0"
 	}
 }
