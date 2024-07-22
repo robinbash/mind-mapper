@@ -16,9 +16,21 @@ import { goto } from '$app/navigation';
 const MIND_NODE_COLLECTION = 'nodes';
 
 const ROOT_NODES: MindNode[] = [
-	{ id: 'goals', title: 'Goals', description: 'Goals' },
-	{ id: 'ideas', title: 'Ideas', description: 'Ideas' },
-	{ id: 'discovery', title: 'Discovery', description: 'Discovery' }
+	{
+		id: 'goals',
+		title: 'Goals',
+		description: 'Everything I want to have done at some point in my life.'
+	},
+	{
+		id: 'ideas',
+		title: 'Ideas',
+		description: 'Thoughts I have had that might grow into something great.'
+	},
+	{
+		id: 'discovery',
+		title: 'Discovery',
+		description: 'Journeys to learn about my own mind and anything beyond.'
+	}
 ];
 
 function createMindmapStore() {
