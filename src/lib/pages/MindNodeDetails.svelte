@@ -42,12 +42,12 @@
 			</div>
 		</h1>
 		<p class="opacity-60">{node?.description}</p>
-		<div class="flex justify-center gap-3">
-			<a class="btn btn-sm md:btn-md" href={`/${nodeId}/develop`}>
-				<span class="iconify mdi--lead-pencil w-4 h-4 md:w-5 md:h-5" />Develop</a
+		<div class="flex justify-center gap-4">
+			<a class="btn btn-md btn-circle" href={`/${nodeId}/develop`}>
+				<span class="iconify mdi--lead-pencil w-5 h-5" /></a
 			>
-			<button class="btn btn-sm md:btn-md" on:click={() => modal.showModal()}
-				><span class="iconify mdi--source-branch w-4 h-4 md:w-5 md:h-5" />Expand</button
+			<button class="btn btn-md btn-circle" on:click={() => modal.showModal()}
+				><span class="iconify mdi--source-branch w-5 h-5" /></button
 			>
 		</div>
 		<dialog class="modal" bind:this={modal}>

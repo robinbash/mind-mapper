@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Breadcrumbs, AnimatedText } from '$lib/components';
-	import { mindmap } from '$lib/stores';
+	import { mindmap, user } from '$lib/stores';
 	import { goto } from '$app/navigation';
 	import {
 		aiResponse,
@@ -9,21 +9,40 @@
 		aiResponseLoading,
 		resetDevelop
 	} from '$lib/stores/develop';
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
+	import { authFetch } from '$lib/fetch';
 
 	export let nodeId: string;
-	export let inputEl: HTMLDivElement;
+	let inputEl: HTMLDivElement;
+	let currentUserText: string | null;
+	let eventSource: EventSource;
+	let textAnimating: boolean;
 
-	$: showUserInput =
-		($developState === 'lead' || $developState === 'prompt') && !$aiResponseLoading;
+	$: {
+		if ($aiResponseLoading) {
+			textAnimating = true;
+		}
+	}
+
+	$: showUserInput = $developState === 'initial' && !$aiResponseLoading && !textAnimating;
 
 	$: node = $mindmap.find((node) => node.id === nodeId);
+	$: sendDisabled = !(currentUserText ?? '').trim();
+
+	$: {
+		if (currentUserText === '' || currentUserText === '\n') {
+			currentUserText = null;
+		}
+	}
 
 	const focus = (element: HTMLDivElement) => {
+		if (!element) return;
 		element.focus();
 	};
 
-	const onFinishedAnimating = () => {};
+	const onFinishedAnimating = () => {
+		textAnimating = false;
+	};
 
 	const cancel = () => {
 		goto(`/${nodeId}/details`, { replaceState: true });
@@ -39,16 +58,59 @@
 	const submitUserResponse = () => {
 		const response = inputEl.innerText;
 		userResponse.set(response);
-		aiResponseLoading.set(true);
-		aiResponse.set('well done, now I am showing you a bunch of text!');
+		submitMessage();
 	};
+
+	async function submitMessage() {
+		const message = inputEl.innerText;
+		if (!message || $aiResponseLoading || !$user) return;
+		inputEl.innerHTML = '';
+		const messages = [{ role: 'user', content: message }];
+		aiResponseLoading.set(true);
+
+		try {
+			if (eventSource) {
+				eventSource.close();
+			}
+			const response = await authFetch('/api/message', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ messages })
+			});
+			if (response.ok) {
+				const reader = response.body?.getReader();
+				if (!reader) {
+					throw new Error('Failed to get reader from response');
+				}
+				const decoder = new TextDecoder();
+				while (true) {
+					const { done, value } = await reader?.read();
+					if (done) {
+						break;
+					}
+					const chunk = decoder.decode(value);
+					aiResponse.set($aiResponse + chunk);
+				}
+			}
+		} finally {
+			aiResponseLoading.set(false);
+		}
+	}
+
+	onDestroy(() => {
+		if (eventSource) {
+			eventSource.close();
+		}
+	});
 
 	onMount(resetDevelop);
 </script>
 
 <div class="container">
 	<div class="flex flex-col items-center h-full w-full md:w-[40rem] p-5">
-		<div class="flex flex-col gap-4 w-full pb-2">
+		<div class="flex flex-col gap-4 w-full">
 			<Breadcrumbs {nodeId} />
 			<h1 class="flex text-xl font-bold justify-between items-start">
 				<span class="pr-1">{node?.title}</span>
@@ -56,25 +118,31 @@
 					><span class="iconify mdi--cancel-bold w-5 h-5 flex items-center" /></button
 				>
 			</h1>
-			<div class="items-center flex-inline text-neutral-content">
-				<span class="iconify mdi--sparkles w-5 h-5 mr-2 mb-[-0.3rem]" />
-
+			<div class="inline-flex min-h-10 relative whitespace-pre-line">
+				<span class="absolute left-0 top-[0.2rem] iconify mdi--sparkles w-5 h-5 opacity-60" />
 				{#if $aiResponse || $aiResponseLoading}
-					<AnimatedText
-						text={$aiResponse}
-						delay={13}
-						duration={350}
-						textLoading={$aiResponseLoading}
-						{onFinishedAnimating}
-					/>
+					<span class="opacity-60">
+						<span class="w-6 h-1 inline-block" />
+						<AnimatedText
+							text={$aiResponse}
+							delay={13}
+							duration={350}
+							textLoading={$aiResponseLoading}
+							{onFinishedAnimating}
+						/>
+					</span>
 				{:else if $developState === 'initial'}
-					<span>How would you like to develop this topic?</span>
-				{:else if $developState === 'prompt'}
-					<span>Prompt something</span>
+					<div class="inline-block mt-[-0.2rem] pl-6">
+						<button class="btn btn-sm text-opacity-60" on:click={() => developState.set('guide')}>
+							<div class="flex items-center">
+								<span class="iconify mdi--question-mark w-4 h-4 mr-1" />Guide me
+							</div>
+						</button>
+					</div>
 				{/if}
 			</div>
 			<!-- {#if !textLoading} -->
-			<div class="flex items-center justify-center gap-3">
+			<!-- <div class="flex items-center justify-center gap-3">
 				{#if $developState === 'initial'}
 					<button
 						class="btn btn-sm md:btn-md"
@@ -92,33 +160,36 @@
 						</div>
 					</button>
 				{/if}
-				<!-- <button class="btn btn-sm md:btn-md">
+				<button class="btn btn-sm md:btn-md">
 					<div class="flex items-center">
 						<span class="iconify mdi--check-circle w-4 h-4 md:w-5 md:h-5 mr-1" />Finish
 					</div>
-				</button> -->
-			</div>
+				</button>
+			</div> -->
 			<!-- {/if} -->
 		</div>
 
-		<div class="flex justify-center items-end pb-8 w-full gap-1">
+		<div class="flex justify-center items-end py-8 w-full gap-1">
 			{#if showUserInput}
 				<div
 					class="user-input"
-					contentEditable
+					contenteditable
 					bind:this={inputEl}
+					bind:innerText={currentUserText}
 					on:keydown={handleInputShortcuts}
-					use:focus
 					role="textbox"
 					aria-multiline="true"
 					tabindex="0"
+					data-placeholder="Type prompt"
 				/>
-				<!-- <div class="tooltip" data-tip="ctrl + enter"> -->
-				<button class="btn btn-square btn-ghost btn-md w-9" on:click={submitUserResponse}>
+				<button
+					class="send-button btn btn-square btn-ghost btn-md"
+					on:click={submitUserResponse}
+					disabled={sendDisabled}
+				>
 					<span class="iconify mdi--send h-6 w-6" />
 				</button>
 			{/if}
-			<!-- </div> -->
 		</div>
 	</div>
 </div>
@@ -128,6 +199,13 @@
 		@apply flex flex-col items-center justify-center min-h-full min-w-full;
 	}
 	.user-input {
-		@apply border border-base-content rounded-btn px-2 w-full h-full py-2 focus:outline-none ring-neutral focus:ring;
+		@apply bg-base-200 rounded-btn px-4 w-full h-full py-3 break-words outline-none;
+	}
+	.user-input:empty:not(:focus):before {
+		content: attr(data-placeholder);
+		opacity: 0.6;
+	}
+	.send-button {
+		@apply w-9 h-12 mb-[1px] disabled:bg-transparent;
 	}
 </style>

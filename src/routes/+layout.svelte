@@ -5,6 +5,7 @@
 	import { auth } from '$lib/firebase';
 	import { user, mindmap } from '$lib/stores';
 	import { onAuthStateChanged } from 'firebase/auth';
+	import { themeChange } from 'theme-change';
 
 	onMount(() => {
 		const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -14,6 +15,9 @@
 			user.set(currentUser);
 		});
 		return unsubscribe;
+	});
+	onMount(() => {
+		themeChange(false);
 	});
 
 	onDestroy(() => {

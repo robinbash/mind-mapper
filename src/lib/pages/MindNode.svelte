@@ -20,7 +20,7 @@
 			href={`${nodeId}/details`}
 			class="btn btn-lg btn-outline w-full font-normal text-base relative"
 		>
-			<span class="absolute left-3 iconify mdi--drive-document mr-1 w-5 h-5" />{node?.title}
+			<span class="absolute left-3 iconify mdi--chevron-down mr-1 w-5 h-5" />{node?.title}
 		</a>
 		<div class="flex justify-center pt-4 flex-col gap-4">
 			{#each children as child}

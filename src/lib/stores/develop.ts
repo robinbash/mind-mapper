@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
 
-export const developState = writable<'initial' | 'lead' | 'prompt'>('initial');
+export const developState = writable<'initial' | 'guide' | 'prompt' | undefined>();
 export const aiResponse = writable('');
 export const aiResponseLoading = writable(false);
 export const userResponse = writable('');

@@ -3,7 +3,7 @@
 	import { blur } from 'svelte/transition';
 
 	export let text = '';
-	export let textLoading;
+	export let textLoading: boolean;
 	export let onFinishedAnimating = () => {};
 
 	export let duration = 500;
@@ -19,6 +19,7 @@
 
 	function animateNewText() {
 		animationInProgress = true;
+		console.log('started animating');
 		const newText = text.slice(displayedText.length);
 		let index = 0;
 
@@ -28,10 +29,13 @@
 				index++;
 				timeouts.push(setTimeout(animateNextLetter, delay));
 			} else {
+				animationInProgress = false;
 				timeouts.push(
 					setTimeout(() => {
-						animationInProgress = false;
-						onFinishedAnimating();
+						if (!textLoading && displayedText.length === text.length) {
+							console.log('finished', displayedText, text, newText);
+							onFinishedAnimating();
+						}
 					}, duration - delay)
 				);
 			}
@@ -57,10 +61,10 @@
 	>{#each displayedText.split('') as char, i (i)}<span in:blur={{ duration, amount: 2 }}
 			>{char}</span
 		>{/each}{#if textLoading && !animationInProgress}
-		<span class="dots">
-			<span in:blur={{ duration, delay: 50, amount: 2 }} class="dot">.</span>
-			<span in:blur={{ duration, delay: 150, amount: 2 }} class="dot">.</span>
-			<span in:blur={{ duration, delay: 250, amount: 2 }} class="dot">.</span>
+		<span class="dots" in:blur={{ duration, amount: 2 }}>
+			<span class="dot">.</span>
+			<span class="dot">.</span>
+			<span class="dot">.</span>
 		</span>
 	{/if}
 </span>
