@@ -2,64 +2,132 @@
 	import { Breadcrumbs, AnimatedText } from '$lib/components';
 	import { mindmap } from '$lib/stores';
 	import { goto } from '$app/navigation';
+	import {
+		aiResponse,
+		developState,
+		userResponse,
+		aiResponseLoading,
+		resetDevelop
+	} from '$lib/stores/develop';
+	import { onMount } from 'svelte';
 
 	export let nodeId: string;
+	export let inputEl: HTMLDivElement;
 
-	let newAIText = 'How would you like to develop this topic?';
+	$: showUserInput =
+		($developState === 'lead' || $developState === 'prompt') && !$aiResponseLoading;
+
 	$: node = $mindmap.find((node) => node.id === nodeId);
 
-	let textLoading = true;
-
-	const onFinishedAnimating = () => {
-		textLoading = false;
+	const focus = (element: HTMLDivElement) => {
+		element.focus();
 	};
+
+	const onFinishedAnimating = () => {};
 
 	const cancel = () => {
 		goto(`/${nodeId}/details`, { replaceState: true });
 	};
+
+	const handleInputShortcuts = (event: KeyboardEvent) => {
+		if (event.key === 'Enter' && event.ctrlKey) {
+			event.preventDefault();
+			submitUserResponse();
+		}
+	};
+
+	const submitUserResponse = () => {
+		const response = inputEl.innerText;
+		userResponse.set(response);
+		aiResponseLoading.set(true);
+		aiResponse.set('well done, now I am showing you a bunch of text!');
+	};
+
+	onMount(resetDevelop);
 </script>
 
 <div class="container">
-	<div class="flex flex-col gap-4 md:w-[40rem] h-full w-full p-5">
-		<Breadcrumbs {nodeId} />
-		<h1 class="flex text-xl font-bold justify-between items-start">
-			<span class="pr-1">{node?.title}</span>
-			<button on:click={cancel}
-				><span class="iconify mdi--cancel-bold w-5 h-5 mt-1 flex items-center" /></button
-			>
-		</h1>
-		<div class="opacity-60 items-center flex-inline">
-			<span class="iconify mdi--sparkles w-5 h-5 mr-2 mb-[-0.3rem]" /><AnimatedText
-				text={newAIText}
-				delay={13}
-				duration={350}
-				{textLoading}
-				{onFinishedAnimating}
-			/>
-		</div>
-		{#if !textLoading}
+	<div class="flex flex-col items-center h-full w-full md:w-[40rem] p-5">
+		<div class="flex flex-col gap-4 w-full pb-2">
+			<Breadcrumbs {nodeId} />
+			<h1 class="flex text-xl font-bold justify-between items-start">
+				<span class="pr-1">{node?.title}</span>
+				<button class="btn btn-ghost btn-square btn-sm" on:click={cancel}
+					><span class="iconify mdi--cancel-bold w-5 h-5 flex items-center" /></button
+				>
+			</h1>
+			<div class="items-center flex-inline text-neutral-content">
+				<span class="iconify mdi--sparkles w-5 h-5 mr-2 mb-[-0.3rem]" />
+
+				{#if $aiResponse || $aiResponseLoading}
+					<AnimatedText
+						text={$aiResponse}
+						delay={13}
+						duration={350}
+						textLoading={$aiResponseLoading}
+						{onFinishedAnimating}
+					/>
+				{:else if $developState === 'initial'}
+					<span>How would you like to develop this topic?</span>
+				{:else if $developState === 'prompt'}
+					<span>Prompt something</span>
+				{/if}
+			</div>
+			<!-- {#if !textLoading} -->
 			<div class="flex items-center justify-center gap-3">
-				<button class="btn btn-sm md:btn-md">
+				{#if $developState === 'initial'}
+					<button
+						class="btn btn-sm md:btn-md"
+						on:click={() => {
+							developState.set('prompt');
+						}}
+					>
+						<div class="flex items-center">
+							<span class="iconify mdi--message-reply-text mr-1 w-4 h-4 md:w-6 md:h-6" />Prompt
+						</div>
+					</button>
+					<button class="btn btn-sm md:btn-md" on:click={() => developState.set('lead')}>
+						<div class="flex items-center">
+							<span class="iconify mdi--question-mark w-4 h-4 md:w-5 md:h-5 mr-1" />Lead me
+						</div>
+					</button>
+				{/if}
+				<!-- <button class="btn btn-sm md:btn-md">
 					<div class="flex items-center">
-						<span class="iconify mdi--message-reply-text mr-1 w-5 h-5 md:w-6 md:h-6" />Prompt
+						<span class="iconify mdi--check-circle w-4 h-4 md:w-5 md:h-5 mr-1" />Finish
 					</div>
+				</button> -->
+			</div>
+			<!-- {/if} -->
+		</div>
+
+		<div class="flex justify-center items-end pb-8 w-full gap-1">
+			{#if showUserInput}
+				<div
+					class="user-input"
+					contentEditable
+					bind:this={inputEl}
+					on:keydown={handleInputShortcuts}
+					use:focus
+					role="textbox"
+					aria-multiline="true"
+					tabindex="0"
+				/>
+				<!-- <div class="tooltip" data-tip="ctrl + enter"> -->
+				<button class="btn btn-square btn-ghost btn-md w-9" on:click={submitUserResponse}>
+					<span class="iconify mdi--send h-6 w-6" />
 				</button>
-				<button class="btn btn-sm md:btn-md">
-					<div class="flex items-center">
-						<span class="iconify mdi--question-mark w-5 h-5 md:w-6 md:h-6 mr-1" />Lead me
-					</div>
-				</button>
-				<button class="btn btn-sm md:btn-md">
-					<div class="flex items-center">
-						<span class="iconify mdi--check-circle w-4 h-4 mr-1" />Finish
-					</div>
-				</button>
-			</div>{/if}
+			{/if}
+			<!-- </div> -->
+		</div>
 	</div>
 </div>
 
 <style>
 	.container {
-		@apply flex justify-center items-center min-w-full min-h-full;
+		@apply flex flex-col items-center justify-center min-h-full min-w-full;
+	}
+	.user-input {
+		@apply border border-base-content rounded-btn px-2 w-full h-full py-2 focus:outline-none ring-neutral focus:ring;
 	}
 </style>

@@ -27,25 +27,27 @@
 		<!-- <a href="/" class="inline-flex"><span class="iconify mdi--arrow-back mr-1 h-5 w-5" /></a> -->
 		<h1 class="flex text-xl font-bold justify-between items-start">
 			<span class="pr-1">{node?.title}</span>
-			<div class="dropdown dropdown-end">
-				<div tabindex="0" role="button" class="iconify mdi--dots-vertical w-5 h-5 mt-1">Click</div>
+			<div class="dropdown dropdown-left">
+				<div tabindex="0" role="button" class="btn btn-ghost btn-square btn-sm">
+					<span class="iconify mdi--dots-vertical w-5 h-5" />
+				</div>
 				<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 				<ul
 					tabindex="0"
 					class="dropdown-content menu bg-base-200 rounded-btn z-[1] w-32 p-2 shadow"
 				>
-					<li><button>Item 1</button></li>
-					<li><button>Item 2</button></li>
+					<li><button><span class="iconify mdi--trash-can w-5 h-5 mr-1" />Delete</button></li>
+					<li><button><span class="iconify mdi--history w-5 h-5 mr-1" />History</button></li>
 				</ul>
 			</div>
 		</h1>
 		<p class="opacity-60">{node?.description}</p>
 		<div class="flex justify-center gap-3">
 			<a class="btn btn-sm md:btn-md" href={`/${nodeId}/develop`}>
-				<span class="iconify mdi--lead-pencil w-5 h-5 md:w-6 md:h-6" />Develop</a
+				<span class="iconify mdi--lead-pencil w-4 h-4 md:w-5 md:h-5" />Develop</a
 			>
 			<button class="btn btn-sm md:btn-md" on:click={() => modal.showModal()}
-				><span class="iconify mdi--source-branch w-5 h-5 md:w-6 md:h-6" />Expand</button
+				><span class="iconify mdi--source-branch w-4 h-4 md:w-5 md:h-5" />Expand</button
 			>
 		</div>
 		<dialog class="modal" bind:this={modal}>

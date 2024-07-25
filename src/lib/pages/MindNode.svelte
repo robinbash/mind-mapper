@@ -18,13 +18,13 @@
 		<Breadcrumbs {nodeId} />
 		<a
 			href={`${nodeId}/details`}
-			class="btn btn-lg btn-outline w-full font-normal text-base border-slate-400 relative"
+			class="btn btn-lg btn-outline w-full font-normal text-base relative"
 		>
 			<span class="absolute left-3 iconify mdi--drive-document mr-1 w-5 h-5" />{node?.title}
 		</a>
 		<div class="flex justify-center pt-4 flex-col gap-4">
 			{#each children as child}
-				<a href={`/${child.id}`} class="btn btn-lg w-full font-normal text-base">
+				<a href={`/${child.id}`} class="btn btn-lg w-full font-normal text-base overflow-hidden">
 					{child.title}
 				</a>
 			{/each}

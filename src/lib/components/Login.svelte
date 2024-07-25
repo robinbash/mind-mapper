@@ -27,9 +27,9 @@
 		@apply flex flex-col gap-4 items-center justify-center h-screen w-screen;
 	}
 	input {
-		@apply p-2 rounded-lg text-black;
+		@apply p-2 input input-bordered;
 	}
 	button {
-		@apply bg-white text-black p-2 rounded-lg font-bold;
+		@apply btn bg-white text-black p-2 rounded-lg font-bold;
 	}
 </style>
