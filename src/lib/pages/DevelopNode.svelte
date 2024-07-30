@@ -10,7 +10,7 @@
 		resetDevelop
 	} from '$lib/stores/develop';
 	import { onMount, onDestroy } from 'svelte';
-	import { authFetch } from '$lib/fetch';
+	import { authFetch, handleAIResponse } from '$lib/fetch';
 
 	export let nodeId: string;
 	let inputEl: HTMLDivElement;
@@ -61,11 +61,33 @@
 		submitMessage();
 	};
 
+	const getGuide = async () => {
+		if (!$user) return;
+		aiResponseLoading.set(true);
+
+		developState.set('guide');
+
+		try {
+			if (eventSource) {
+				eventSource.close();
+			}
+			const response = await authFetch('/api/guide', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ topicId: nodeId })
+			});
+			await handleAIResponse(response, aiResponse);
+		} finally {
+			aiResponseLoading.set(false);
+		}
+	};
+
 	async function submitMessage() {
 		const message = inputEl.innerText;
 		if (!message || $aiResponseLoading || !$user) return;
 		inputEl.innerHTML = '';
-		const messages = [{ role: 'user', content: message }];
 		aiResponseLoading.set(true);
 
 		try {
@@ -77,23 +99,9 @@
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ messages })
+				body: JSON.stringify({ content: message })
 			});
-			if (response.ok) {
-				const reader = response.body?.getReader();
-				if (!reader) {
-					throw new Error('Failed to get reader from response');
-				}
-				const decoder = new TextDecoder();
-				while (true) {
-					const { done, value } = await reader?.read();
-					if (done) {
-						break;
-					}
-					const chunk = decoder.decode(value);
-					aiResponse.set($aiResponse + chunk);
-				}
-			}
+			await handleAIResponse(response, aiResponse);
 		} finally {
 			aiResponseLoading.set(false);
 		}
@@ -133,7 +141,7 @@
 					</span>
 				{:else if $developState === 'initial'}
 					<div class="inline-block mt-[-0.2rem] pl-6">
-						<button class="btn btn-sm text-opacity-60" on:click={() => developState.set('guide')}>
+						<button class="btn btn-sm text-opacity-60" on:click={getGuide}>
 							<div class="flex items-center">
 								<span class="iconify mdi--question-mark w-4 h-4 mr-1" />Guide me
 							</div>

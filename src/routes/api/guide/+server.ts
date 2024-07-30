@@ -1,18 +1,18 @@
 import { json, type RequestHandler } from '@sveltejs/kit';
-import { submitDevelopmentPrompt } from '$lib/server/domain';
 import { authenticateRequest } from '$lib/server/auth-middleware';
+import { getDevelopmentGuidance } from '$lib/server/domain';
 
 export const POST: RequestHandler = async ({ request }) => {
 	try {
 		await authenticateRequest(request);
-		const data: { content: string } = await request.json();
 
-		if (!data || !data.content) {
+		const data: { topicId: string } | undefined = await request.json();
+
+		if (!data || !data.topicId) {
 			throw new Error('No request data');
 		}
 
-		const stream = submitDevelopmentPrompt(data.content);
-
+		const stream = await getDevelopmentGuidance(data.topicId);
 		return new Response(stream, {
 			headers: {
 				'Content-Type': 'text/event-stream',

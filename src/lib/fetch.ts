@@ -1,4 +1,5 @@
 import { auth } from '$lib/firebase';
+import { type Writable, get } from 'svelte/store';
 
 export const authFetch = async (
 	input: string | URL | Request,
@@ -13,4 +14,22 @@ export const authFetch = async (
 		...init,
 		headers: { ...init?.headers, Authorization: `Bearer ${token}` }
 	});
+};
+
+export const handleAIResponse = async (response: Response, store: Writable<string>) => {
+	if (response.ok) {
+		const reader = response.body?.getReader();
+		if (!reader) {
+			throw new Error('Failed to get reader from response');
+		}
+		const decoder = new TextDecoder();
+		while (true) {
+			const { done, value } = await reader?.read();
+			if (done) {
+				return;
+			}
+			const chunk = decoder.decode(value);
+			store.set(get(store) + chunk);
+		}
+	}
 };
