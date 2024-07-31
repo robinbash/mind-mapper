@@ -38,6 +38,9 @@ function createMindmapStore() {
 
 	let unsubscribe: () => void;
 
+	const isNodeRoot = (node?: MindNode) =>
+		node ? ROOT_NODES.some((root) => root.id === node.id) : true;
+
 	const saveMindNode = async ({
 		parentId,
 		description,
@@ -79,7 +82,8 @@ function createMindmapStore() {
 			if (unsubscribe) {
 				unsubscribe();
 			}
-		}
+		},
+		isNodeRoot
 	};
 }
 
