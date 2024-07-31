@@ -6,13 +6,14 @@ export const POST: RequestHandler = async ({ request }) => {
 	try {
 		await authenticateRequest(request);
 
-		const data: { topicId: string } | undefined = await request.json();
+		const data: { topicId: string; previousQuestions?: string[] } | undefined =
+			await request.json();
 
 		if (!data || !data.topicId) {
 			throw new Error('No request data');
 		}
 
-		const stream = await getDevelopmentGuidance(data.topicId);
+		const stream = await getDevelopmentGuidance(data.topicId, data.previousQuestions);
 		return new Response(stream, {
 			headers: {
 				'Content-Type': 'text/event-stream',

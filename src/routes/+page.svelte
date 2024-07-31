@@ -3,6 +3,7 @@
 	import { CATEGORIES } from '$lib/categories';
 	import { themeChange } from 'theme-change';
 	import { onMount } from 'svelte';
+	import { logout } from '$lib/auth';
 
 	onMount(() => {
 		themeChange(false);
@@ -10,6 +11,11 @@
 </script>
 
 <div class="container">
+	<div class="absolute top-0 w-full flex p-6 md:p-8">
+		<button class="btn btn-md btn-circle" on:click={logout}
+			><span class="iconify mdi--logout" /></button
+		>
+	</div>
 	<div class="categories">
 		{#each CATEGORIES as category}
 			<NodeButton {category} />

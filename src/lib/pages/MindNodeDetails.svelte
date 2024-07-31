@@ -43,11 +43,14 @@
 		</h1>
 		<p class="opacity-60">{node?.description}</p>
 		<div class="flex justify-center gap-4">
-			<a class="btn btn-md btn-circle" href={`/${nodeId}/develop`}>
-				<span class="iconify mdi--lead-pencil w-5 h-5" /></a
+			<a class="btn btn-sm" href={`/${nodeId}/develop`}>
+				<span class="iconify mdi--lead-pencil w-5 h-5" /> Refine</a
 			>
-			<button class="btn btn-md btn-circle" on:click={() => modal.showModal()}
-				><span class="iconify mdi--source-branch w-5 h-5" /></button
+			<button class="btn btn-sm" on:click={() => modal.showModal()}
+				><span class="iconify mdi--source-branch w-5 h-5" /> Expand</button
+			>
+			<button class="btn btn-sm"
+				><span class="iconify mdi--format-page-split w-5 h-5" /> Split</button
 			>
 		</div>
 		<dialog class="modal" bind:this={modal}>

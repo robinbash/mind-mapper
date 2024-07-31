@@ -11,12 +11,14 @@
 	} from '$lib/stores/develop';
 	import { onMount, onDestroy } from 'svelte';
 	import { authFetch, handleAIResponse } from '$lib/fetch';
+	import { scale, fade } from 'svelte/transition';
 
 	export let nodeId: string;
 	let inputEl: HTMLDivElement;
 	let currentUserText: string | null;
 	let eventSource: EventSource;
 	let textAnimating: boolean;
+	let previousQuestions: string[] = [];
 
 	$: {
 		if ($aiResponseLoading) {
@@ -24,7 +26,7 @@
 		}
 	}
 
-	$: showUserInput = $developState === 'initial' && !$aiResponseLoading && !textAnimating;
+	$: showUserInput = !$aiResponseLoading && !textAnimating;
 
 	$: node = $mindmap.find((node) => node.id === nodeId);
 	$: sendDisabled = !(currentUserText ?? '').trim();
@@ -51,20 +53,14 @@
 	const handleInputShortcuts = (event: KeyboardEvent) => {
 		if (event.key === 'Enter' && event.ctrlKey) {
 			event.preventDefault();
-			submitUserResponse();
+			submitMessage();
 		}
-	};
-
-	const submitUserResponse = () => {
-		const response = inputEl.innerText;
-		userResponse.set(response);
-		submitMessage();
 	};
 
 	const getGuide = async () => {
 		if (!$user) return;
 		aiResponseLoading.set(true);
-
+		aiResponse.set('');
 		developState.set('guide');
 
 		try {
@@ -76,18 +72,22 @@
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ topicId: nodeId })
+				body: JSON.stringify({ topicId: nodeId, previousQuestions })
 			});
 			await handleAIResponse(response, aiResponse);
 		} finally {
 			aiResponseLoading.set(false);
+			previousQuestions.push($aiResponse);
 		}
 	};
 
-	async function submitMessage() {
-		const message = inputEl.innerText;
+	const submitMessage = async () => {
+		const message = currentUserText;
 		if (!message || $aiResponseLoading || !$user) return;
-		inputEl.innerHTML = '';
+
+		aiResponse.set('');
+		userResponse.set(message);
+		currentUserText = '';
 		aiResponseLoading.set(true);
 
 		try {
@@ -105,7 +105,7 @@
 		} finally {
 			aiResponseLoading.set(false);
 		}
-	}
+	};
 
 	onDestroy(() => {
 		if (eventSource) {
@@ -138,6 +138,15 @@
 							textLoading={$aiResponseLoading}
 							{onFinishedAnimating}
 						/>
+						<!-- {#if !$aiResponseLoading && !textAnimating && $developState === 'guide'}
+							<span class="inline-block ml-1 mt-1">
+								<button class="btn btn-sm text-opacity-60 btn-square" on:click={getGuide}>
+									<div class="flex items-center">
+										<span class="iconify mdi--refresh w-4 h-4" />
+									</div>
+								</button>
+							</span>
+						{/if} -->
 					</span>
 				{:else if $developState === 'initial'}
 					<div class="inline-block mt-[-0.2rem] pl-6">
@@ -149,37 +158,12 @@
 					</div>
 				{/if}
 			</div>
-			<!-- {#if !textLoading} -->
-			<!-- <div class="flex items-center justify-center gap-3">
-				{#if $developState === 'initial'}
-					<button
-						class="btn btn-sm md:btn-md"
-						on:click={() => {
-							developState.set('prompt');
-						}}
-					>
-						<div class="flex items-center">
-							<span class="iconify mdi--message-reply-text mr-1 w-4 h-4 md:w-6 md:h-6" />Prompt
-						</div>
-					</button>
-					<button class="btn btn-sm md:btn-md" on:click={() => developState.set('lead')}>
-						<div class="flex items-center">
-							<span class="iconify mdi--question-mark w-4 h-4 md:w-5 md:h-5 mr-1" />Lead me
-						</div>
-					</button>
-				{/if}
-				<button class="btn btn-sm md:btn-md">
-					<div class="flex items-center">
-						<span class="iconify mdi--check-circle w-4 h-4 md:w-5 md:h-5 mr-1" />Finish
-					</div>
-				</button>
-			</div> -->
-			<!-- {/if} -->
 		</div>
 
 		<div class="flex justify-center items-end py-8 w-full gap-1">
 			{#if showUserInput}
 				<div
+					in:scale={{ start: 0.9, duration: 200 }}
 					class="user-input"
 					contenteditable
 					bind:this={inputEl}
@@ -191,8 +175,9 @@
 					data-placeholder="Type prompt"
 				/>
 				<button
+					in:fade={{ duration: 200 }}
 					class="send-button btn btn-square btn-ghost btn-md"
-					on:click={submitUserResponse}
+					on:click={submitMessage}
 					disabled={sendDisabled}
 				>
 					<span class="iconify mdi--send h-6 w-6" />
