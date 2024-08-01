@@ -16,7 +16,7 @@ export const authFetch = async (
 	});
 };
 
-export const handleAIResponse = async (response: Response, store: Writable<string>) => {
+export const handleAIResponse = async (response: Response, addChunk: (chunk: string) => void) => {
 	if (response.ok) {
 		const reader = response.body?.getReader();
 		if (!reader) {
@@ -29,7 +29,7 @@ export const handleAIResponse = async (response: Response, store: Writable<strin
 				return;
 			}
 			const chunk = decoder.decode(value);
-			store.set(get(store) + chunk);
+			addChunk(chunk);
 		}
 	}
 };

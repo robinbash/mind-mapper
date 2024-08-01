@@ -1,32 +1,24 @@
 <script lang="ts">
 	import { Breadcrumbs, AnimatedText } from '$lib/components';
-	import { mindmap, user } from '$lib/stores';
+	import { mindmap } from '$lib/stores';
 	import { goto } from '$app/navigation';
-	import {
-		aiResponse,
-		developState,
-		userResponse,
-		aiResponseLoading,
-		resetDevelop
-	} from '$lib/stores/develop';
+
+	import { develop } from '$lib/stores/develop';
 	import { onMount, onDestroy } from 'svelte';
-	import { authFetch, handleAIResponse } from '$lib/fetch';
 	import { scale, fade } from 'svelte/transition';
 
 	export let nodeId: string;
 	let inputEl: HTMLDivElement;
 	let currentUserText: string | null;
-	let eventSource: EventSource;
 	let textAnimating: boolean;
-	let previousQuestions: string[] = [];
 
 	$: {
-		if ($aiResponseLoading) {
+		if ($develop.aiResponseLoading) {
 			textAnimating = true;
 		}
 	}
 
-	$: showUserInput = !$aiResponseLoading && !textAnimating;
+	$: showUserInput = !$develop.aiResponseLoading && !textAnimating;
 
 	$: node = $mindmap.find((node) => node.id === nodeId);
 	$: sendDisabled = !(currentUserText ?? '').trim();
@@ -53,67 +45,21 @@
 	const handleInputShortcuts = (event: KeyboardEvent) => {
 		if (event.key === 'Enter' && event.ctrlKey) {
 			event.preventDefault();
-			submitMessage();
+			submitPrompt();
 		}
 	};
 
-	const getGuide = async () => {
-		if (!$user) return;
-		aiResponseLoading.set(true);
-		aiResponse.set('');
-		developState.set('guide');
-
-		try {
-			if (eventSource) {
-				eventSource.close();
-			}
-			const response = await authFetch('/api/guide', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({ topicId: nodeId, previousQuestions })
-			});
-			await handleAIResponse(response, aiResponse);
-		} finally {
-			aiResponseLoading.set(false);
-			previousQuestions.push($aiResponse);
-		}
-	};
-
-	const submitMessage = async () => {
-		const message = currentUserText;
-		if (!message || $aiResponseLoading || !$user) return;
-
-		aiResponse.set('');
-		userResponse.set(message);
+	const submitPrompt = () => {
+		if (!currentUserText) return;
+		develop.submitPrompt(nodeId, currentUserText);
 		currentUserText = '';
-		aiResponseLoading.set(true);
-
-		try {
-			if (eventSource) {
-				eventSource.close();
-			}
-			const response = await authFetch('/api/message', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({ content: message })
-			});
-			await handleAIResponse(response, aiResponse);
-		} finally {
-			aiResponseLoading.set(false);
-		}
 	};
 
-	onDestroy(() => {
-		if (eventSource) {
-			eventSource.close();
-		}
-	});
+	const getGuide = () => develop.getGuide(nodeId);
+	const finish = () => develop.finish(nodeId);
 
-	onMount(resetDevelop);
+	onDestroy(develop.destroy);
+	onMount(develop.reset);
 </script>
 
 <div class="container">
@@ -122,20 +68,20 @@
 			<Breadcrumbs {nodeId} />
 			<h1 class="flex text-xl font-bold justify-between items-start">
 				<span class="pr-1">{node?.title}</span>
-				<button class="btn btn-ghost btn-square btn-sm" on:click={cancel}
-					><span class="iconify mdi--cancel-bold w-5 h-5 flex items-center" /></button
-				>
+				<button class="btn btn-ghost btn-square btn-sm" on:click={cancel}>
+					<span class="iconify mdi--cancel-bold w-5 h-5 flex items-center" />
+				</button>
 			</h1>
 			<div class="inline-flex min-h-10 relative whitespace-pre-line">
 				<span class="absolute left-0 top-[0.2rem] iconify mdi--sparkles w-5 h-5 opacity-60" />
-				{#if $aiResponse || $aiResponseLoading}
+				{#if $develop.currentAiRespsonse || $develop.aiResponseLoading}
 					<span class="opacity-60">
 						<span class="w-6 h-1 inline-block" />
 						<AnimatedText
-							text={$aiResponse}
+							text={$develop.currentAiRespsonse}
 							delay={13}
 							duration={350}
-							textLoading={$aiResponseLoading}
+							textLoading={$develop.aiResponseLoading}
 							{onFinishedAnimating}
 						/>
 						<!-- {#if !$aiResponseLoading && !textAnimating && $developState === 'guide'}
@@ -148,7 +94,7 @@
 							</span>
 						{/if} -->
 					</span>
-				{:else if $developState === 'initial'}
+				{:else if $develop.state === 'initial'}
 					<div class="inline-block mt-[-0.2rem] pl-6">
 						<button class="btn btn-sm text-opacity-60" on:click={getGuide}>
 							<div class="flex items-center">
@@ -177,13 +123,22 @@
 				<button
 					in:fade={{ duration: 200 }}
 					class="send-button btn btn-square btn-ghost btn-md"
-					on:click={submitMessage}
+					on:click={submitPrompt}
 					disabled={sendDisabled}
 				>
 					<span class="iconify mdi--send h-6 w-6" />
 				</button>
 			{/if}
 		</div>
+		{#if $develop.state === 'prompt' && showUserInput}
+			<div class="inline-block">
+				<button class="btn btn-sm text-opacity-60" on:click={finish}>
+					<div class="flex items-center">
+						<span class="iconify mdi--check-circle w-4 h-4 mr-1" />Finish
+					</div>
+				</button>
+			</div>
+		{/if}
 	</div>
 </div>
 

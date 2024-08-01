@@ -19,7 +19,6 @@
 
 	function animateNewText() {
 		animationInProgress = true;
-		console.log('started animating');
 		const newText = text.slice(displayedText.length);
 		let index = 0;
 
@@ -33,7 +32,6 @@
 				timeouts.push(
 					setTimeout(() => {
 						if (!textLoading && displayedText.length === text.length) {
-							console.log('finished', displayedText, text, newText);
 							onFinishedAnimating();
 						}
 					}, duration - delay)
