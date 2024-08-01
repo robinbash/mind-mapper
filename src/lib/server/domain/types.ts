@@ -1,5 +1,3 @@
-export type DevelopmentType = 'prompt' | 'lead';
-
 export type MessageRole = 'assistant' | 'user';
 export type Message = {
 	role: MessageRole;
@@ -7,12 +5,10 @@ export type Message = {
 };
 export type Development = {
 	messages: Message[];
-	type: DevelopmentType;
 };
 
 export type Expansion = {
 	messages: Message[];
-	type: DevelopmentType;
 };
 
 export type Topic = {

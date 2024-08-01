@@ -1,10 +1,41 @@
 import type { Topic } from '$lib/server/domain';
 import { adminDb } from '$lib/server/firebase-admin';
 
-export const getTopic = async (topicId: string): Promise<Topic> => {
-	const topic = (await adminDb.collection('topics').doc(topicId).get()).data() as Topic | undefined;
-	if (!topic) {
-		throw new Error('Topic not found');
-	}
-	return topic;
-};
+export class TopicRepo {
+	private topicMap?: Record<string, Topic>;
+
+	loadTopics = async (userId: string) => {
+		const topicDocs = await adminDb.collection('topics').where('userId', '==', userId).get();
+		const topics = topicDocs.docs.map((doc) => ({
+			id: doc.id,
+			...doc.data()
+		})) as Topic[];
+		this.topicMap = topics.reduce(
+			(acc, topic) => {
+				acc[topic.id] = topic;
+				return acc;
+			},
+			{} as Record<string, Topic>
+		);
+	};
+
+	getTopic = (topicId: string): Topic => {
+		if (!this.topicMap) throw new Error('Topics not loaded');
+		const topic = this.topicMap[topicId];
+		if (!topic) {
+			throw new Error('Topic not found');
+		}
+		return topic;
+	};
+
+	getParentTopics = (topicId: string): Topic[] => {
+		if (!this.topicMap) throw new Error('Topics not loaded');
+		const parentTopics = [];
+		let currentTopic = this.topicMap[topicId];
+		while (currentTopic.parentId) {
+			currentTopic = this.topicMap[currentTopic.parentId];
+			parentTopics.unshift(currentTopic);
+		}
+		return parentTopics;
+	};
+}

@@ -1,5 +1,5 @@
 import { streamAiResponse } from './ai';
-import { getTopic } from '$lib/server/topicRepo';
+import { TopicRepo } from '$lib/server/topicRepo';
 import type { Message, Topic } from './types';
 
 const getDevelopmentGuidancePrompt = (topic: Topic, previousQuestions?: string[]): Message[] => {
@@ -14,9 +14,13 @@ const getDevelopmentGuidancePrompt = (topic: Topic, previousQuestions?: string[]
 
 export const getDevelopmentGuidance = async (
 	topicId: string,
+	userId: string,
 	previousQuestions?: string[]
 ): Promise<ReadableStream<string>> => {
-	const topic = await getTopic(topicId);
+	const topicRepo = new TopicRepo();
+	await topicRepo.loadTopics(userId);
+	const topic = topicRepo.getTopic(topicId);
+
 	return streamAiResponse({
 		messages: getDevelopmentGuidancePrompt(topic, previousQuestions),
 		temperature: 0.9

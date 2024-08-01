@@ -4,7 +4,7 @@ import { getDevelopmentGuidance } from '$lib/server/domain';
 
 export const POST: RequestHandler = async ({ request }) => {
 	try {
-		await authenticateRequest(request);
+		const token = await authenticateRequest(request);
 
 		const data: { topicId: string; previousQuestions?: string[] } | undefined =
 			await request.json();
@@ -13,7 +13,8 @@ export const POST: RequestHandler = async ({ request }) => {
 			throw new Error('No request data');
 		}
 
-		const stream = await getDevelopmentGuidance(data.topicId, data.previousQuestions);
+		const stream = await getDevelopmentGuidance(data.topicId, token.uid, data.previousQuestions);
+
 		return new Response(stream, {
 			headers: {
 				'Content-Type': 'text/event-stream',
