@@ -1,5 +1,5 @@
 <script>
-	import { NodeButton } from '$lib/components';
+	import { TopicButton } from '$lib/components';
 	import { CATEGORIES } from '$lib/categories';
 	import { themeChange } from 'theme-change';
 	import { onMount } from 'svelte';
@@ -18,7 +18,7 @@
 	</div>
 	<div class="categories">
 		{#each CATEGORIES as category}
-			<NodeButton {category} />
+			<TopicButton {category} />
 		{/each}
 	</div>
 	<button class="switcher" data-toggle-theme="dracula,bumblebee">Toggle theme</button>

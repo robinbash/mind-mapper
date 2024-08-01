@@ -7,7 +7,7 @@
 	import { onMount, onDestroy } from 'svelte';
 	import { scale, fade } from 'svelte/transition';
 
-	export let nodeId: string;
+	export let topicId: string;
 	let inputEl: HTMLDivElement;
 	let currentUserText: string | null;
 	let textAnimating: boolean;
@@ -20,7 +20,7 @@
 
 	$: showUserInput = !$develop.aiResponseLoading && !textAnimating;
 
-	$: node = $mindmap.find((node) => node.id === nodeId);
+	$: topic = $mindmap.find((topic) => topic.id === topicId);
 	$: sendDisabled = !(currentUserText ?? '').trim();
 
 	$: {
@@ -39,7 +39,7 @@
 	};
 
 	const cancel = () => {
-		goto(`/${nodeId}/details`, { replaceState: true });
+		goto(`/${topicId}/details`, { replaceState: true });
 	};
 
 	const handleInputShortcuts = (event: KeyboardEvent) => {
@@ -51,12 +51,12 @@
 
 	const submitPrompt = () => {
 		if (!currentUserText) return;
-		develop.submitPrompt(nodeId, currentUserText);
+		develop.submitPrompt(topicId, currentUserText);
 		currentUserText = '';
 	};
 
-	const getGuide = () => develop.getGuide(nodeId);
-	const finish = () => develop.finish(nodeId);
+	const getGuide = () => develop.getGuide(topicId);
+	const finish = () => develop.finish(topicId);
 
 	onDestroy(develop.destroy);
 	onMount(develop.reset);
@@ -65,9 +65,9 @@
 <div class="container">
 	<div class="flex flex-col items-center h-full w-full md:w-[40rem] p-5">
 		<div class="flex flex-col gap-4 w-full">
-			<Breadcrumbs {nodeId} />
+			<Breadcrumbs {topicId} />
 			<h1 class="flex text-xl font-bold justify-between items-start">
-				<span class="pr-1">{node?.title}</span>
+				<span class="pr-1">{topic?.title}</span>
 				<button class="btn btn-ghost btn-square btn-sm" on:click={cancel}>
 					<span class="iconify mdi--cancel-bold w-5 h-5 flex items-center" />
 				</button>

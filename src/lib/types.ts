@@ -1,7 +1,6 @@
-export type MindNode = {
+export type Topic = {
 	id: string;
 	title: string;
 	description: string;
-	childIds?: string[];
 	parentId?: string;
 };

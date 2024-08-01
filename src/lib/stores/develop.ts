@@ -39,7 +39,7 @@ function createDevelopStore() {
 	const addResponseChunk = (chunk: string) =>
 		update((store) => ({ ...store, currentAiRespsonse: store.currentAiRespsonse + chunk }));
 
-	const getGuide = async (nodeId: string) => {
+	const getGuide = async (topicId: string) => {
 		if (!get(user)) return;
 
 		update((store) => ({
@@ -59,7 +59,7 @@ function createDevelopStore() {
 					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({
-					topicId: nodeId,
+					topicId: topicId,
 					previousQuestions: get(devStore).previousQuestions
 				})
 			});
@@ -74,7 +74,7 @@ function createDevelopStore() {
 		}
 	};
 
-	const submitPrompt = async (nodeId: string, prompt: string) => {
+	const submitPrompt = async (topicId: string, prompt: string) => {
 		if (get(devStore).aiResponseLoading || !get(user)) return;
 
 		update((store) => ({
@@ -93,7 +93,7 @@ function createDevelopStore() {
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ topicId: nodeId, prompt })
+				body: JSON.stringify({ topicId: topicId, prompt })
 			});
 			await handleAIResponse(response, addResponseChunk);
 		} finally {
@@ -109,13 +109,13 @@ function createDevelopStore() {
 		}
 	};
 
-	const finish = async (nodeId: string) => {
+	const finish = async (topicId: string) => {
 		const response = await authFetch('/api/develop/finish', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify({ topicId: nodeId, messages: get(devStore).messages })
+			body: JSON.stringify({ topicId: topicId, messages: get(devStore).messages })
 		});
 		console.log(response.ok);
 	};

@@ -1,3 +1,3 @@
-export { default as MindNode } from './MindNode.svelte';
-export { default as MindNodeDetails } from './MindNodeDetails.svelte';
-export { default as DevelopNode } from './DevelopNode.svelte';
+export { default as TopicOverview } from './TopicOverview.svelte';
+export { default as TopicDetails } from './TopicDetails.svelte';
+export { default as DevelopTopic } from './DevelopTopic.svelte';

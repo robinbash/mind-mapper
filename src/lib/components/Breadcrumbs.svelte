@@ -1,31 +1,31 @@
 <script lang="ts">
 	import { mindmap } from '$lib/stores';
 	import { CATEGORIES } from '$lib/categories';
-	import type { MindNode } from '$lib/types';
+	import type { Topic } from '$lib/types';
 	import { page } from '$app/stores';
 
-	export let nodeId: string;
-	$: node = $mindmap.find((n) => n.id === nodeId);
-	const getPaths = (n?: MindNode) => {
+	export let topicId: string;
+	$: topic = $mindmap.find((n) => n.id === topicId);
+	const getPaths = (n?: Topic) => {
 		if (!n) return;
 		let root = n;
-		let nodes = [];
+		let topics = [];
 		while (true) {
 			if (!root.parentId) break;
 			const parent = $mindmap.find((n) => n.id === root.parentId);
 			if (!parent) break;
-			nodes.unshift(root);
+			topics.unshift(root);
 			root = parent;
 		}
-		return { root, nodes };
+		return { root, topics };
 	};
-	$: paths = getPaths(node);
+	$: paths = getPaths(topic);
 	$: category = CATEGORIES.find((cat) => cat.id === paths?.root.id);
 	$: isDetails = $page.route.id?.endsWith('/details');
 	$: isDevelop = $page.route.id?.endsWith('/develop');
 
 	$: isSubpage = isDetails || isDevelop;
-	$: pathLen = paths?.nodes?.length ?? 0;
+	$: pathLen = paths?.topics?.length ?? 0;
 	let showAll: boolean;
 	$: showAll = pathLen < 3 && (!isSubpage || pathLen < 2);
 </script>
@@ -37,7 +37,7 @@
 		<a href={`/${category?.id}`} class="flex items-center">{category?.title}</a>
 	</div>
 	{#if showAll}
-		{#each paths?.nodes ?? [] as path}
+		{#each paths?.topics ?? [] as path}
 			<span class="iconify mdi--chevron-right min-w-5 min-h-5" />
 
 			<a href={`/${path.id}`} class="flex items-center"
@@ -56,8 +56,8 @@
 			<span class="iconify mdi--chevron-right min-w-5 min-h-5" />
 		</button>
 
-		<a href={`/${paths?.nodes.at(-1)?.id}`} class="flex items-center"
-			><span class="max-w-24 truncate">{paths?.nodes.at(-1)?.title}</span></a
+		<a href={`/${paths?.topics.at(-1)?.id}`} class="flex items-center"
+			><span class="max-w-24 truncate">{paths?.topics.at(-1)?.title}</span></a
 		>
 	{/if}
 

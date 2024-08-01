@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store';
-import type { MindNode } from '$lib/types';
+import type { Topic } from '$lib/types';
 import {
 	collection,
 	onSnapshot,
@@ -13,9 +13,9 @@ import {
 import { db } from '$lib/firebase';
 import { goto } from '$app/navigation';
 
-const MIND_NODE_COLLECTION = 'nodes';
+const TOPICS_COLLECTION = 'topics';
 
-const ROOT_NODES: MindNode[] = [
+const ROOT_TOPICS: Topic[] = [
 	{
 		id: 'goals',
 		title: 'Goals',
@@ -34,14 +34,14 @@ const ROOT_NODES: MindNode[] = [
 ];
 
 function createMindmapStore() {
-	const { subscribe, set } = writable<MindNode[]>([]);
+	const { subscribe, set } = writable<Topic[]>([]);
 
 	let unsubscribe: () => void;
 
-	const isNodeRoot = (node?: MindNode) =>
-		node ? ROOT_NODES.some((root) => root.id === node.id) : true;
+	const isTopicRoot = (topic?: Topic) =>
+		topic ? ROOT_TOPICS.some((root) => root.id === topic.id) : true;
 
-	const saveMindNode = async ({
+	const saveTopic = async ({
 		parentId,
 		description,
 		title,
@@ -52,30 +52,29 @@ function createMindmapStore() {
 		title: string;
 		userId: string;
 	}) => {
-		const { id } = await addDoc(collection(db, MIND_NODE_COLLECTION), {
+		const { id } = await addDoc(collection(db, TOPICS_COLLECTION), {
 			parentId,
 			title,
 			description,
 			userId,
-			childIds: [],
 			created: serverTimestamp()
 		});
 		goto(`/${id}`);
-		// updateDoc(doc(db, MIND_NODE_COLLECTION, mindNode.id), { messages: mindNode.messages });
+		// updateDoc(doc(db, TOPICS_COLLECTION, Topic.id), { messages: Topic.messages });
 	};
 
 	return {
 		subscribe,
-		saveMindNode,
+		saveTopic,
 		init: (userId: string) => {
-			const colRef = collection(db, MIND_NODE_COLLECTION);
+			const colRef = collection(db, TOPICS_COLLECTION);
 			const q = query(colRef, where('userId', '==', userId));
 			unsubscribe = onSnapshot(q, (snapshot) => {
 				const data = snapshot.docs.map((doc) => ({
 					id: doc.id,
 					...doc.data()
-				})) as MindNode[];
-				set([...ROOT_NODES, ...data]);
+				})) as Topic[];
+				set([...ROOT_TOPICS, ...data]);
 			});
 		},
 		destroy: () => {
@@ -83,7 +82,7 @@ function createMindmapStore() {
 				unsubscribe();
 			}
 		},
-		isNodeRoot
+		isTopicRoot
 	};
 }
 

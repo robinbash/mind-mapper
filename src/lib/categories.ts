@@ -1,9 +1,9 @@
-import type { MindNode } from './types';
+import type { Topic } from './types';
 
 export type Category = {
 	icon: string;
 	background: string;
-} & Omit<MindNode, 'description'>;
+} & Omit<Topic, 'description'>;
 
 export const CATEGORIES: Category[] = [
 	{ title: 'Goals', id: 'goals', icon: 'mdi--goal', background: 'bg-rose-500' },

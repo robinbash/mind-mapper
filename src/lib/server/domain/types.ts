@@ -19,7 +19,6 @@ export type Topic = {
 	id: string;
 	title: string;
 	description: string;
-	childIds?: string[];
 	parentId?: string;
 	developments?: Development[];
 	expansions?: Expansion[];
