@@ -1,17 +1,23 @@
 import { json, type RequestHandler } from '@sveltejs/kit';
-import { submitDevelopmentPrompt } from '$lib/server/domain';
+import { type Message, submitDevelopmentPrompt } from '$lib/server/domain';
 import { authenticateRequest } from '$lib/server/auth-middleware';
 
 export const POST: RequestHandler = async ({ request }) => {
 	try {
-		await authenticateRequest(request);
-		const data: { topicId: string; prompt: string } = await request.json();
+		const userId = await authenticateRequest(request);
+		const data: { topicId: string; prompt: string; previousMessages: Message[] } =
+			await request.json();
 
-		if (!data || !data.topicId || !data.prompt) {
+		if (!data || !data.topicId || !data.prompt || !data.previousMessages) {
 			throw new Error('No request data');
 		}
 
-		const stream = submitDevelopmentPrompt(data.topicId, data.prompt);
+		const stream = await submitDevelopmentPrompt(
+			data.topicId,
+			userId,
+			data.prompt,
+			data.previousMessages
+		);
 
 		return new Response(stream, {
 			headers: {

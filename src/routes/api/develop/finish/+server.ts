@@ -4,7 +4,7 @@ import { type Message, finishDeveloping } from '$lib/server/domain';
 
 export const POST: RequestHandler = async ({ request }) => {
 	try {
-		await authenticateRequest(request);
+		const userId = await authenticateRequest(request);
 
 		const data: { topicId: string; messages: Message[] } | undefined = await request.json();
 
@@ -12,7 +12,7 @@ export const POST: RequestHandler = async ({ request }) => {
 			throw new Error('No request data');
 		}
 
-		await finishDeveloping(data.topicId, data.messages);
+		await finishDeveloping(data.topicId, userId, data.messages);
 		return new Response(null, { status: 200 });
 	} catch (err) {
 		console.error(err);

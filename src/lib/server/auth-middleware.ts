@@ -12,7 +12,7 @@ export async function authenticateRequest(request: Request) {
 
 	try {
 		const decodedToken = await adminAuth.verifyIdToken(idToken);
-		return decodedToken;
+		return decodedToken.uid;
 	} catch (err) {
 		console.error('Error verifying auth token:', err);
 		throw error(401, 'Unauthorized');

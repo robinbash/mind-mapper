@@ -1,6 +1,7 @@
 import { writable } from 'svelte/store';
 import { user } from '$lib/stores';
 import { get } from 'svelte/store';
+import { goto } from '$app/navigation';
 
 import { authFetch, handleAIResponse } from '$lib/fetch';
 
@@ -10,7 +11,7 @@ type Message = {
 };
 
 type Development = {
-	state: 'initial' | 'guide' | 'prompt';
+	state: 'initial' | 'guide' | 'prompt' | 'finishing';
 	currentAiRespsonse: string;
 	aiResponseLoading: boolean;
 	previousQuestions: string[];
@@ -93,7 +94,7 @@ function createDevelopStore() {
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ topicId: topicId, prompt })
+				body: JSON.stringify({ topicId: topicId, prompt, previousMessages: get(devStore).messages })
 			});
 			await handleAIResponse(response, addResponseChunk);
 		} finally {
@@ -110,6 +111,11 @@ function createDevelopStore() {
 	};
 
 	const finish = async (topicId: string) => {
+		update((store) => ({
+			...store,
+			state: 'finishing'
+		}));
+
 		const response = await authFetch('/api/develop/finish', {
 			method: 'POST',
 			headers: {
@@ -117,7 +123,8 @@ function createDevelopStore() {
 			},
 			body: JSON.stringify({ topicId: topicId, messages: get(devStore).messages })
 		});
-		console.log(response.ok);
+		reset();
+		goto(`/${topicId}/details`, { replaceState: true });
 	};
 
 	return {

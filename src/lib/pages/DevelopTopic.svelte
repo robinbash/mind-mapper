@@ -18,7 +18,10 @@
 		}
 	}
 
-	$: showUserInput = !$develop.aiResponseLoading && !textAnimating;
+	$: showUserInput =
+		!$develop.aiResponseLoading && !textAnimating && $develop.state !== 'finishing';
+
+	$: showAI = $develop.currentAiRespsonse || $develop.aiResponseLoading;
 
 	$: topic = $mindmap.find((topic) => topic.id === topicId);
 	$: sendDisabled = !(currentUserText ?? '').trim();
@@ -39,6 +42,7 @@
 	};
 
 	const cancel = () => {
+		develop.reset();
 		goto(`/${topicId}/details`, { replaceState: true });
 	};
 
@@ -72,19 +76,27 @@
 					<span class="iconify mdi--cancel-bold w-5 h-5 flex items-center" />
 				</button>
 			</h1>
-			<div class="inline-flex min-h-10 relative whitespace-pre-line">
-				<span class="absolute left-0 top-[0.2rem] iconify mdi--sparkles w-5 h-5 opacity-60" />
-				{#if $develop.currentAiRespsonse || $develop.aiResponseLoading}
-					<span class="opacity-60">
-						<span class="w-6 h-1 inline-block" />
-						<AnimatedText
-							text={$develop.currentAiRespsonse}
-							delay={13}
-							duration={350}
-							textLoading={$develop.aiResponseLoading}
-							{onFinishedAnimating}
-						/>
-						<!-- {#if !$aiResponseLoading && !textAnimating && $developState === 'guide'}
+			{#if $develop.state === 'finishing'}
+				<div class="w-full flex justify-center pt-8">
+					<span class="font-semibold">Refining Topic</span><span
+						class="loading loading-dots loading-md ml-2 mt-1"
+					/>
+				</div>
+			{/if}
+			{#if $develop.state !== 'finishing'}
+				<div class="inline-flex min-h-10 relative whitespace-pre-line">
+					<span class="absolute left-0 top-[0.2rem] iconify mdi--sparkles w-5 h-5 opacity-60" />
+					{#if showAI}
+						<span class="opacity-60">
+							<span class="w-6 h-1 inline-block" />
+							<AnimatedText
+								text={$develop.currentAiRespsonse}
+								delay={13}
+								duration={350}
+								textLoading={$develop.aiResponseLoading}
+								{onFinishedAnimating}
+							/>
+							<!-- {#if !$aiResponseLoading && !textAnimating && $developState === 'guide'}
 							<span class="inline-block ml-1 mt-1">
 								<button class="btn btn-sm text-opacity-60 btn-square" on:click={getGuide}>
 									<div class="flex items-center">
@@ -93,17 +105,18 @@
 								</button>
 							</span>
 						{/if} -->
-					</span>
-				{:else if $develop.state === 'initial'}
-					<div class="inline-block mt-[-0.2rem] pl-6">
-						<button class="btn btn-sm text-opacity-60" on:click={getGuide}>
-							<div class="flex items-center">
-								<span class="iconify mdi--question-mark w-4 h-4 mr-1" />Guide me
-							</div>
-						</button>
-					</div>
-				{/if}
-			</div>
+						</span>
+					{:else if $develop.state === 'initial'}
+						<div class="inline-block mt-[-0.2rem] pl-6">
+							<button class="btn btn-sm text-opacity-60" on:click={getGuide}>
+								<div class="flex items-center">
+									<span class="iconify mdi--question-mark w-4 h-4 mr-1" />Guide me
+								</div>
+							</button>
+						</div>
+					{/if}
+				</div>
+			{/if}
 		</div>
 
 		<div class="flex justify-center items-end py-8 w-full gap-1">

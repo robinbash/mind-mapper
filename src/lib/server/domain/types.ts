@@ -5,6 +5,7 @@ export type Message = {
 };
 export type Development = {
 	messages: Message[];
+	newDescription: string;
 };
 
 export type Expansion = {

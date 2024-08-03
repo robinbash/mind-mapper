@@ -1,11 +1,16 @@
 import type { Topic } from '$lib/server/domain';
 import { adminDb } from '$lib/server/firebase-admin';
 
+const TOPICS_COLLECTION = 'topics';
+
 export class TopicRepo {
 	private topicMap?: Record<string, Topic>;
 
 	loadTopics = async (userId: string) => {
-		const topicDocs = await adminDb.collection('topics').where('userId', '==', userId).get();
+		const topicDocs = await adminDb
+			.collection(TOPICS_COLLECTION)
+			.where('userId', '==', userId)
+			.get();
 		const topics = topicDocs.docs.map((doc) => ({
 			id: doc.id,
 			...doc.data()
@@ -37,5 +42,13 @@ export class TopicRepo {
 			parentTopics.unshift(currentTopic);
 		}
 		return parentTopics;
+	};
+
+	updateTopic = async (topic: Topic) => {
+		const { id, ...update } = topic;
+		await adminDb
+			.collection(TOPICS_COLLECTION)
+			.doc(id)
+			.update({ ...update });
 	};
 }
