@@ -43,7 +43,7 @@
 
 	const cancel = () => {
 		develop.reset();
-		goto(`/${topicId}/details`, { replaceState: true });
+		goto(`/${topicId}`, { replaceState: true });
 	};
 
 	const handleInputShortcuts = (event: KeyboardEvent) => {
@@ -71,7 +71,9 @@
 		<div class="flex flex-col gap-4 w-full">
 			<Breadcrumbs {topicId} />
 			<h1 class="flex text-xl font-bold justify-between items-start">
-				<span class="pr-1">{topic?.title}</span>
+				<span class="pr-1 flex items-center"
+					><span class="iconify mdi--lead-pencil mr-2 w-5" /> {topic?.title}</span
+				>
 				<button class="btn btn-ghost btn-square btn-sm" on:click={cancel}>
 					<span class="iconify mdi--cancel-bold w-5 h-5 flex items-center" />
 				</button>

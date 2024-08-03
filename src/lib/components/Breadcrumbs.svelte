@@ -41,7 +41,7 @@
 			<span class="iconify mdi--chevron-right min-w-5 min-h-5" />
 
 			<a href={`/${path.id}`} class="flex items-center"
-				><span class="max-w-24 truncate">{path.title}</span></a
+				><span class="max-w-28 truncate">{path.title}</span></a
 			>
 		{/each}
 	{:else}
