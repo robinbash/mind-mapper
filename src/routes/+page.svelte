@@ -1,6 +1,6 @@
 <script>
 	import { TopicButton } from '$lib/components';
-	import { CATEGORIES } from '$lib/categories';
+	import { CATEGORIES } from '$lib/common';
 	import { themeChange } from 'theme-change';
 	import { onMount } from 'svelte';
 	import { logout } from '$lib/auth';

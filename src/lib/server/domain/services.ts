@@ -1,6 +1,6 @@
 import { streamAiResponse, getAiResponse } from './ai';
 import { TopicRepo } from '$lib/server/topicRepo';
-import type { Message, Topic } from './types';
+import type { Message, Topic } from '$lib/types';
 
 export type DomainService<TParams, TReturn> = (
 	params: { topicId: string; userId: string } & TParams

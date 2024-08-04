@@ -12,26 +12,9 @@ import {
 } from 'firebase/firestore';
 import { db } from '$lib/firebase';
 import { goto } from '$app/navigation';
+import { ROOT_TOPICS } from '$lib/common';
 
 const TOPICS_COLLECTION = 'topics';
-
-const ROOT_TOPICS: Topic[] = [
-	{
-		id: 'goals',
-		title: 'Goals',
-		description: 'Everything I want to have done at some point in my life.'
-	},
-	{
-		id: 'ideas',
-		title: 'Ideas',
-		description: 'Thoughts I have had that might grow into something great.'
-	},
-	{
-		id: 'discovery',
-		title: 'Discovery',
-		description: 'Journeys to learn about my own mind and anything beyond.'
-	}
-];
 
 function createMindmapStore() {
 	const { subscribe, set } = writable<Topic[]>([]);

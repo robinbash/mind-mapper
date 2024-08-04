@@ -10,3 +10,21 @@ export const CATEGORIES: Category[] = [
 	{ title: 'Ideas', id: 'ideas', icon: 'mdi--head-idea', background: 'bg-indigo-500' },
 	{ title: 'Discovery', id: 'discovery', icon: 'mdi--telescope', background: 'bg-teal-500' }
 ];
+
+export const ROOT_TOPICS: Topic[] = [
+	{
+		id: 'goals',
+		title: 'Goals',
+		description: 'Everything I want to have done at some point in my life.'
+	},
+	{
+		id: 'ideas',
+		title: 'Ideas',
+		description: 'Thoughts I have had that might grow into something great.'
+	},
+	{
+		id: 'discovery',
+		title: 'Discovery',
+		description: 'Journeys to learn about my own mind and anything beyond.'
+	}
+];

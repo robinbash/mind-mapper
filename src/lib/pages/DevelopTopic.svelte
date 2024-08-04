@@ -93,27 +93,32 @@
 				<div class="inline-flex min-h-10 relative whitespace-pre-line">
 					<span class="absolute left-0 top-[0.2rem] iconify mdi--sparkles w-5 h-5 opacity-60" />
 					{#if showAI}
-						<span class="opacity-60">
+						<span>
 							<span class="w-6 h-1 inline-block" />
-							<AnimatedText
-								text={$developStore.currentAiRespsonse}
-								delay={13}
-								duration={350}
-								textLoading={$developStore.aiResponseLoading}
-								{onFinishedAnimating}
-							/>
-							<!-- {#if !$aiResponseLoading && !textAnimating && $developState === 'guide'}
-							<span class="inline-block ml-1 mt-1">
-								<button class="btn btn-sm text-opacity-60 btn-square" on:click={getGuide}>
-									<div class="flex items-center">
-										<span class="iconify mdi--refresh w-4 h-4" />
-									</div>
-								</button>
+							<span class="opacity-60">
+								<AnimatedText
+									text={$developStore.currentAiRespsonse}
+									delay={13}
+									duration={350}
+									textLoading={$developStore.aiResponseLoading}
+									{onFinishedAnimating}
+								/>
 							</span>
-						{/if} -->
+							{#if !$developStore.aiResponseLoading && !textAnimating && $developStore.currentAiRespsonse}
+								<span class="inline-block relative h-3 w-6">
+									<div
+										class="flex items-center absolute top-1/2 -translate-y-1/2"
+										in:fade={{ duration: 200 }}
+									>
+										<button class=" btn btn-xs btn-ghost btn-square" on:click={getGuide}>
+											<span class=" iconify mdi--refresh w-6 h-6 opacity-60" />
+										</button>
+									</div>
+								</span>
+							{/if}
 						</span>
 					{:else if $developStore.state === 'initial'}
-						<div class="inline-block mt-[-0.2rem] pl-6">
+						<div class="inline-block mt-[-0.2rem] pl-6 items-center">
 							<button class="btn btn-sm text-opacity-60" on:click={getGuide}>
 								<div class="flex items-center">
 									<span class="iconify mdi--question-mark w-4 h-4 mr-1" />Guide me

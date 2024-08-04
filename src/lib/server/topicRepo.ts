@@ -1,5 +1,7 @@
-import type { Topic } from '$lib/server/domain';
+import type { Topic } from '$lib/types';
 import { adminDb } from '$lib/server/firebase-admin';
+
+import { ROOT_TOPICS } from '$lib/common';
 
 const TOPICS_COLLECTION = 'topics';
 
@@ -16,7 +18,7 @@ export class TopicRepo {
 			...doc.data()
 		})) as Topic[];
 
-		this.topicsById = topics.reduce(
+		this.topicsById = [...topics, ...ROOT_TOPICS].reduce(
 			(acc, topic) => {
 				acc[topic.id] = topic;
 				return acc;

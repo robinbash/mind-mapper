@@ -17,6 +17,7 @@ export const authFetch = async (
 };
 
 export const handleAIResponse = async (response: Response, addChunk: (chunk: string) => void) => {
+	let responseText = '';
 	if (response.ok) {
 		const reader = response.body?.getReader();
 		if (!reader) {
@@ -26,10 +27,12 @@ export const handleAIResponse = async (response: Response, addChunk: (chunk: str
 		while (true) {
 			const { done, value } = await reader?.read();
 			if (done) {
-				return;
+				return responseText;
 			}
 			const chunk = decoder.decode(value);
+			responseText += chunk;
 			addChunk(chunk);
 		}
 	}
+	throw new Error('Response not ok');
 };

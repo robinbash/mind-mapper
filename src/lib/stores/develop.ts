@@ -51,6 +51,7 @@ const createDevelopStore = (endpoint: string): DevelopmentStore => {
 
 	const getGuide = async (topicId: string) => {
 		if (!get(user)) return;
+		let responseText: string;
 
 		update((store) => ({
 			...store,
@@ -73,13 +74,15 @@ const createDevelopStore = (endpoint: string): DevelopmentStore => {
 					previousQuestions: get(devStore).previousQuestions
 				})
 			});
-			await handleAIResponse(response, addResponseChunk);
+			responseText = await handleAIResponse(response, addResponseChunk);
 		} finally {
 			update((store) => ({
 				...store,
 				aiResponseLoading: false,
 				messages: [...store.messages, { role: 'assistant', content: store.currentAiRespsonse }],
-				previousQuestions: [...store.previousQuestions]
+				previousQuestions: responseText
+					? [...store.previousQuestions, responseText]
+					: store.previousQuestions
 			}));
 		}
 	};

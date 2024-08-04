@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { mindmap } from '$lib/stores';
-	import { CATEGORIES } from '$lib/categories';
-	import type { Topic } from '$lib/types';
+	import { CATEGORIES } from '$lib/common';
 	import { page } from '$app/stores';
 	import BreadcrumbItem from './BreadcrumbItem.svelte';
+	import { type Topic } from '$lib/types';
 
 	export let topicId: string;
 	$: topic = $mindmap.find((n) => n.id === topicId);
