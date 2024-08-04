@@ -64,15 +64,15 @@ export const finishRefining: DomainService<{ messages: Message[] }, void> = asyn
 };
 
 export const submitRefinementPrompt: DomainService<
-	{ content: string; previousMessages: Message[] },
+	{ prompt: string; previousMessages: Message[] },
 	ReadableStream<string>
-> = async ({ topicId, userId, content, previousMessages }): Promise<ReadableStream<string>> => {
+> = async ({ topicId, userId, prompt, previousMessages }): Promise<ReadableStream<string>> => {
 	const topicRepo = new TopicRepo();
 	await topicRepo.loadTopics(userId);
 	const topic = topicRepo.getTopic(topicId);
 	const initial = getRefinementPrompt(topic);
 	return streamAiResponse({
-		messages: [initial, ...previousMessages, { role: 'user', content }]
+		messages: [initial, ...previousMessages, { role: 'user', content: prompt }]
 	});
 };
 
@@ -125,8 +125,8 @@ export const finishExpanding: DomainService<{ messages: Message[] }, void> = asy
 };
 
 export const submitExpansionPrompt: DomainService<
-	{ content: string; previousMessages: Message[] },
+	{ prompt: string; previousMessages: Message[] },
 	ReadableStream<string>
-> = async ({ topicId, userId, content, previousMessages }): Promise<ReadableStream<string>> => {
+> = async ({ topicId, userId, prompt, previousMessages }): Promise<ReadableStream<string>> => {
 	return new ReadableStream<string>();
 };

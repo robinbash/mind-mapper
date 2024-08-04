@@ -136,7 +136,7 @@ const createDevelopStore = (endpoint: string): DevelopmentStore => {
 			body: JSON.stringify({ topicId: topicId, messages: get(devStore).messages })
 		});
 		reset();
-		goto(`/${topicId}/details`, { replaceState: true });
+		goto(`/${topicId}`, { replaceState: true });
 	};
 
 	return {
