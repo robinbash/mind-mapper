@@ -50,7 +50,7 @@
 				{topic?.description}
 			</div>
 			<div class="w-full flex pt-3 justify-center gap-4">
-				<a class="btn btn-sm" href={`/${topicId}/develop`}
+				<a class="btn btn-sm" href={`/${topicId}/refine`}
 					><span class="iconify mdi--lead-pencil" /> Refine</a
 				>
 				<button class="btn btn-sm"

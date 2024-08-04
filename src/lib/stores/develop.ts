@@ -18,7 +18,16 @@ type Development = {
 	messages: Message[];
 };
 
-function createDevelopStore() {
+export type DevelopmentStore = {
+	subscribe: (run: (value: Development) => void, invalidate?: any) => () => void;
+	reset: () => void;
+	submitPrompt: (topicId: string, prompt: string) => void;
+	getGuide: (topicId: string) => void;
+	finish: (topicId: string) => void;
+	destroy: () => void;
+};
+
+const createDevelopStore = (endpoint: string): DevelopmentStore => {
 	const initial: Development = {
 		state: 'initial',
 		currentAiRespsonse: '',
@@ -54,7 +63,7 @@ function createDevelopStore() {
 			if (eventSource) {
 				eventSource.close();
 			}
-			const response = await authFetch('/api/develop/guide', {
+			const response = await authFetch(`/api/${endpoint}/guide`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -89,7 +98,7 @@ function createDevelopStore() {
 			if (eventSource) {
 				eventSource.close();
 			}
-			const response = await authFetch('/api/develop/prompt', {
+			const response = await authFetch(`/api/${endpoint}/prompt`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -116,7 +125,7 @@ function createDevelopStore() {
 			state: 'finishing'
 		}));
 
-		const response = await authFetch('/api/develop/finish', {
+		const response = await authFetch(`/api/${endpoint}/finish`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
@@ -142,6 +151,7 @@ function createDevelopStore() {
 			}
 		}
 	};
-}
+};
 
-export const develop = createDevelopStore();
+export const refine = createDevelopStore('refine');
+export const expand = createDevelopStore('expand');

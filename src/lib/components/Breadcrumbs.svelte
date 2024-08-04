@@ -23,9 +23,9 @@
 	$: paths = getPaths(topic);
 	$: category = CATEGORIES.find((cat) => cat.id === paths?.root.id);
 	$: isExpand = $page.route.id?.endsWith('/expand');
-	$: isDevelop = $page.route.id?.endsWith('/develop');
+	$: isRefine = $page.route.id?.endsWith('/refine');
 
-	$: isSubpage = isExpand || isDevelop;
+	$: isSubpage = isExpand || isRefine;
 	$: pathLen = paths?.topics?.length ?? 0;
 	let showAll: boolean = true;
 
@@ -69,7 +69,7 @@
 			<span class="iconify mdi--source-branch min-w-5 min-h-5" />
 		</BreadcrumbItem>
 	{/if}
-	{#if isDevelop}
+	{#if isRefine}
 		<BreadcrumbItem>
 			<span class="iconify mdi--lead-pencil min-w-5 min-h-5" />
 		</BreadcrumbItem>

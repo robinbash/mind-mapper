@@ -4,7 +4,7 @@ import { adminDb } from '$lib/server/firebase-admin';
 const TOPICS_COLLECTION = 'topics';
 
 export class TopicRepo {
-	private topicMap?: Record<string, Topic>;
+	private topicsById?: Record<string, Topic>;
 
 	loadTopics = async (userId: string) => {
 		const topicDocs = await adminDb
@@ -15,7 +15,8 @@ export class TopicRepo {
 			id: doc.id,
 			...doc.data()
 		})) as Topic[];
-		this.topicMap = topics.reduce(
+
+		this.topicsById = topics.reduce(
 			(acc, topic) => {
 				acc[topic.id] = topic;
 				return acc;
@@ -25,8 +26,8 @@ export class TopicRepo {
 	};
 
 	getTopic = (topicId: string): Topic => {
-		if (!this.topicMap) throw new Error('Topics not loaded');
-		const topic = this.topicMap[topicId];
+		if (!this.topicsById) throw new Error('Topics not loaded');
+		const topic = this.topicsById[topicId];
 		if (!topic) {
 			throw new Error('Topic not found');
 		}
@@ -34,14 +35,19 @@ export class TopicRepo {
 	};
 
 	getParentTopics = (topicId: string): Topic[] => {
-		if (!this.topicMap) throw new Error('Topics not loaded');
+		if (!this.topicsById) throw new Error('Topics not loaded');
 		const parentTopics = [];
-		let currentTopic = this.topicMap[topicId];
+		let currentTopic = this.topicsById[topicId];
 		while (currentTopic.parentId) {
-			currentTopic = this.topicMap[currentTopic.parentId];
+			currentTopic = this.topicsById[currentTopic.parentId];
 			parentTopics.unshift(currentTopic);
 		}
 		return parentTopics;
+	};
+
+	getSubtopics = (topicId: string): Topic[] => {
+		if (!this.topicsById) throw new Error('Topics not loaded');
+		return Object.values(this.topicsById).filter((t) => t.parentId === topicId);
 	};
 
 	updateTopic = async (topic: Topic) => {

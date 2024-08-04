@@ -3,25 +3,28 @@
 	import { mindmap } from '$lib/stores';
 	import { goto } from '$app/navigation';
 
-	import { develop } from '$lib/stores/develop';
+	import type { DevelopmentStore } from '$lib/stores/develop';
 	import { onMount, onDestroy } from 'svelte';
 	import { scale, fade } from 'svelte/transition';
 
+	export let developTitle: string;
+	export let developIcon: string;
+	export let developStore: DevelopmentStore;
 	export let topicId: string;
 	let inputEl: HTMLDivElement;
 	let currentUserText: string | null;
 	let textAnimating: boolean;
 
 	$: {
-		if ($develop.aiResponseLoading) {
+		if ($developStore.aiResponseLoading) {
 			textAnimating = true;
 		}
 	}
 
 	$: showUserInput =
-		!$develop.aiResponseLoading && !textAnimating && $develop.state !== 'finishing';
+		!$developStore.aiResponseLoading && !textAnimating && $developStore.state !== 'finishing';
 
-	$: showAI = $develop.currentAiRespsonse || $develop.aiResponseLoading;
+	$: showAI = $developStore.currentAiRespsonse || $developStore.aiResponseLoading;
 
 	$: topic = $mindmap.find((topic) => topic.id === topicId);
 	$: sendDisabled = !(currentUserText ?? '').trim();
@@ -42,7 +45,7 @@
 	};
 
 	const cancel = () => {
-		develop.reset();
+		developStore.reset();
 		goto(`/${topicId}`, { replaceState: true });
 	};
 
@@ -55,15 +58,15 @@
 
 	const submitPrompt = () => {
 		if (!currentUserText) return;
-		develop.submitPrompt(topicId, currentUserText);
+		developStore.submitPrompt(topicId, currentUserText);
 		currentUserText = '';
 	};
 
-	const getGuide = () => develop.getGuide(topicId);
-	const finish = () => develop.finish(topicId);
+	const getGuide = () => developStore.getGuide(topicId);
+	const finish = () => developStore.finish(topicId);
 
-	onDestroy(develop.destroy);
-	onMount(develop.reset);
+	onDestroy(developStore.destroy);
+	onMount(developStore.reset);
 </script>
 
 <div class="container">
@@ -72,30 +75,31 @@
 			<Breadcrumbs {topicId} />
 			<h1 class="flex text-lg font-bold justify-between items-start">
 				<span class="pr-1 flex items-center"
-					><span class="iconify mdi--lead-pencil mr-1 w-5 h-5" /> Refine - {topic?.title}</span
+					><span class="iconify {developIcon} mr-1 w-5 h-5" />
+					{developTitle} - {topic?.title}</span
 				>
 				<button class="btn btn-ghost btn-square btn-sm" on:click={cancel}>
 					<span class="iconify mdi--cancel-bold w-5 h-5 flex items-center" />
 				</button>
 			</h1>
-			{#if $develop.state === 'finishing'}
+			{#if $developStore.state === 'finishing'}
 				<div class="w-full flex justify-center pt-8">
 					<span class="font-semibold">Refining Topic</span><span
 						class="loading loading-dots loading-md ml-2 mt-1"
 					/>
 				</div>
 			{/if}
-			{#if $develop.state !== 'finishing'}
+			{#if $developStore.state !== 'finishing'}
 				<div class="inline-flex min-h-10 relative whitespace-pre-line">
 					<span class="absolute left-0 top-[0.2rem] iconify mdi--sparkles w-5 h-5 opacity-60" />
 					{#if showAI}
 						<span class="opacity-60">
 							<span class="w-6 h-1 inline-block" />
 							<AnimatedText
-								text={$develop.currentAiRespsonse}
+								text={$developStore.currentAiRespsonse}
 								delay={13}
 								duration={350}
-								textLoading={$develop.aiResponseLoading}
+								textLoading={$developStore.aiResponseLoading}
 								{onFinishedAnimating}
 							/>
 							<!-- {#if !$aiResponseLoading && !textAnimating && $developState === 'guide'}
@@ -108,7 +112,7 @@
 							</span>
 						{/if} -->
 						</span>
-					{:else if $develop.state === 'initial'}
+					{:else if $developStore.state === 'initial'}
 						<div class="inline-block mt-[-0.2rem] pl-6">
 							<button class="btn btn-sm text-opacity-60" on:click={getGuide}>
 								<div class="flex items-center">
@@ -145,7 +149,7 @@
 				</button>
 			{/if}
 		</div>
-		{#if $develop.state === 'prompt' && showUserInput}
+		{#if $developStore.state === 'prompt' && showUserInput}
 			<div class="inline-block">
 				<button class="btn btn-sm text-opacity-60" on:click={finish}>
 					<div class="flex items-center">

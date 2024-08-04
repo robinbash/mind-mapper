@@ -3,7 +3,7 @@ export type Message = {
 	role: MessageRole;
 	content: string;
 };
-export type Development = {
+export type Refinement = {
 	messages: Message[];
 	newDescription: string;
 };
@@ -17,9 +17,6 @@ export type Topic = {
 	title: string;
 	description: string;
 	parentId?: string;
-	developments?: Development[];
+	refinements?: Refinement[];
 	expansions?: Expansion[];
 };
-
-export type ExpandTopic = (topic: Topic, expansion: Expansion) => Topic[];
-export type DevelopTopic = (topic: Topic, development: Development) => Topic;
