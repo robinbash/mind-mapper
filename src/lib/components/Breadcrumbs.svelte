@@ -3,6 +3,7 @@
 	import { CATEGORIES } from '$lib/categories';
 	import type { Topic } from '$lib/types';
 	import { page } from '$app/stores';
+	import BreadcrumbItem from './BreadcrumbItem.svelte';
 
 	export let topicId: string;
 	$: topic = $mindmap.find((n) => n.id === topicId);
@@ -26,23 +27,25 @@
 
 	$: isSubpage = isExpand || isDevelop;
 	$: pathLen = paths?.topics?.length ?? 0;
-	let showAll: boolean;
-	$: showAll = pathLen < 3 && (!isSubpage || pathLen < 2);
+	let showAll: boolean = true;
+
+	// $: showAll = pathLen < 3 && (!isSubpage || pathLen < 2);
 </script>
 
-<div class="flex max-w-full text-sm pb-6 font-sans items-center overflow-x-scroll pt-2 md:pt-6">
+<div class="flex max-w-full text-sm pb-6 font-sans items-center pt-2 md:pt-6 flex-wrap gap-y-1">
 	<a href="/" class="flex"><span class="iconify mdi--home h-6 w-6" /></a>
-	<span class="iconify mdi--chevron-right min-w-5 min-h-5" />
-	<div class={`badge badge-sm text-white p-2 ${category?.background}`}>
-		<a href={`/${category?.id}`} class="flex items-center">{category?.title}</a>
-	</div>
+	<BreadcrumbItem>
+		<div class={`badge badge-sm text-white p-2 ${category?.background}`}>
+			<a href={`/${category?.id}`} class="flex items-center">{category?.title}</a>
+		</div>
+	</BreadcrumbItem>
 	{#if showAll}
 		{#each paths?.topics ?? [] as path}
-			<span class="iconify mdi--chevron-right min-w-5 min-h-5" />
-
-			<a href={`/${path.id}`} class="flex items-center"
-				><span class="max-w-28 truncate">{path.title}</span></a
-			>
+			<BreadcrumbItem>
+				<a href={`/${path.id}`} class="flex items-center">
+					<span class="max-w-28 truncate">{path.title}</span>
+				</a>
+			</BreadcrumbItem>
 		{/each}
 	{:else}
 		<button
@@ -62,9 +65,13 @@
 	{/if}
 
 	{#if isExpand}
-		<span class="iconify mdi--chevron-right min-w-5 min-h-5" />
-		<span class="iconify mdi--source-branch min-w-5 min-h-5" />{/if}
+		<BreadcrumbItem>
+			<span class="iconify mdi--source-branch min-w-5 min-h-5" />
+		</BreadcrumbItem>
+	{/if}
 	{#if isDevelop}
-		<span class="iconify mdi--chevron-right min-w-5 min-h-5" />
-		<span class="iconify mdi--lead-pencil min-w-5 min-h-5" />{/if}
+		<BreadcrumbItem>
+			<span class="iconify mdi--lead-pencil min-w-5 min-h-5" />
+		</BreadcrumbItem>
+	{/if}
 </div>
