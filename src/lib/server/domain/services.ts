@@ -2,6 +2,10 @@ import { streamAiResponse, getAiResponse } from './ai';
 import { TopicRepo } from '$lib/server/topicRepo';
 import type { Message, Topic } from './types';
 
+export type DomainService<TParams, TReturn> = (
+	params: { topicId: string; userId: string } & TParams
+) => Promise<TReturn>;
+
 const getDevelopmentPrompt = (topic: Topic, previousQuestions?: string[]): Message => {
 	const previousDevelopmentQuestions =
 		topic.developments
@@ -17,11 +21,10 @@ const getDevelopmentPrompt = (topic: Topic, previousQuestions?: string[]): Messa
 	return { role: 'user', content: prompt };
 };
 
-export const getDevelopmentGuidance = async (
-	topicId: string,
-	userId: string,
-	previousQuestions?: string[]
-): Promise<ReadableStream<string>> => {
+export const getDevelopmentGuidance: DomainService<
+	{ previousQuestions?: string[] },
+	ReadableStream<string>
+> = async ({ topicId, userId, previousQuestions }): Promise<ReadableStream<string>> => {
 	const topicRepo = new TopicRepo();
 	await topicRepo.loadTopics(userId);
 	const topic = topicRepo.getTopic(topicId);
@@ -32,7 +35,11 @@ export const getDevelopmentGuidance = async (
 	});
 };
 
-export const finishDeveloping = async (topicId: string, userId: string, messages: Message[]) => {
+export const finishDeveloping: DomainService<{ messages: Message[] }, void> = async ({
+	topicId,
+	userId,
+	messages
+}) => {
 	const topicRepo = new TopicRepo();
 	await topicRepo.loadTopics(userId);
 	const topic = topicRepo.getTopic(topicId);
@@ -56,12 +63,10 @@ export const finishDeveloping = async (topicId: string, userId: string, messages
 	await topicRepo.updateTopic(topic);
 };
 
-export const submitDevelopmentPrompt = async (
-	topicId: string,
-	userId: string,
-	content: string,
-	previousMessages: Message[]
-): Promise<ReadableStream<string>> => {
+export const submitDevelopmentPrompt: DomainService<
+	{ content: string; previousMessages: Message[] },
+	ReadableStream<string>
+> = async ({ topicId, userId, content, previousMessages }): Promise<ReadableStream<string>> => {
 	console.log('previous', previousMessages);
 	const topicRepo = new TopicRepo();
 	await topicRepo.loadTopics(userId);

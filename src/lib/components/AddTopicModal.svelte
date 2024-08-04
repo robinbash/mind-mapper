@@ -28,6 +28,6 @@
 		<button>close</button>
 	</form>
 </dialog>
-<button class="btn btn-sm text-opacity-60" on:click={() => modal.showModal()}>
-	<span class="iconify mdi--add w-4 h-4 mr" />Add manually
+<button class="btn btn-sm text-opacity-60 gap-1" on:click={() => modal.showModal()}>
+	<span class="iconify mdi--add w-4 h-4" />Add manually
 </button>

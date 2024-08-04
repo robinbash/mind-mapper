@@ -73,7 +73,7 @@
 			<Breadcrumbs {topicId} />
 			<h1 class="flex text-lg font-bold justify-between items-start">
 				<span class="pr-1 flex items-center"
-					><span class="iconify mdi--source-branch mr-1 w-5" />Expand - {topic?.title}</span
+					><span class="iconify mdi--source-branch mr-1 w-5 h-5" />Expand - {topic?.title}</span
 				>
 				<button class="btn btn-ghost btn-square btn-sm" on:click={cancel}>
 					<span class="iconify mdi--cancel-bold w-5 h-5 flex items-center" />
@@ -110,10 +110,15 @@
 						{/if} -->
 						</span>
 					{:else if $develop.state === 'initial'}
-						<div class="inline-block mt-[-0.2rem] pl-6">
-							<button class="btn btn-sm text-opacity-60 mr-1" on:click={getGuide}>
+						<div class="inline-block mt-[-0.2rem] pl-6 space-x-1">
+							<button class="btn btn-sm text-opacity-60" on:click={getGuide}>
 								<div class="flex items-center">
 									<span class="iconify mdi--question-mark w-4 h-4 mr-1" />Guide me
+								</div>
+							</button>
+							<button class="btn btn-sm text-opacity-60">
+								<div class="flex items-center">
+									<span class="iconify mdi--lightbulb-variant w-4 h-4 mr-1" />Tell me
 								</div>
 							</button>
 							<AddTopicModal {topicId} />
