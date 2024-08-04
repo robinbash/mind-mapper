@@ -21,16 +21,16 @@
 	};
 	$: paths = getPaths(topic);
 	$: category = CATEGORIES.find((cat) => cat.id === paths?.root.id);
-	$: isDetails = $page.route.id?.endsWith('/details');
+	$: isExpand = $page.route.id?.endsWith('/expand');
 	$: isDevelop = $page.route.id?.endsWith('/develop');
 
-	$: isSubpage = isDetails || isDevelop;
+	$: isSubpage = isExpand || isDevelop;
 	$: pathLen = paths?.topics?.length ?? 0;
 	let showAll: boolean;
 	$: showAll = pathLen < 3 && (!isSubpage || pathLen < 2);
 </script>
 
-<div class="flex max-w-full text-sm pb-6 font-sans items-center overflow-x-scroll">
+<div class="flex max-w-full text-sm pb-6 font-sans items-center overflow-x-scroll pt-2 md:pt-6">
 	<a href="/" class="flex"><span class="iconify mdi--home h-6 w-6" /></a>
 	<span class="iconify mdi--chevron-right min-w-5 min-h-5" />
 	<div class={`badge badge-sm text-white p-2 ${category?.background}`}>
@@ -61,9 +61,9 @@
 		>
 	{/if}
 
-	{#if isDetails}
+	{#if isExpand}
 		<span class="iconify mdi--chevron-right min-w-5 min-h-5" />
-		<span class="iconify mdi--drive-document min-w-5 min-h-5" />{/if}
+		<span class="iconify mdi--source-branch min-w-5 min-h-5" />{/if}
 	{#if isDevelop}
 		<span class="iconify mdi--chevron-right min-w-5 min-h-5" />
 		<span class="iconify mdi--lead-pencil min-w-5 min-h-5" />{/if}

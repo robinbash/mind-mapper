@@ -6,6 +6,7 @@
 	import { develop } from '$lib/stores/develop';
 	import { onMount, onDestroy } from 'svelte';
 	import { scale, fade } from 'svelte/transition';
+	import { AddTopicModal } from '$lib/components';
 
 	export let topicId: string;
 	let inputEl: HTMLDivElement;
@@ -19,7 +20,7 @@
 	}
 
 	$: showUserInput =
-		!$develop.aiResponseLoading && !textAnimating && $develop.state !== 'finishing';
+		!$develop.aiResponseLoading && !textAnimating && $develop.state !== 'finishing' && false;
 
 	$: showAI = $develop.currentAiRespsonse || $develop.aiResponseLoading;
 
@@ -72,7 +73,7 @@
 			<Breadcrumbs {topicId} />
 			<h1 class="flex text-xl font-bold justify-between items-start">
 				<span class="pr-1 flex items-center"
-					><span class="iconify mdi--lead-pencil mr-2 w-5" /> {topic?.title}</span
+					><span class="iconify mdi--source-branch mr-2 w-5" /> {topic?.title}</span
 				>
 				<button class="btn btn-ghost btn-square btn-sm" on:click={cancel}>
 					<span class="iconify mdi--cancel-bold w-5 h-5 flex items-center" />
@@ -110,11 +111,12 @@
 						</span>
 					{:else if $develop.state === 'initial'}
 						<div class="inline-block mt-[-0.2rem] pl-6">
-							<button class="btn btn-sm text-opacity-60" on:click={getGuide}>
+							<button class="btn btn-sm text-opacity-60 mr-1" on:click={getGuide}>
 								<div class="flex items-center">
 									<span class="iconify mdi--question-mark w-4 h-4 mr-1" />Guide me
 								</div>
 							</button>
+							<AddTopicModal {topicId} />
 						</div>
 					{/if}
 				</div>

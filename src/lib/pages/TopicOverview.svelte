@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { Breadcrumbs } from '$lib/components';
-	import AddTopicModal from '$lib/components/AddTopicModal.svelte';
 	import { mindmap } from '$lib/stores';
 
 	export let topicId: string;
@@ -15,7 +14,7 @@
 </script>
 
 <div class="container">
-	<div class="md:w-[40rem] w-full h-full p-5">
+	<div class="md:w-[46rem] w-full h-full p-5">
 		<Breadcrumbs {topicId} />
 		<div class="flex w-full items-center">
 			<button
@@ -71,12 +70,11 @@
 				{/each}
 
 				<a
-					href={`/`}
-					class="btn btn-lg text-opacity-60 w-full font-normal text-base overflow-hidden"
+					href={`/${topicId}/expand`}
+					class="btn btn-lg text-opacity-60 w-full font-normal text-base gap-1"
 				>
 					<span class="iconify mdi--add w-5 h-5" />Add Subtopic
 				</a>
-				<AddTopicModal {topicId} />
 			</div>
 		{/if}
 	</div>
