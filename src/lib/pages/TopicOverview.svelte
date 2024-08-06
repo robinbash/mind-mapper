@@ -14,7 +14,7 @@
 </script>
 
 <div class="container">
-	<div class="md:w-[46rem] w-full h-full p-5">
+	<div class="flex flex-col md:w-[46rem] w-full h-full p-5">
 		<Breadcrumbs {topicId} />
 		<div class="flex w-full items-center">
 			<button
@@ -46,10 +46,10 @@
 			</div>
 		</div>
 		{#if expanded}
-			<div class="flex w-full opacity-60 items-center py-3">
+			<span class="flex w-full opacity-65 overflow-y-scroll my-3">
 				{topic?.description}
-			</div>
-			<div class="w-full flex pt-3 justify-center gap-4">
+			</span>
+			<div class="w-full flex pb-6 pt-3 justify-center gap-4">
 				<a class="btn btn-sm" href={`/${topicId}/refine`}
 					><span class="iconify mdi--lead-pencil" /> Refine</a
 				>
@@ -71,7 +71,7 @@
 
 				<a
 					href={`/${topicId}/expand`}
-					class="btn btn-lg text-opacity-60 w-full font-normal text-base gap-1"
+					class="btn btn-lg text-opacity-65 w-full font-normal text-base gap-1"
 				>
 					<span class="iconify mdi--add w-5 h-5" />Add Subtopic
 				</a>

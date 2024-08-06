@@ -71,19 +71,21 @@
 
 <div class="container">
 	<div class="flex flex-col items-center h-full w-full md:w-[46rem] p-5">
-		<div class="flex flex-col gap-4 w-full">
+		<div class="flex flex-col w-full">
 			<Breadcrumbs {topicId} />
-			<h1 class="flex text-lg font-bold justify-between items-start">
-				<span class="pr-1 flex items-center"
-					><span class="iconify {developIcon} mr-1 w-5 h-5" />
-					{developTitle} - {topic?.title}</span
-				>
+			<div class="flex items-center pb-3 justify-between">
+				<div class="flex font-bold justify-between items-start py-3">
+					<span class="relative pl-6 inline-block items-center pr-3">
+						<span class="absolute left-0 top-1 iconify {developIcon} w-4 h-4" />
+						{developTitle} - {topic?.title}</span
+					>
+				</div>
 				<button class="btn btn-ghost btn-square btn-sm" on:click={cancel}>
 					<span class="iconify mdi--cancel-bold w-5 h-5 flex items-center" />
 				</button>
-			</h1>
+			</div>
 			{#if $developStore.state === 'finishing'}
-				<div class="w-full flex justify-center pt-8 opacity-60">
+				<div class="w-full flex justify-center pt-8 opacity-65">
 					<span class="font-semibold">Developing topic</span><span
 						class="loading loading-dots loading-md ml-2 mt-1"
 					/>
@@ -91,11 +93,11 @@
 			{/if}
 			{#if $developStore.state !== 'finishing'}
 				<div class="inline-flex min-h-10 relative whitespace-pre-line">
-					<span class="absolute left-0 top-[0.2rem] iconify mdi--sparkles w-5 h-5 opacity-60" />
+					<span class="absolute left-0 top-[0.2rem] iconify mdi--sparkles w-5 h-5 opacity-65" />
 					{#if showAI}
 						<span>
 							<span class="w-6 h-1 inline-block" />
-							<span class="opacity-60">
+							<span class="opacity-65">
 								<AnimatedText
 									text={$developStore.currentAiRespsonse}
 									delay={13}
@@ -111,7 +113,7 @@
 										in:fade={{ duration: 200 }}
 									>
 										<button class=" btn btn-xs btn-ghost btn-square" on:click={getGuide}>
-											<span class=" iconify mdi--refresh w-6 h-6 opacity-60" />
+											<span class=" iconify mdi--refresh w-6 h-6 opacity-65" />
 										</button>
 									</div>
 								</span>
@@ -119,7 +121,7 @@
 						</span>
 					{:else if $developStore.state === 'initial'}
 						<div class="inline-block mt-[-0.2rem] pl-6 items-center">
-							<button class="btn btn-sm text-opacity-60" on:click={getGuide}>
+							<button class="btn btn-sm text-opacity-65" on:click={getGuide}>
 								<div class="flex items-center">
 									<span class="iconify mdi--question-mark w-4 h-4 mr-1" />Guide me
 								</div>
@@ -156,7 +158,7 @@
 		</div>
 		{#if $developStore.state === 'prompt' && showUserInput}
 			<div class="inline-block">
-				<button class="btn btn-sm text-opacity-60" on:click={finish}>
+				<button class="btn btn-sm text-opacity-65" on:click={finish}>
 					<div class="flex items-center">
 						<span class="iconify mdi--check-circle w-4 h-4 mr-1" />Finish
 					</div>

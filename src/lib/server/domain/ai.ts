@@ -40,8 +40,6 @@ export const streamAiResponse = ({
 		apiKey: ATHROPIC_API_KEY
 	});
 
-	console.log('hah', mergeMessages(messages));
-
 	return new ReadableStream<string>({
 		async start(controller) {
 			client.messages

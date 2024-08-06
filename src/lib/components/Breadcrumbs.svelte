@@ -43,7 +43,7 @@
 		{#each paths?.topics ?? [] as path}
 			<BreadcrumbItem>
 				<a href={`/${path.id}`} class="flex items-center">
-					<span class="max-w-28 truncate">{path.title}</span>
+					<span class="max-w-24 truncate">{path.title}</span>
 				</a>
 			</BreadcrumbItem>
 		{/each}
@@ -64,7 +64,7 @@
 		>
 	{/if}
 
-	{#if isExpand}
+	<!-- {#if isExpand}
 		<BreadcrumbItem>
 			<span class="iconify mdi--source-branch min-w-5 min-h-5" />
 		</BreadcrumbItem>
@@ -73,5 +73,5 @@
 		<BreadcrumbItem>
 			<span class="iconify mdi--lead-pencil min-w-5 min-h-5" />
 		</BreadcrumbItem>
-	{/if}
+	{/if} -->
 </div>
