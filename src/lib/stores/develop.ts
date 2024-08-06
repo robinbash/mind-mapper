@@ -76,10 +76,14 @@ const createDevelopStore = (endpoint: string): DevelopmentStore => {
 			});
 			responseText = await handleAIResponse(response, addResponseChunk);
 		} finally {
+			const isReload = get(devStore).messages.at(-1)?.role === 'assistant';
 			update((store) => ({
 				...store,
 				aiResponseLoading: false,
-				messages: [...store.messages, { role: 'assistant', content: store.currentAiRespsonse }],
+				messages: [
+					...(isReload ? store.messages.slice(0, -1) : store.messages),
+					{ role: 'assistant', content: store.currentAiRespsonse }
+				],
 				previousQuestions: responseText
 					? [...store.previousQuestions, responseText]
 					: store.previousQuestions
@@ -127,16 +131,19 @@ const createDevelopStore = (endpoint: string): DevelopmentStore => {
 			...store,
 			state: 'finishing'
 		}));
+		let messages = get(devStore).messages;
+		if (messages.at(-1)?.role === 'assistant') messages.pop();
 
 		const response = await authFetch(`/api/${endpoint}/finish`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify({ topicId: topicId, messages: get(devStore).messages })
+			body: JSON.stringify({ topicId: topicId, messages })
 		});
+		const result = await response.json();
 		reset();
-		goto(`/${topicId}`, { replaceState: true });
+		goto(`/${result.result}`, { replaceState: true });
 	};
 
 	return {

@@ -22,7 +22,7 @@ export async function authenticateRequest(request: Request) {
 }
 
 export const PostSimple =
-	<TParams>(service: DomainService<TParams, void>): RequestHandler =>
+	<TParams>(service: DomainService<TParams, string | void>): RequestHandler =>
 	async ({ request }) => {
 		try {
 			const userId = await authenticateRequest(request);
@@ -33,8 +33,8 @@ export const PostSimple =
 				throw new Error('No request data');
 			}
 
-			await service({ ...data, userId });
-			return new Response(null, { status: 200 });
+			const result = await service({ ...data, userId });
+			return json({ result });
 		} catch (err) {
 			console.error(err);
 			return json({ error: 'There was an error processing your request' }, { status: 500 });

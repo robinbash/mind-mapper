@@ -7,6 +7,7 @@ const TOPICS_COLLECTION = 'topics';
 
 export class TopicRepo {
 	private topicsById?: Record<string, Topic>;
+	private userId?: string;
 
 	loadTopics = async (userId: string) => {
 		const topicDocs = await adminDb
@@ -25,6 +26,7 @@ export class TopicRepo {
 			},
 			{} as Record<string, Topic>
 		);
+		this.userId = userId;
 	};
 
 	getTopic = (topicId: string): Topic => {
@@ -58,5 +60,13 @@ export class TopicRepo {
 			.collection(TOPICS_COLLECTION)
 			.doc(id)
 			.update({ ...update });
+	};
+
+	addTopic = async (newTopic: Omit<Topic, 'id'>): Promise<string> => {
+		if (!this.userId) throw new Error('Topics not loaded');
+		const newDoc = await adminDb
+			.collection(TOPICS_COLLECTION)
+			.add({ ...newTopic, userId: this.userId });
+		return newDoc.id;
 	};
 }

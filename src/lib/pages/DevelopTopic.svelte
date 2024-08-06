@@ -83,8 +83,8 @@
 				</button>
 			</h1>
 			{#if $developStore.state === 'finishing'}
-				<div class="w-full flex justify-center pt-8">
-					<span class="font-semibold">Refining Topic</span><span
+				<div class="w-full flex justify-center pt-8 opacity-60">
+					<span class="font-semibold">Developing topic</span><span
 						class="loading loading-dots loading-md ml-2 mt-1"
 					/>
 				</div>
