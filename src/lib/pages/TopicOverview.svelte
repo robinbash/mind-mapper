@@ -4,6 +4,10 @@
 
 	export let topicId: string;
 	let expanded = false;
+	let scrolledToTop = true;
+	let scrolledToBottom = true;
+
+	let descriptionEl: HTMLSpanElement;
 
 	$: topic = $mindmap.find((n) => n.id === topicId);
 	$: children = $mindmap.filter((n) => n.parentId === topicId);
@@ -11,6 +15,19 @@
 	$: if (topic && topicId) {
 		expanded = children.length === 0;
 	}
+
+	$: {
+		if (descriptionEl) {
+			checkScroll();
+		}
+	}
+
+	const checkScroll = () => {
+		if (!descriptionEl) return;
+		scrolledToBottom =
+			descriptionEl.scrollHeight - descriptionEl.scrollTop < descriptionEl.clientHeight + 3;
+		scrolledToTop = descriptionEl.scrollTop <= 0;
+	};
 </script>
 
 <div class="container">
@@ -34,10 +51,19 @@
 			<TopicActionsDropdown {topic} />
 		</div>
 		{#if expanded}
-			<span class="flex w-full opacity-65 overflow-y-scroll my-3">
+			<span
+				class="flex max-h-full w-full opacity-65 overflow-y-scroll my-3"
+				on:scroll={() => {
+					checkScroll();
+				}}
+				bind:this={descriptionEl}
+				class:shadow-both={!scrolledToTop && !scrolledToBottom}
+				class:shadow-top={scrolledToTop && !scrolledToBottom}
+				class:shadow-bottom={!scrolledToTop && scrolledToBottom}
+			>
 				{topic?.description}
 			</span>
-			<div class="w-full flex pb-6 pt-3 justify-center gap-4">
+			<div class="w-full flex pb-8 pt-4 justify-center gap-4">
 				<a class="btn btn-sm" href={`/${topicId}/refine`}
 					><span class="iconify mdi--lead-pencil" /> Refine</a
 				>
@@ -71,5 +97,16 @@
 <style>
 	.container {
 		@apply flex justify-center items-center min-w-full min-h-full;
+	}
+	.shadow-both {
+		box-shadow:
+			inset 0px -8px 5px -5px rgba(0, 0, 0, 0.15),
+			inset 0px 8px 5px -5px rgba(0, 0, 0, 0.15);
+	}
+	.shadow-bottom {
+		box-shadow: inset 0px 8px 5px -5px rgba(0, 0, 0, 0.15);
+	}
+	.shadow-top {
+		box-shadow: inset 0px -8px 5px -5px rgba(0, 0, 0, 0.15);
 	}
 </style>
