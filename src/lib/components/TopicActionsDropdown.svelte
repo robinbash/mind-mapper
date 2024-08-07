@@ -42,6 +42,11 @@
 			text: 'History',
 			icon: 'mdi--history',
 			onAction: showHistory
+		},
+		{
+			text: 'Split',
+			icon: 'mdi--format-page-split',
+			onAction: () => {}
 		}
 	]}
 />

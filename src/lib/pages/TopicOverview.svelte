@@ -11,9 +11,10 @@
 
 	$: topic = $mindmap.find((n) => n.id === topicId);
 	$: children = $mindmap.filter((n) => n.parentId === topicId);
+	$: isRoot = topic?.parentId === undefined;
 
 	$: if (topic && topicId) {
-		expanded = children.length === 0;
+		expanded = children.length === 0 && !isRoot;
 	}
 
 	$: {
@@ -35,24 +36,23 @@
 		<Breadcrumbs {topicId} />
 		<div class="flex w-full items-center">
 			<button
-				class="font-bold text-base py-3 w-full flex"
+				class="relative font-bold text-base btn btn-lg btn-outline w-full rounded-btn"
 				on:click={() => {
 					expanded = !expanded;
 				}}
 			>
-				<div class="flex w-9 items-center">
+				<div class="absolute left-2 flex w-9 items-center">
 					<span
-						class="iconify mdi--chevron-right w-6 h-6 transition-all"
+						class="iconify mdi--chevron-right w-5 h-5 transition-all"
 						class:rotate-90={expanded}
 					/>
 				</div>
 				<span class="w-full">{topic?.title}</span>
 			</button>
-			<TopicActionsDropdown {topic} />
 		</div>
 		{#if expanded}
 			<span
-				class="flex max-h-full w-full opacity-65 overflow-y-scroll my-3"
+				class="flex max-h-full w-full opacity-65 overflow-y-scroll my-6 text-sm"
 				on:scroll={() => {
 					checkScroll();
 				}}
@@ -63,20 +63,20 @@
 			>
 				{topic?.description}
 			</span>
-			<div class="w-full flex pb-8 pt-4 justify-center gap-4">
-				<a class="btn btn-sm" href={`/${topicId}/refine`}
-					><span class="iconify mdi--lead-pencil" /> Refine</a
-				>
-				<button class="btn btn-sm"
-					><span class="iconify mdi--format-page-split w-5 h-5" /> Split</button
-				>
-			</div>
+			{#if !isRoot}
+				<div class="w-full flex pb-8 justify-center gap-4">
+					<a class="btn btn-sm" href={`/${topicId}/refine`}
+						><span class="iconify mdi--lead-pencil" /> Refine</a
+					>
+					<!-- <button class="btn btn-sm"
+						><span class="iconify mdi--format-page-split w-5 h-5" /> Split</button
+					> -->
+					<TopicActionsDropdown {topic} />
+				</div>
+			{/if}
 		{/if}
 		{#if !expanded}
-			<div class="w-full px-1">
-				<div class="border-dashed w-full border-t-2 my-4 border-base-content opacity-20" />
-			</div>
-			<div class="flex justify-center flex-col gap-4">
+			<div class="flex justify-center flex-col gap-4 pt-4">
 				{#each children as child}
 					<a href={`/${child.id}`} class="btn btn-lg w-full font-normal text-base overflow-hidden">
 						{child.title}
