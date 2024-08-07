@@ -11,7 +11,7 @@
 </script>
 
 <div class="container">
-	<div class="absolute top-0 w-full flex p-6 md:p-8">
+	<div class="absolute top-0 w-full flex pl-6 md:p-8 mt-6 pt-inset">
 		<button class="btn btn-md btn-circle" on:click={logout}
 			><span class="iconify mdi--logout" /></button
 		>

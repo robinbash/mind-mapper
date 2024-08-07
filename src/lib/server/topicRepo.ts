@@ -69,4 +69,9 @@ export class TopicRepo {
 			.add({ ...newTopic, userId: this.userId });
 		return newDoc.id;
 	};
+
+	deleteTopic = async (topicId: string) => {
+		this.getTopic(topicId);
+		await adminDb.collection(TOPICS_COLLECTION).doc(topicId).delete();
+	};
 }

@@ -42,7 +42,7 @@
 		display: none;
 	}
 	.app {
-		@apply flex w-screen h-screen;
+		@apply flex w-screen h-screen pt-inset;
 		font-family: 'Roboto slab';
 	}
 	.loading-screen {

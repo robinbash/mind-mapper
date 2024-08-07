@@ -32,7 +32,7 @@
 	// $: showAll = pathLen < 3 && (!isSubpage || pathLen < 2);
 </script>
 
-<div class="flex max-w-full text-sm pb-6 font-sans items-center pt-2 md:pt-6 flex-wrap gap-y-1">
+<div class="flex max-w-full text-xs pb-6 font-sans items-center pt-2 md:pt-6 flex-wrap gap-y-1">
 	<a href="/" class="flex"><span class="iconify mdi--home h-6 w-6" /></a>
 	<BreadcrumbItem>
 		<div class={`badge badge-sm text-white p-2 ${category?.background}`}>
@@ -43,7 +43,7 @@
 		{#each paths?.topics ?? [] as path}
 			<BreadcrumbItem>
 				<a href={`/${path.id}`} class="flex items-center">
-					<span class="max-w-24 truncate">{path.title}</span>
+					<span class="max-w-[5.5rem] truncate">{path.title}</span>
 				</a>
 			</BreadcrumbItem>
 		{/each}

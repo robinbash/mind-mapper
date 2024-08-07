@@ -176,3 +176,18 @@ export const submitExpansionPrompt: DomainService<
 		messages: [initial, ...previousMessages, { role: 'user', content: prompt }]
 	});
 };
+
+export const deleteTopic: DomainService<{}, void> = async ({ topicId, userId }) => {
+	const topicRepo = new TopicRepo();
+	await topicRepo.loadTopics(userId);
+
+	const deleteWithSubtopics = async (id: string) => {
+		for (const subtopic of topicRepo.getSubtopics(id)) {
+			await deleteWithSubtopics(subtopic.id);
+		}
+		console.log('Deleting topic:', id);
+		await topicRepo.deleteTopic(id);
+	};
+
+	await deleteWithSubtopics(topicId);
+};

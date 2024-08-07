@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Breadcrumbs } from '$lib/components';
+	import { Breadcrumbs, TopicActionsDropdown } from '$lib/components';
 	import { mindmap } from '$lib/stores';
 
 	export let topicId: string;
@@ -31,19 +31,7 @@
 				</div>
 				<span class="w-full">{topic?.title}</span>
 			</button>
-			<div class="dropdown dropdown-end">
-				<div tabindex="0" role="button" class="btn btn-ghost btn-square btn-sm">
-					<span class="iconify mdi--dots-vertical w-5 h-5" />
-				</div>
-				<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-				<ul
-					tabindex="0"
-					class="dropdown-content menu bg-base-200 rounded-btn z-[1] w-32 p-2 shadow"
-				>
-					<li><button><span class="iconify mdi--trash-can w-5 h-5 mr-1" />Delete</button></li>
-					<li><button><span class="iconify mdi--history w-5 h-5 mr-1" />History</button></li>
-				</ul>
-			</div>
+			<TopicActionsDropdown {topic} />
 		</div>
 		{#if expanded}
 			<span class="flex w-full opacity-65 overflow-y-scroll my-3">
