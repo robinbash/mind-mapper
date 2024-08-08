@@ -8,15 +8,10 @@ export type Refinement = {
 	newDescription: string;
 };
 
-export type Expansion = {
-	messages: Message[];
-};
-
 export type Topic = {
 	id: string;
 	title: string;
 	description: string;
 	parentId?: string;
 	refinements?: Refinement[];
-	expansions?: Expansion[];
 };

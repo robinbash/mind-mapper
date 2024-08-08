@@ -185,7 +185,6 @@ export const deleteTopic: DomainService<{}, void> = async ({ topicId, userId }) 
 		for (const subtopic of topicRepo.getSubtopics(id)) {
 			await deleteWithSubtopics(subtopic.id);
 		}
-		console.log('Deleting topic:', id);
 		await topicRepo.deleteTopic(id);
 	};
 

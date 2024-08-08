@@ -42,23 +42,30 @@ export const streamAiResponse = ({
 
 	return new ReadableStream<string>({
 		async start(controller) {
-			client.messages
-				.stream({
-					messages: mergeMessages(messages),
-					model,
-					max_tokens,
-					temperature,
-					system: SYSTEM_PROMPT
-				})
-				.on('text', (text) => {
-					controller.enqueue(text);
-				})
-				.on('end', () => {
-					controller.close();
-				})
-				.on('error', () => {
-					controller.error('Error while streaming ai response');
-				});
+			try {
+				client.messages
+					.stream({
+						messages: mergeMessages(messages),
+						model,
+						max_tokens,
+						temperature,
+						system: SYSTEM_PROMPT
+					})
+					.on('text', (text) => {
+						controller.enqueue(text);
+					})
+					.on('end', () => {
+						controller.close();
+					})
+					.on('error', (err) => {
+						controller.error('Error while streaming ai response');
+					})
+					.on('abort', (err) => {
+						controller.error('Error while streaming ai response');
+					});
+			} catch (err) {
+				controller.error('Error while streaming ai response');
+			}
 		}
 	});
 };
