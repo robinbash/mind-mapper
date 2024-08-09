@@ -1,11 +1,20 @@
-export type MessageRole = 'assistant' | 'user';
-export type Message = {
-	role: MessageRole;
+export type UserMessage = {
+	role: 'user';
 	content: string;
 };
-export type Refinement = {
-	messages: Message[];
+
+export type AssistantMessage = {
+	role: 'assistant';
+	type: 'suggestion' | 'question';
+	content: string;
+};
+
+export type DevelopmentMessage = UserMessage | AssistantMessage;
+
+export type Development = {
+	messages: DevelopmentMessage[];
 	newDescription: string;
+	type: 'expansion' | 'refinement';
 };
 
 export type Topic = {
@@ -13,5 +22,5 @@ export type Topic = {
 	title: string;
 	description: string;
 	parentId?: string;
-	refinements?: Refinement[];
+	developments?: Development[];
 };

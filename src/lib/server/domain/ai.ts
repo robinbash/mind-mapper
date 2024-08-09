@@ -11,7 +11,7 @@ const mergeMessages = (messages: Anthropic.MessageParam[]) => {
 	return messages.reduce(
 		(acc: Anthropic.MessageParam[], current: Anthropic.MessageParam, index: number) => {
 			if (index === 0 || current.role !== acc[acc.length - 1].role) {
-				acc.push(current);
+				acc.push({ role: current.role, content: current.content });
 			} else {
 				acc[acc.length - 1].content += ' ' + current.content;
 			}
@@ -58,12 +58,15 @@ export const streamAiResponse = ({
 						controller.close();
 					})
 					.on('error', (err) => {
+						console.error(err);
 						controller.error('Error while streaming ai response');
 					})
 					.on('abort', (err) => {
+						console.error(err);
 						controller.error('Error while streaming ai response');
 					});
 			} catch (err) {
+				console.error(err);
 				controller.error('Error while streaming ai response');
 			}
 		}
