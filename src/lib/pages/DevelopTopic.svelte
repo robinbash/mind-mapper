@@ -26,9 +26,9 @@
 		}
 	}
 
-	$: modeChosen = $developStore.mode !== 'initial';
+	$: modeIsChosen = $developStore.mode !== 'initial';
 
-	$: showUserInput = !$developStore.aiResponseLoading && !textAnimating && modeChosen;
+	$: showUserInput = !$developStore.aiResponseLoading && !textAnimating && modeIsChosen;
 
 	$: showAI = $developStore.currentAiRespsonse || $developStore.aiResponseLoading;
 
@@ -90,7 +90,7 @@
 					<span class="iconify mdi--cancel-bold w-5 h-5 flex items-center" />
 				</button>
 			</div>
-			{#if !modeChosen}
+			{#if !modeIsChosen}
 				<div class="flex justify-center w-full">
 					<div class="grid gap-4 w-full grid-cols-2 max-w-80">
 						<button
@@ -132,7 +132,7 @@
 					/>
 				</div>
 			{/if}
-			{#if modeChosen}
+			{#if modeIsChosen}
 				<div class="inline-flex relative whitespace-pre-line">
 					<span class="absolute left-0 top-[0.2rem] iconify mdi--sparkles w-5 h-5 opacity-65" />
 					{#if showAI}
@@ -186,7 +186,7 @@
 						</div>
 					</button>
 				{/if}
-				{#if modeChosen}
+				{#if modeIsChosen}
 					<button class="btn btn-sm text-opacity-65" on:click={generate}>
 						<div class="flex items-center">
 							<span class="iconify mdi--refresh w-4 h-4 mr-1" />Regenerate
@@ -229,9 +229,9 @@
 				</button>
 			</div>
 		{/if}
-		{#if modeChosen}
+		{#if modeIsChosen}
 			<div class="flex justify-center w-full h-full items-end gap-2 pb-6">
-				<button class="join-item btn btn-sm" on:click={developStore.toggleState}>
+				<button class="join-item btn btn-sm" on:click={developStore.toggleMode}>
 					<span class:opacity-35={$developStore.mode !== 'guide'}>Guide</span>
 					<span class="iconify mdi--exchange w-5 h-5" />
 					<span class:opacity-35={$developStore.mode !== 'tell'}>Tell</span>

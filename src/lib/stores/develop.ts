@@ -3,22 +3,18 @@ import { user } from '$lib/stores';
 import { get } from 'svelte/store';
 import { goto } from '$app/navigation';
 
-import type { DevelopmentMessage } from '$lib/types';
+import type { DevelopmentInProgress, DevelopmentType } from '$lib/types';
 
 import { authFetch, handleAIResponse } from '$lib/fetch';
 
-type Development = {
-	mode: 'initial' | 'guide' | 'tell';
+type DevelopmentData = DevelopmentInProgress & {
 	state: 'initial' | 'finishable' | 'finishing';
 	currentAiRespsonse: string;
 	aiResponseLoading: boolean;
-	previousQuestions: string[];
-	previousSuggestions: string[];
-	messages: DevelopmentMessage[];
 };
 
 export type DevelopmentStore = {
-	subscribe: (run: (value: Development) => void, invalidate?: any) => () => void;
+	subscribe: (run: (value: DevelopmentData) => void, invalidate?: any) => () => void;
 	reset: () => void;
 	submitPrompt: (topicId: string, prompt: string) => void;
 	generate: (topicId: string) => void;
@@ -27,20 +23,21 @@ export type DevelopmentStore = {
 	destroy: () => void;
 	setGuide: () => void;
 	setTell: () => void;
-	toggleState: () => void;
+	toggleMode: () => void;
 };
 
-const createDevelopStore = (endpoint: string): DevelopmentStore => {
-	const initial: Development = {
+const createDevelopStore = (developmentType: DevelopmentType): DevelopmentStore => {
+	const initial: DevelopmentData = {
 		state: 'initial',
 		mode: 'initial',
 		currentAiRespsonse: '',
 		aiResponseLoading: false,
 		previousQuestions: [],
 		previousSuggestions: [],
-		messages: []
+		messages: [],
+		type: developmentType
 	};
-	const devStore = writable<Development>(initial);
+	const devStore = writable<DevelopmentData>(initial);
 	const { subscribe, set, update } = devStore;
 
 	let unsubscribe: () => void;
@@ -63,7 +60,7 @@ const createDevelopStore = (endpoint: string): DevelopmentStore => {
 			mode: 'tell'
 		}));
 
-	const toggleState = () => {
+	const toggleMode = () => {
 		update((store) => ({
 			...store,
 			mode: store.mode === 'guide' ? 'tell' : 'guide',
@@ -88,14 +85,14 @@ const createDevelopStore = (endpoint: string): DevelopmentStore => {
 			if (eventSource) {
 				eventSource.close();
 			}
-			const response = await authFetch(`/api/${endpoint}/guide`, {
+			const response = await authFetch('/api/develop/question', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({
 					topicId: topicId,
-					previousQuestions: get(devStore).previousQuestions
+					development: get(devStore)
 				})
 			});
 			responseText = await handleAIResponse(response, addResponseChunk);
@@ -138,14 +135,14 @@ const createDevelopStore = (endpoint: string): DevelopmentStore => {
 			if (eventSource) {
 				eventSource.close();
 			}
-			const response = await authFetch(`/api/${endpoint}/suggest`, {
+			const response = await authFetch('/api/develop/suggest', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({
 					topicId: topicId,
-					previousSuggestions: get(devStore).previousSuggestions
+					development: get(devStore)
 				})
 			});
 			responseText = await handleAIResponse(response, addResponseChunk);
@@ -198,14 +195,14 @@ const createDevelopStore = (endpoint: string): DevelopmentStore => {
 			if (eventSource) {
 				eventSource.close();
 			}
-			const response = await authFetch(`/api/${endpoint}/accept-suggestion`, {
+			const response = await authFetch('/api/develop/accept-suggestion', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({
 					topicId: topicId,
-					previousSuggestions: get(devStore).previousSuggestions
+					development: get(devStore)
 				})
 			});
 			responseText = await handleAIResponse(response, addResponseChunk);
@@ -249,12 +246,16 @@ const createDevelopStore = (endpoint: string): DevelopmentStore => {
 			if (eventSource) {
 				eventSource.close();
 			}
-			const response = await authFetch(`/api/${endpoint}/prompt`, {
+			const response = await authFetch('/api/develop/prompt', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ topicId: topicId, prompt, previousMessages: current.messages })
+				body: JSON.stringify({
+					topicId: topicId,
+					development: get(devStore),
+					prompt
+				})
 			});
 			await handleAIResponse(response, addResponseChunk);
 		} finally {
@@ -282,12 +283,12 @@ const createDevelopStore = (endpoint: string): DevelopmentStore => {
 		let messages = get(devStore).messages;
 		if (messages.at(-1)?.role === 'assistant') messages.pop();
 
-		const response = await authFetch(`/api/${endpoint}/finish`, {
+		const response = await authFetch(`/api/develop/finish`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify({ topicId: topicId, messages })
+			body: JSON.stringify({ topicId: topicId, development: get(devStore) })
 		});
 		const result = await response.json();
 		reset();
@@ -302,7 +303,7 @@ const createDevelopStore = (endpoint: string): DevelopmentStore => {
 		acceptSuggestion,
 		finish,
 		setGuide,
-		toggleState,
+		toggleMode,
 		setTell,
 		destroy: () => {
 			if (unsubscribe) {
@@ -315,5 +316,5 @@ const createDevelopStore = (endpoint: string): DevelopmentStore => {
 	};
 };
 
-export const refine = createDevelopStore('refine');
-export const expand = createDevelopStore('expand');
+export const refine = createDevelopStore('expansion');
+export const expand = createDevelopStore('refinement');

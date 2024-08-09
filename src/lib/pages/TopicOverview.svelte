@@ -36,7 +36,7 @@
 		<Breadcrumbs {topicId} />
 		<div class="flex w-full items-center">
 			<button
-				class="relative font-bold text-base btn btn-lg btn-outline w-full rounded-btn"
+				class="relative font-bold text-base btn btn-lg btn-outline w-full rounded-btn pl-9 pr-4"
 				on:click={() => {
 					expanded = !expanded;
 				}}
