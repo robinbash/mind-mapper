@@ -1,13 +1,16 @@
 import { TopicRepo } from '$lib/server/topicRepo';
 import type { Topic, DevelopmentInProgress } from '$lib/types';
 
+export const SYSTEM_PROMPT =
+	'You are an assistant of an app designed to discover topics by structuring the users thoughts as well as providing information. You respond in a very concise manner while forming grammatically correct sentences. You do not act like a person would, you are a tool. You avoid greetings, thanks and other interpersonal phrases, focusing only on the topic.';
+
 export const getTopicPrompt = (topic: Topic, topicRepo: TopicRepo): string => {
 	const subtopics = topicRepo.getSubtopics(topic.id);
 	const subtopicPrompt =
 		subtopics.length > 0
 			? `The existing subtopics are:\n${subtopics.map((t) => t.title).join('\n')}\n`
 			: '';
-	return `The title of our topic is: ${topic.title}. The summary of our topic is: ${topic.description}\n${subtopicPrompt}`;
+	return `The title of our topic is: ${topic.title}. The summary of our topic is: ${topic.description} - End topic summary.\n${subtopicPrompt}`;
 };
 
 export const getPreviousQuestionsPrompt = (topic: Topic, development: DevelopmentInProgress) => {
@@ -51,7 +54,8 @@ export const REFINEMENT_QUESTION_PROMPT =
 export const EXPANSION_QUESTION_PROMPT =
 	'Always respond with only one question in one sentence which should help me discover a new subtopic. The subtopic should not relate to information that is already in the summary. The question should not suggest a subtopic but rather ask a question that would lead to a subtopic. Once I have answered, you should ask followup questions to help me understand the subtopic better.';
 
-export const REFINEMENT_SUGGESTION_PROMPT = '';
+export const REFINEMENT_SUGGESTION_PROMPT =
+	'Always respond with a continuation of the topic summary in one sentence. You should not repeat any information that can be derived from the existing summary.';
 
 export const EXPANSION_SUGGESTION_PROMPT = '';
 
@@ -90,6 +94,7 @@ export const getSuggestionPrompt = (
 			: development.type === 'expansion'
 				? EXPANSION_SUGGESTION_PROMPT
 				: '';
+	console.log(development.type, suggestionPrompt);
 	return `${topicPrompt}\n${previousSuggestionsPrompt}\n${suggestionPrompt}`;
 };
 

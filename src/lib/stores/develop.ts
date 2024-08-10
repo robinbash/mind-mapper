@@ -37,7 +37,7 @@ const createDevelopStore = (developmentType: DevelopmentType): DevelopmentStore 
 		messages: [],
 		type: developmentType
 	};
-	const devStore = writable<DevelopmentData>(initial);
+	const devStore = writable<DevelopmentData>({ ...initial });
 	const { subscribe, set, update } = devStore;
 
 	let unsubscribe: () => void;
@@ -164,9 +164,9 @@ const createDevelopStore = (developmentType: DevelopmentType): DevelopmentStore 
 					{ role: 'assistant', content: store.currentAiRespsonse, type: 'suggestion' }
 				],
 				aiResponseLoading: false,
-				previousQuestions: responseText
-					? [...store.previousQuestions, responseText]
-					: store.previousQuestions
+				previousSuggestions: responseText
+					? [...store.previousSuggestions, responseText]
+					: store.previousSuggestions
 			}));
 		}
 	};
@@ -316,5 +316,5 @@ const createDevelopStore = (developmentType: DevelopmentType): DevelopmentStore 
 	};
 };
 
-export const refine = createDevelopStore('expansion');
-export const expand = createDevelopStore('refinement');
+export const refine = createDevelopStore('refinement');
+export const expand = createDevelopStore('expansion');

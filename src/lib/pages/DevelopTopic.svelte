@@ -76,20 +76,26 @@
 </script>
 
 <div class="container">
-	<div class="flex flex-col items-center h-full w-full md:w-[46rem] p-5">
-		<div class="flex flex-col w-full">
-			<Breadcrumbs {topicId} />
-			<div class="flex items-center pb-3 justify-between">
-				<div class="flex font-bold justify-between items-start py-3">
-					<span class="relative pl-6 inline-block items-center pr-3">
-						<span class="absolute left-0 top-1 iconify {developIcon} w-4 h-4" />
-						{developTitle} - {topic?.title}</span
-					>
-				</div>
-				<button class="btn btn-ghost btn-square btn-sm" on:click={cancel}>
-					<span class="iconify mdi--cancel-bold w-5 h-5 flex items-center" />
-				</button>
+	<div class="flex flex-col items-center h-full w-full md:w-[44rem] p-5">
+		<Breadcrumbs {topicId} />
+		<div class="flex items-center pb-3 justify-between w-full">
+			<div class="flex font-bold justify-between items-start py-3">
+				<span class="relative pl-6 inline-block items-center pr-3">
+					<span class="absolute left-0 top-1 iconify {developIcon} w-4 h-4" />
+					{developTitle} - {topic?.title}</span
+				>
 			</div>
+			<button class="btn btn-ghost btn-square btn-sm" on:click={cancel}>
+				<span class="iconify mdi--cancel-bold w-5 h-5 flex items-center" />
+			</button>
+		</div>
+		{#if $developStore.state === 'finishing'}
+			<div class="w-full flex justify-center pt-8 opacity-65">
+				<span class="font-semibold">Developing topic</span><span
+					class="loading loading-dots loading-md ml-2 mt-1"
+				/>
+			</div>
+		{:else}
 			{#if !modeIsChosen}
 				<div class="flex justify-center w-full">
 					<div class="grid gap-4 w-full grid-cols-2 max-w-80">
@@ -125,15 +131,8 @@
 					</div>
 				</div>
 			{/if}
-			{#if $developStore.state === 'finishing'}
-				<div class="w-full flex justify-center pt-8 opacity-65">
-					<span class="font-semibold">Developing topic</span><span
-						class="loading loading-dots loading-md ml-2 mt-1"
-					/>
-				</div>
-			{/if}
 			{#if modeIsChosen}
-				<div class="inline-flex relative whitespace-pre-line">
+				<div class="inline-flex relative whitespace-pre-line w-full">
 					<span class="absolute left-0 top-[0.2rem] iconify mdi--sparkles w-5 h-5 opacity-65" />
 					{#if showAI}
 						<span>
@@ -176,67 +175,67 @@
 					{/if}
 				</div>
 			{/if}
-		</div>
-		{#if showUserInput && showAI}
-			<div class="flex gap-4 items-center pt-6">
-				{#if $developStore.mode === 'tell'}
-					<button class="btn btn-sm text-opacity-65" on:click={acceptSuggestion}>
-						<div class="flex items-center">
-							<span class="iconify mdi--check w-4 h-4 mr-1" />Accept
-						</div>
+			{#if showUserInput && showAI}
+				<div class="flex gap-4 items-center pt-6">
+					{#if $developStore.mode === 'tell'}
+						<button class="btn btn-sm text-opacity-65" on:click={acceptSuggestion}>
+							<div class="flex items-center">
+								<span class="iconify mdi--check w-4 h-4 mr-1" />Accept
+							</div>
+						</button>
+					{/if}
+					{#if modeIsChosen}
+						<button class="btn btn-sm text-opacity-65" on:click={generate}>
+							<div class="flex items-center">
+								<span class="iconify mdi--refresh w-4 h-4 mr-1" />Regenerate
+							</div>
+						</button>
+					{/if}
+				</div>
+			{/if}
+			{#if showUserInput}
+				<div class="flex justify-center items-end py-8 w-full gap-1">
+					<div
+						in:scale={{ start: 0.9, duration: 200 }}
+						class="user-input"
+						contenteditable
+						bind:this={inputEl}
+						bind:innerText={currentUserText}
+						on:keydown={handleInputShortcuts}
+						role="textbox"
+						aria-multiline="true"
+						tabindex="0"
+						data-placeholder="Type prompt"
+					/>
+					<button
+						in:fade={{ duration: 200 }}
+						class="send-button btn btn-square btn-ghost btn-md"
+						on:click={submitPrompt}
+						disabled={sendDisabled}
+					>
+						<span class="iconify mdi--send h-6 w-6" />
 					</button>
-				{/if}
-				{#if modeIsChosen}
-					<button class="btn btn-sm text-opacity-65" on:click={generate}>
-						<div class="flex items-center">
-							<span class="iconify mdi--refresh w-4 h-4 mr-1" />Regenerate
-						</div>
-					</button>
-				{/if}
-			</div>
-		{/if}
-		{#if showUserInput}
-			<div class="flex justify-center items-end py-8 w-full gap-1">
-				<div
-					in:scale={{ start: 0.9, duration: 200 }}
-					class="user-input"
-					contenteditable
-					bind:this={inputEl}
-					bind:innerText={currentUserText}
-					on:keydown={handleInputShortcuts}
-					role="textbox"
-					aria-multiline="true"
-					tabindex="0"
-					data-placeholder="Type prompt"
-				/>
-				<button
-					in:fade={{ duration: 200 }}
-					class="send-button btn btn-square btn-ghost btn-md"
-					on:click={submitPrompt}
-					disabled={sendDisabled}
-				>
-					<span class="iconify mdi--send h-6 w-6" />
-				</button>
-			</div>
-		{/if}
+				</div>
+			{/if}
 
-		{#if $developStore.state === 'finishable' && showUserInput}
-			<div class="inline-block">
-				<button class="btn btn-sm text-opacity-65" on:click={finish} disabled={!!currentUserText}>
-					<div class="flex items-center">
-						<span class="iconify mdi--check-circle w-4 h-4 mr-1" />Finish
-					</div>
-				</button>
-			</div>
-		{/if}
-		{#if modeIsChosen}
-			<div class="flex justify-center w-full h-full items-end gap-2 pb-6">
-				<button class="join-item btn btn-sm" on:click={developStore.toggleMode}>
-					<span class:opacity-35={$developStore.mode !== 'guide'}>Guide</span>
-					<span class="iconify mdi--exchange w-5 h-5" />
-					<span class:opacity-35={$developStore.mode !== 'tell'}>Tell</span>
-				</button>
-			</div>
+			{#if $developStore.state === 'finishable' && showUserInput}
+				<div class="inline-block">
+					<button class="btn btn-sm text-opacity-65" on:click={finish} disabled={!!currentUserText}>
+						<div class="flex items-center">
+							<span class="iconify mdi--check-circle w-4 h-4 mr-1" />Finish
+						</div>
+					</button>
+				</div>
+			{/if}
+			{#if modeIsChosen}
+				<div class="flex justify-center w-full h-full items-end gap-2 pb-6">
+					<button class="join-item btn btn-sm" on:click={developStore.toggleMode}>
+						<span class:opacity-35={$developStore.mode !== 'guide'}>Guide</span>
+						<span class="iconify mdi--exchange w-5 h-5" />
+						<span class:opacity-35={$developStore.mode !== 'tell'}>Tell</span>
+					</button>
+				</div>
+			{/if}
 		{/if}
 	</div>
 </div>

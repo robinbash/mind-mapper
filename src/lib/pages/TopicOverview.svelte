@@ -32,11 +32,11 @@
 </script>
 
 <div class="container">
-	<div class="flex flex-col md:w-[46rem] w-full h-full p-5">
+	<div class="flex flex-col md:w-[44rem] w-full h-full p-5">
 		<Breadcrumbs {topicId} />
 		<div class="flex w-full items-center">
 			<button
-				class="relative font-bold text-base btn btn-lg btn-outline w-full rounded-btn pl-9 pr-4"
+				class="flex h-full relative font-bold text-base btn btn-lg btn-outline w-full rounded-btn px-9 py-2"
 				on:click={() => {
 					expanded = !expanded;
 				}}
@@ -78,7 +78,10 @@
 		{#if !expanded}
 			<div class="flex justify-center flex-col gap-4 pt-4">
 				{#each children as child}
-					<a href={`/${child.id}`} class="btn btn-lg w-full font-normal text-base overflow-hidden">
+					<a
+						href={`/${child.id}`}
+						class="flex h-auto btn btn-lg w-full font-normal text-base overflow-hidden py-2"
+					>
 						{child.title}
 					</a>
 				{/each}
