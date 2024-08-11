@@ -26,9 +26,7 @@ export const handleAIResponse = async (response: Response, addChunk: (chunk: str
 		const decoder = new TextDecoder();
 		while (true) {
 			const { done, value } = await reader?.read();
-			if (done) {
-				return responseText;
-			}
+			if (done) return responseText;
 			const chunk = decoder.decode(value);
 			responseText += chunk;
 			addChunk(chunk);

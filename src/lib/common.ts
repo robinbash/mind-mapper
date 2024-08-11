@@ -15,7 +15,8 @@ export const ROOT_TOPICS: Topic[] = [
 	{
 		id: 'goals',
 		title: 'Goals',
-		description: 'Everything I want to have done at some point in my life.'
+		description:
+			'Everything I want to have done at some point in my life, be it in the near or far future.'
 	},
 	{
 		id: 'ideas',

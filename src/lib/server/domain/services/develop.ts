@@ -5,7 +5,7 @@ import type { DomainService } from './types';
 import {
 	getQuestionPrompt,
 	getSuggestionPrompt,
-	getAcceptSuggestionPrompt,
+	ACCEPT_SUGGESTION_PROMPT,
 	FINISH_EXPANSION_PROMPT,
 	FINISH_REFINEMENT_PROMPT,
 	getTopicPrompt
@@ -20,7 +20,10 @@ export const getDevelopmentQuestion: DomainService<
 	const topic = topicRepo.getTopic(topicId);
 
 	return streamAiResponse({
-		messages: [{ role: 'user', content: getQuestionPrompt(topic, topicRepo, development) }],
+		messages: [
+			{ role: 'user', content: getQuestionPrompt(topic, topicRepo, development) },
+			...development.messages
+		],
 		temperature: 0.9
 	});
 };
@@ -34,7 +37,11 @@ export const getDevelopmentSuggestion: DomainService<
 	const topic = topicRepo.getTopic(topicId);
 
 	return streamAiResponse({
-		messages: [{ role: 'user', content: getSuggestionPrompt(topic, topicRepo, development) }],
+		messages: [
+			{ role: 'user', content: getSuggestionPrompt(topic, topicRepo, development) },
+			...development.messages
+		],
+
 		temperature: 0.9
 	});
 };
@@ -48,7 +55,11 @@ export const acceptDevelopmentSuggestion: DomainService<
 	const topic = topicRepo.getTopic(topicId);
 
 	return streamAiResponse({
-		messages: [{ role: 'user', content: getAcceptSuggestionPrompt(topic, topicRepo, development) }],
+		messages: [
+			{ role: 'user', content: getSuggestionPrompt(topic, topicRepo, development) },
+			...development.messages,
+			{ role: 'user', content: ACCEPT_SUGGESTION_PROMPT }
+		],
 		temperature: 0.9
 	});
 };

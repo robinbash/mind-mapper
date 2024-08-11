@@ -3,7 +3,7 @@ import { user } from '$lib/stores';
 import { get } from 'svelte/store';
 import { goto } from '$app/navigation';
 
-import type { DevelopmentInProgress, DevelopmentType } from '$lib/types';
+import type { DevelopmentInProgress, DevelopmentType, AIHelpType } from '$lib/types';
 
 import { authFetch, handleAIResponse } from '$lib/fetch';
 
@@ -71,59 +71,29 @@ const createDevelopStore = (developmentType: DevelopmentType): DevelopmentStore 
 	const addResponseChunk = (chunk: string) =>
 		update((store) => ({ ...store, currentAiRespsonse: store.currentAiRespsonse + chunk }));
 
-	const getGuide = async (topicId: string) => {
-		if (!get(user)) return;
-		let responseText: string;
+	const checkReload = () => {
+		const lastMessage = get(devStore).messages.at(-1);
+		if (lastMessage?.role !== 'assistant') return;
 
 		update((store) => ({
 			...store,
-			aiResponseLoading: true,
-			currentAiRespsonse: ''
-		}));
-
-		try {
-			if (eventSource) {
-				eventSource.close();
-			}
-			const response = await authFetch('/api/develop/question', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({
-					topicId: topicId,
-					development: get(devStore)
-				})
-			});
-			responseText = await handleAIResponse(response, addResponseChunk);
-		} catch (err) {
-			console.error(err);
-			update((store) => ({
-				...store,
-				aiResponseLoading: false,
-				currentAiRespsonse: ''
-			}));
-			return;
-		}
-		const isReload = get(devStore).messages.at(-1)?.role === 'assistant';
-		if (responseText) {
-			update((store) => ({
-				...store,
-				messages: [
-					...(isReload ? store.messages.slice(0, -1) : store.messages),
-					{ role: 'assistant', content: store.currentAiRespsonse, type: 'question' }
-				],
-				aiResponseLoading: false,
-				previousQuestions: responseText
-					? [...store.previousQuestions, responseText]
+			messages: store.messages.slice(0, -1),
+			previousQuestions:
+				lastMessage.type === 'question'
+					? [...store.previousQuestions, lastMessage.content ?? '']
+					: store.previousQuestions,
+			previousSuggestions:
+				lastMessage.type === 'suggestion'
+					? [...store.previousQuestions, lastMessage.content ?? '']
 					: store.previousQuestions
-			}));
-		}
+		}));
 	};
 
-	const getSuggestion = async (topicId: string) => {
+	const getAIHelp = async (type: AIHelpType, topicId: string) => {
 		if (!get(user)) return;
 		let responseText: string;
+
+		checkReload();
 
 		update((store) => ({
 			...store,
@@ -135,7 +105,7 @@ const createDevelopStore = (developmentType: DevelopmentType): DevelopmentStore 
 			if (eventSource) {
 				eventSource.close();
 			}
-			const response = await authFetch('/api/develop/suggest', {
+			const response = await authFetch(`/api/develop/${type}`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -155,18 +125,14 @@ const createDevelopStore = (developmentType: DevelopmentType): DevelopmentStore 
 			}));
 			return;
 		}
-		const isReload = get(devStore).messages.at(-1)?.role === 'assistant';
 		if (responseText) {
 			update((store) => ({
 				...store,
 				messages: [
-					...(isReload ? store.messages.slice(0, -1) : store.messages),
-					{ role: 'assistant', content: store.currentAiRespsonse, type: 'suggestion' }
+					...store.messages,
+					{ role: 'assistant', content: store.currentAiRespsonse, type }
 				],
-				aiResponseLoading: false,
-				previousSuggestions: responseText
-					? [...store.previousSuggestions, responseText]
-					: store.previousSuggestions
+				aiResponseLoading: false
 			}));
 		}
 	};
@@ -174,15 +140,19 @@ const createDevelopStore = (developmentType: DevelopmentType): DevelopmentStore 
 	const generate = (topicId: string) => {
 		const mode = get(devStore).mode;
 		if (mode === 'guide') {
-			getGuide(topicId);
+			getAIHelp('question', topicId);
 		}
 		if (mode === 'tell') {
-			getSuggestion(topicId);
+			getAIHelp('suggestion', topicId);
 		}
 	};
 
 	const acceptSuggestion = async (topicId: string) => {
-		if (!get(user)) return;
+		const lastMessage = get(devStore).messages.at(-1);
+
+		if (!get(user) || lastMessage?.role !== 'assistant' || lastMessage.type !== 'suggestion')
+			return;
+
 		let responseText: string;
 
 		update((store) => ({
@@ -215,18 +185,15 @@ const createDevelopStore = (developmentType: DevelopmentType): DevelopmentStore 
 			}));
 			return;
 		}
-		const isReload = get(devStore).messages.at(-1)?.role === 'assistant';
 		if (responseText) {
 			update((store) => ({
 				...store,
 				messages: [
-					...(isReload ? store.messages.slice(0, -1) : store.messages),
+					...store.messages,
 					{ role: 'assistant', content: store.currentAiRespsonse, type: 'suggestion' }
 				],
 				aiResponseLoading: false,
-				previousQuestions: responseText
-					? [...store.previousQuestions, responseText]
-					: store.previousQuestions
+				state: 'finishable'
 			}));
 		}
 	};
@@ -238,8 +205,7 @@ const createDevelopStore = (developmentType: DevelopmentType): DevelopmentStore 
 		update((store) => ({
 			...store,
 			currentAiRespsonse: '',
-			aiResponseLoading: true,
-			state: 'finishable'
+			aiResponseLoading: true
 		}));
 
 		try {
@@ -270,7 +236,8 @@ const createDevelopStore = (developmentType: DevelopmentType): DevelopmentStore 
 						content: store.currentAiRespsonse,
 						type: store.mode === 'guide' ? 'question' : 'suggestion'
 					}
-				]
+				],
+				state: 'finishable'
 			}));
 		}
 	};

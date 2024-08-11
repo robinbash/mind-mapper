@@ -52,7 +52,7 @@
 		</div>
 		{#if expanded}
 			<span
-				class="flex max-h-full w-full opacity-65 overflow-y-scroll my-6 text-sm"
+				class="flex max-h-full w-full opacity-65 overflow-y-scroll my-6"
 				on:scroll={() => {
 					checkScroll();
 				}}

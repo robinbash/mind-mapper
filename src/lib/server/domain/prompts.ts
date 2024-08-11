@@ -10,7 +10,7 @@ export const getTopicPrompt = (topic: Topic, topicRepo: TopicRepo): string => {
 		subtopics.length > 0
 			? `The existing subtopics are:\n${subtopics.map((t) => t.title).join('\n')}\n`
 			: '';
-	return `The title of our topic is: ${topic.title}. The summary of our topic is: ${topic.description} - End topic summary.\n${subtopicPrompt}`;
+	return `The title of our topic is: ${topic.title}.\n${subtopicPrompt} The summary text of our topic is: ${topic.description} - End topic summary.`;
 };
 
 export const getPreviousQuestionsPrompt = (topic: Topic, development: DevelopmentInProgress) => {
@@ -44,18 +44,20 @@ export const getPreviousSuggestionsPrompt = (topic: Topic, development: Developm
 		...(development.previousSuggestions ?? [])
 	];
 	return previous.length > 0
-		? `You have already made these suggestions: ${previous.join('\n')}\n`
+		? `You have already made these suggestions, do not repeat any of them: ${previous.join('\n')}\nEnd suggestions.`
 		: '';
 };
 
+export const ACCEPT_SUGGESTION_PROMPT = 'Accept';
+
 export const REFINEMENT_QUESTION_PROMPT =
-	'Always respond with only one question in one sentence to help me discover more detail about the topic.';
+	'During this conversation, always respond with only one question in one sentence to help me discover more detail about the topic.';
 
 export const EXPANSION_QUESTION_PROMPT =
-	'Always respond with only one question in one sentence which should help me discover a new subtopic. The subtopic should not relate to information that is already in the summary. The question should not suggest a subtopic but rather ask a question that would lead to a subtopic. Once I have answered, you should ask followup questions to help me understand the subtopic better.';
+	'During this conversation, always respond with only one question in one sentence which should help me discover a new subtopic. The subtopic should not relate to information that is already in the summary. The question should not suggest a subtopic but rather ask a question that would lead to a subtopic. Once I have answered, you should ask followup questions to help me understand the subtopic better.';
 
 export const REFINEMENT_SUGGESTION_PROMPT =
-	'Always respond with a continuation of the topic summary in one sentence. You should not repeat any information that can be derived from the existing summary.';
+	'Help me expand the topic summary by predicting the next sentence of the summary text. During this conversation you always only respond with the next sentence of the summary, making sure not to reapeat any information that is already in the summary. If I respond with "Accept" then the sentence will be added to the topic summary.';
 
 export const EXPANSION_SUGGESTION_PROMPT = '';
 
@@ -94,14 +96,5 @@ export const getSuggestionPrompt = (
 			: development.type === 'expansion'
 				? EXPANSION_SUGGESTION_PROMPT
 				: '';
-	console.log(development.type, suggestionPrompt);
 	return `${topicPrompt}\n${previousSuggestionsPrompt}\n${suggestionPrompt}`;
-};
-
-export const getAcceptSuggestionPrompt = (
-	topic: Topic,
-	topicRepo: TopicRepo,
-	development: DevelopmentInProgress
-) => {
-	return '';
 };

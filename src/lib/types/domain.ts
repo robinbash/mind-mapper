@@ -3,9 +3,11 @@ export type UserMessage = {
 	content: string;
 };
 
+export type AIHelpType = 'suggestion' | 'question';
+
 export type AssistantMessage = {
 	role: 'assistant';
-	type: 'suggestion' | 'question';
+	type: AIHelpType;
 	content: string;
 };
 
