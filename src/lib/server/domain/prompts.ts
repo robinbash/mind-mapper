@@ -54,18 +54,19 @@ export const REFINEMENT_QUESTION_PROMPT =
 	'During this conversation, always respond with only one question in one sentence to help me discover more detail about the topic.';
 
 export const EXPANSION_QUESTION_PROMPT =
-	'During this conversation, always respond with only one question in one sentence which should help me discover a new subtopic. The subtopic should not relate to information that is already in the summary. The question should not suggest a subtopic but rather ask a question that would lead to a subtopic. Once I have answered, you should ask followup questions to help me understand the subtopic better.';
+	'During this conversation, always respond with only one question in one sentence which should help me discover a new subtopic. The subtopic should not relate to information that is already in the summary. The conversation is only about one new subtopic. The question should not suggest a subtopic but rather ask a question that would lead to a subtopic and deepen it. Once I have answered, you should ask followup questions to help me understand the subtopic better.';
 
 export const REFINEMENT_SUGGESTION_PROMPT =
 	'Help me expand the topic summary by predicting the next sentence of the summary text. During this conversation you always only respond with the next sentence of the summary, making sure not to reapeat any information that is already in the summary. You also make sure that your prediction is not similar to a previous one. If I respond with "Accept" then the sentence will be added to the topic summary.';
 
-export const EXPANSION_SUGGESTION_PROMPT = '';
+export const EXPANSION_SUGGESTION_PROMPT =
+	'Help me discover a new subtopic by predicting The next sentence of the topic summary text of a new subtopic. During this conversation you always only respond with the next sentence of the summary, making sure not to reapeat any information that is already in the summary. This conversation is about a single new subtopic. You also make sure that your prediction is not similar to a previous one. If I respond with "Accept" then the sentence will be added to the new subtopic summary.';
 
 export const FINISH_REFINEMENT_PROMPT =
 	'Based on our conversation, adjust the original topic summary by incoporating the newly discovered information. Do not remove anything from the original summary, rather expand it with the new infomation. Make the added information as brief as possible while remaining grammatically correct. Only respond with the updated topic summary.';
 
 export const FINISH_EXPANSION_PROMPT =
-	'Based on the new information in our conversation, formulate a new subtopic. The subtopic should only contain new information that is not already in the summary. Repond only with a title and summary for the new subtopic in the format: {"title": "string", "summary": "string"}';
+	'Based on the new information in our conversation, formulate a new subtopic. The subtopic should only contain new information that is not already in the summary. The new subtopic summary should be concise while being grammatically correct and follow the same tone and style of the original topic summary. The title should be only a few words long. Respond only with a title and summary for the new subtopic in the format: {"title": "string", "summary": "string"}';
 
 export const getQuestionPrompt = (
 	topic: Topic,
