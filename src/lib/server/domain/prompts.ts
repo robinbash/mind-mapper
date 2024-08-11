@@ -44,7 +44,7 @@ export const getPreviousSuggestionsPrompt = (topic: Topic, development: Developm
 		...(development.previousSuggestions ?? [])
 	];
 	return previous.length > 0
-		? `You have already made these suggestions, do not repeat any of them: ${previous.join('\n')}\nEnd suggestions.`
+		? `You have already made these predictions: ${previous.join('\n')}\nEnd predictions.`
 		: '';
 };
 
@@ -57,7 +57,7 @@ export const EXPANSION_QUESTION_PROMPT =
 	'During this conversation, always respond with only one question in one sentence which should help me discover a new subtopic. The subtopic should not relate to information that is already in the summary. The question should not suggest a subtopic but rather ask a question that would lead to a subtopic. Once I have answered, you should ask followup questions to help me understand the subtopic better.';
 
 export const REFINEMENT_SUGGESTION_PROMPT =
-	'Help me expand the topic summary by predicting the next sentence of the summary text. During this conversation you always only respond with the next sentence of the summary, making sure not to reapeat any information that is already in the summary. If I respond with "Accept" then the sentence will be added to the topic summary.';
+	'Help me expand the topic summary by predicting the next sentence of the summary text. During this conversation you always only respond with the next sentence of the summary, making sure not to reapeat any information that is already in the summary. You also make sure that your prediction is not similar to a previous one. If I respond with "Accept" then the sentence will be added to the topic summary.';
 
 export const EXPANSION_SUGGESTION_PROMPT = '';
 

@@ -153,49 +153,7 @@ const createDevelopStore = (developmentType: DevelopmentType): DevelopmentStore 
 		if (!get(user) || lastMessage?.role !== 'assistant' || lastMessage.type !== 'suggestion')
 			return;
 
-		let responseText: string;
-
-		update((store) => ({
-			...store,
-			aiResponseLoading: true,
-			currentAiRespsonse: ''
-		}));
-
-		try {
-			if (eventSource) {
-				eventSource.close();
-			}
-			const response = await authFetch('/api/develop/accept-suggestion', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({
-					topicId: topicId,
-					development: get(devStore)
-				})
-			});
-			responseText = await handleAIResponse(response, addResponseChunk);
-		} catch (err) {
-			console.error(err);
-			update((store) => ({
-				...store,
-				aiResponseLoading: false,
-				currentAiRespsonse: ''
-			}));
-			return;
-		}
-		if (responseText) {
-			update((store) => ({
-				...store,
-				messages: [
-					...store.messages,
-					{ role: 'assistant', content: store.currentAiRespsonse, type: 'suggestion' }
-				],
-				aiResponseLoading: false,
-				state: 'finishable'
-			}));
-		}
+		submitPrompt(topicId, 'Accept');
 	};
 
 	const submitPrompt = async (topicId: string, prompt: string) => {
