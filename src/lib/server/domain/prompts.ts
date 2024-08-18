@@ -99,3 +99,8 @@ export const getSuggestionPrompt = (
 				: '';
 	return `${topicPrompt}\n${previousSuggestionsPrompt}\n${suggestionPrompt}`;
 };
+
+export const getSplitTopicPrompt = (topic: Topic, topicRepo: TopicRepo) => {
+	const topicPrompt = getTopicPrompt(topic, topicRepo);
+	return `${topicPrompt}\nYour task is to split out 2-4 new subtopics from the main topic. The new subtopic summaries should be as close to the corresponding text passages in the original summary as possible while being grammatically correct and forming full sentences. The titles should be only a few words long. The information that has been extracted into subtopics should be removed from the original topic summary. Respond only with the updated topic summary and the summaries and titles for the new subtopics in the format: {"summary": "string", "subtopics": [{"summary": "string", "title": "string"}]}`;
+};

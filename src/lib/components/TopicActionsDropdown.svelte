@@ -6,6 +6,8 @@
 	import Modal from './Modal.svelte';
 
 	export let topic: Topic | undefined;
+	export let setLoading: (value: boolean) => void;
+
 	let deleteModalOpen = false;
 
 	const closeDeleteModal = () => {
@@ -14,15 +16,36 @@
 
 	const deleteTopic = async () => {
 		if (!topic) return;
-		const response = await authFetch(`/api/delete`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({ topicId: topic.id })
-		});
-		if (response.ok) {
-			goto(`/${topic.parentId}`);
+		setLoading(true);
+		try {
+			const response = await authFetch(`/api/delete`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ topicId: topic.id })
+			});
+			if (response.ok) {
+				goto(`/${topic.parentId}`);
+			}
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	const splitTopic = async () => {
+		if (!topic) return;
+		setLoading(true);
+		try {
+			await authFetch(`/api/split`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ topicId: topic.id })
+			});
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -46,7 +69,7 @@
 		{
 			text: 'Split',
 			icon: 'mdi--format-page-split',
-			onAction: () => {}
+			onAction: splitTopic
 		}
 	]}
 />

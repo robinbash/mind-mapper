@@ -6,6 +6,7 @@
 	let expanded = false;
 	let scrolledToTop = true;
 	let scrolledToBottom = true;
+	let loading = false;
 
 	let descriptionEl: HTMLSpanElement;
 
@@ -50,7 +51,12 @@
 				<span class="w-full">{topic?.title}</span>
 			</button>
 		</div>
-		{#if expanded}
+		{#if loading}
+			<div class="w-full flex justify-center pt-8 opacity-65">
+				<span class="loading loading-dots loading-md ml-2 mt-1" />
+			</div>
+		{/if}
+		{#if expanded && !loading}
 			<span
 				class="flex max-h-full w-full opacity-65 overflow-y-scroll my-6"
 				on:scroll={() => {
@@ -71,12 +77,17 @@
 					<!-- <button class="btn btn-sm"
 						><span class="iconify mdi--format-page-split w-5 h-5" /> Split</button
 					> -->
-					<TopicActionsDropdown {topic} />
+					<TopicActionsDropdown
+						{topic}
+						setLoading={(value) => {
+							loading = value;
+						}}
+					/>
 				</div>
 			{/if}
 		{/if}
-		{#if !expanded}
-			<div class="flex justify-center flex-col gap-4 pt-4">
+		{#if !expanded && !loading}
+			<div class="flex justify-center flex-col gap-4 pt-4 pb-6">
 				{#each children as child}
 					<a
 						href={`/${child.id}`}
