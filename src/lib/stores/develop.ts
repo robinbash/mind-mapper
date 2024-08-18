@@ -16,6 +16,7 @@ type DevelopmentData = DevelopmentInProgress & {
 export type DevelopmentStore = {
 	subscribe: (run: (value: DevelopmentData) => void, invalidate?: any) => () => void;
 	reset: () => void;
+	ignore: () => void;
 	submitPrompt: (topicId: string, prompt: string) => void;
 	generate: (topicId: string) => void;
 	acceptSuggestion: (topicId: string) => void;
@@ -220,6 +221,15 @@ const createDevelopStore = (developmentType: DevelopmentType): DevelopmentStore 
 		goto(`/${result.result}`, { replaceState: true });
 	};
 
+	const ignore = async () => {
+		checkReload();
+		update((store) => ({
+			...store,
+			currentAiRespsonse: '',
+			aiResponseLoading: false
+		}));
+	};
+
 	return {
 		subscribe,
 		reset,
@@ -230,6 +240,7 @@ const createDevelopStore = (developmentType: DevelopmentType): DevelopmentStore 
 		setGuide,
 		toggleMode,
 		setTell,
+		ignore,
 		destroy: () => {
 			if (unsubscribe) {
 				unsubscribe();

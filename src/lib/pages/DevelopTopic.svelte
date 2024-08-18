@@ -185,9 +185,14 @@
 						</button>
 					{/if}
 					{#if modeIsChosen}
+						<button class="btn btn-sm text-opacity-65" on:click={developStore.ignore}>
+							<div class="flex items-center">
+								<span class="iconify mdi--close w-4 h-4 mr-1" />Ignore
+							</div>
+						</button>
 						<button class="btn btn-sm text-opacity-65" on:click={generate}>
 							<div class="flex items-center">
-								<span class="iconify mdi--refresh w-4 h-4 mr-1" />Regenerate
+								<span class="iconify mdi--refresh w-4 h-4 mr-1" />Next
 							</div>
 						</button>
 					{/if}
