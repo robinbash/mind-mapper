@@ -49,6 +49,22 @@
 		}
 	};
 
+	const categorize = async () => {
+		if (!topic) return;
+		setLoading(true);
+		try {
+			await authFetch(`/api/categorize`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ topicId: topic.id })
+			});
+		} finally {
+			setLoading(false);
+		}
+	};
+
 	const showHistory = () => {};
 </script>
 
@@ -70,6 +86,11 @@
 			text: 'Split',
 			icon: 'mdi--format-page-split',
 			onAction: splitTopic
+		},
+		{
+			text: 'Move into categories',
+			icon: 'mdi--content-duplicate',
+			onAction: categorize
 		}
 	]}
 />

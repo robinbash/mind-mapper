@@ -13,7 +13,10 @@
 		<span class="iconify mdi--dots-vertical w-5 h-5" />
 	</div>
 	<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-	<ul tabindex="0" class="dropdown-content menu bg-base-200 rounded-btn z-[1] w-32 p-2 shadow mb-2">
+	<ul
+		tabindex="0"
+		class="dropdown-content menu bg-base-200 rounded-btn z-[1] min-w-32 p-2 shadow mb-2"
+	>
 		{#each actions as action}
 			<li>
 				<button

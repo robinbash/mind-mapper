@@ -8,9 +8,9 @@ export const getTopicPrompt = (topic: Topic, topicRepo: TopicRepo): string => {
 	const subtopics = topicRepo.getSubtopics(topic.id);
 	const subtopicPrompt =
 		subtopics.length > 0
-			? `The existing subtopics are:\n${subtopics.map((t) => t.title).join('\n')}\n`
+			? `The existing subtopics are: ${subtopics.map((t) => `"${t.title}"`).join(', ')}\n`
 			: '';
-	return `The title of our topic is: ${topic.title}.\n${subtopicPrompt} The summary text of our topic is: ${topic.description} - End topic summary.`;
+	return `The title of our topic is: "${topic.title}".\n${subtopicPrompt} The summary text of our topic is: "${topic.description}"`;
 };
 
 export const getPreviousQuestionsPrompt = (topic: Topic, development: DevelopmentInProgress) => {
@@ -44,7 +44,7 @@ export const getPreviousSuggestionsPrompt = (topic: Topic, development: Developm
 		...(development.previousSuggestions ?? [])
 	];
 	return previous.length > 0
-		? `You have already made these predictions: ${previous.join('\n')}\nEnd predictions.`
+		? `You have already made these predictions: ${previous.map((p) => `"${p}"`).join('\n')}\nEnd of predictions.`
 		: '';
 };
 
@@ -66,7 +66,7 @@ export const FINISH_REFINEMENT_PROMPT =
 	'Based on our conversation, adjust the original topic summary by incoporating the newly discovered information. Do not remove anything from the original summary, rather expand it with the new infomation. Make the added information as brief as possible while remaining grammatically correct. Only respond with the updated topic summary.';
 
 export const FINISH_EXPANSION_PROMPT =
-	'Based on the new information in our conversation, formulate a new subtopic. The subtopic should only contain new information that is not already in the summary. The new subtopic summary should be concise while being grammatically correct and follow the same tone and style of the original topic summary. The title should be only a few words long. Respond only with a title and summary for the new subtopic in the format: {"title": "string", "summary": "string"}';
+	'Based on the new information in our conversation, formulate a new subtopic. The subtopic should only contain new information that is not already in the summary. The new subtopic summary should be concise while being grammatically correct and follow the same tone and style of the original topic summary. The title should be only a few words long. Respond only with a title and summary for the new subtopic in the json format: {"title": "string", "summary": "string"}';
 
 export const getQuestionPrompt = (
 	topic: Topic,
@@ -102,5 +102,10 @@ export const getSuggestionPrompt = (
 
 export const getSplitTopicPrompt = (topic: Topic, topicRepo: TopicRepo) => {
 	const topicPrompt = getTopicPrompt(topic, topicRepo);
-	return `${topicPrompt}\nYour task is to split out 2-4 new subtopics from the main topic. The new subtopic summaries should be as close to the corresponding text passages in the original summary as possible while being grammatically correct and forming full sentences. The titles should be only a few words long. The information that has been extracted into subtopics should be removed from the original topic summary. Respond only with the updated topic summary and the summaries and titles for the new subtopics in the format: {"summary": "string", "subtopics": [{"summary": "string", "title": "string"}]}`;
+	return `${topicPrompt}\nYour task is to split out 2-4 new subtopics from the main topic. The new subtopic summaries should be as close to the corresponding text passages in the original summary as possible while being grammatically correct and forming full sentences. The titles should be only a few words long. The information that has been extracted into subtopics should be removed from the original topic summary. Respond only with the updated topic summary and the summaries and titles for the new subtopics in the json format: {"summary": "string", "subtopics": [{"summary": "string", "title": "string"}]}`;
+};
+
+export const getCategorizePrompt = (topic: Topic, topicRepo: TopicRepo) => {
+	const topicPrompt = getTopicPrompt(topic, topicRepo);
+	return `${topicPrompt}\nDivide the subtopics into no more than 3 categories with a title with a few words. The categories should allow adding more similar subtopics. Respond only in json format [{"title": "string", "summary": "string", "subtopics": ["string"]}]`;
 };
