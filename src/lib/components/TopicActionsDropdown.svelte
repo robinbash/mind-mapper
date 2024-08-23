@@ -83,12 +83,12 @@
 			onAction: showHistory
 		},
 		{
-			text: 'Split',
+			text: 'Split into subtopics',
 			icon: 'mdi--format-page-split',
 			onAction: splitTopic
 		},
 		{
-			text: 'Move into categories',
+			text: 'Categorize subtopics',
 			icon: 'mdi--content-duplicate',
 			onAction: categorize
 		}

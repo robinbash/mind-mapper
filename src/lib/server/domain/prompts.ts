@@ -1,5 +1,12 @@
 import { TopicRepo } from '$lib/server/topicRepo';
 import type { Topic, DevelopmentInProgress } from '$lib/types';
+import { type RootTopicId } from '$lib/common';
+
+const ROOT_PROMPTS: Record<RootTopicId, string> = {
+	discovery: '',
+	goals: 'The topic summary should be formulated in first person.',
+	ideas: ''
+};
 
 export const SYSTEM_PROMPT =
 	'You are an assistant of an app designed to discover topics by structuring the users thoughts as well as providing information. You respond in a very concise manner while forming grammatically correct sentences. You do not act like a person would, you are a tool. You avoid greetings, thanks and other interpersonal phrases, focusing only on the topic.';
@@ -44,7 +51,7 @@ export const getPreviousSuggestionsPrompt = (topic: Topic, development: Developm
 		...(development.previousSuggestions ?? [])
 	];
 	return previous.length > 0
-		? `You have already made these predictions: ${previous.map((p) => `"${p}"`).join('\n')}\nEnd of predictions.`
+		? `You have already made these suggestions: ${previous.map((p) => `"${p}"`).join('\n')}\nEnd of suggestions.`
 		: '';
 };
 
@@ -57,16 +64,13 @@ export const EXPANSION_QUESTION_PROMPT =
 	'During this conversation, always respond with only one question in one sentence which should help me discover a new subtopic. The subtopic should not relate to information that is already in the summary. The conversation is only about one new subtopic. The question should not suggest a subtopic but rather ask a question that would lead to a subtopic and deepen it. Once I have answered, you should ask followup questions to help me understand the subtopic better.';
 
 export const REFINEMENT_SUGGESTION_PROMPT =
-	'Help me expand the topic summary by predicting the next sentence of the summary text. During this conversation you always only respond with the next sentence of the summary, making sure not to reapeat any information that is already in the summary. You also make sure that your prediction is not similar to a previous one. If I respond with "Accept" then the sentence will be added to the topic summary.';
+	'Help me by giving me a new idea that expands on the topic. You should suggest a new idea rather than suggest a way to arrive at a new idea. During this conversation you always only respond with a suggestion, making sure not to reapeat any information that is already in the summary. You also make sure that your suggestion is not similar to a previous one. If I respond with "Accept" then the suggestion will be added to the topic.';
 
 export const EXPANSION_SUGGESTION_PROMPT =
-	'Help me discover a new subtopic by predicting The next sentence of the topic summary text of a new subtopic. During this conversation you always only respond with the next sentence of the summary, making sure not to reapeat any information that is already in the summary. This conversation is about a single new subtopic. You also make sure that your prediction is not similar to a previous one. If I respond with "Accept" then the sentence will be added to the new subtopic summary.';
+	'Help me discover a new subtopic by giving me a new idea that expands on the topic. You should suggest a new idea rather than suggest a way to arrive at a new idea. During this conversation you always only respond with a suggestion, making sure not to reapeat any information that is already in the summary. You also make sure that your suggestion is not similar to a previous one. This conversation is about a single new subtopic. If I respond with "Accept" then the sentence will be added to the new subtopic summary. Only make make suggestions that relate to the accepted subtopic.';
 
 export const FINISH_REFINEMENT_PROMPT =
 	'Based on our conversation, adjust the original topic summary by incoporating the newly discovered information. Do not remove anything from the original summary, rather expand it with the new infomation. Make the added information as brief as possible while remaining grammatically correct. Only respond with the updated topic summary.';
-
-export const FINISH_EXPANSION_PROMPT =
-	'Based on the new information in our conversation, formulate a new subtopic. The subtopic should only contain new information that is not already in the summary. The new subtopic summary should be concise while being grammatically correct and follow the same tone and style of the original topic summary. The title should be only a few words long. Respond only with a title and summary for the new subtopic in the json format: {"title": "string", "summary": "string"}';
 
 export const getQuestionPrompt = (
 	topic: Topic,
@@ -108,4 +112,11 @@ export const getSplitTopicPrompt = (topic: Topic, topicRepo: TopicRepo) => {
 export const getCategorizePrompt = (topic: Topic, topicRepo: TopicRepo) => {
 	const topicPrompt = getTopicPrompt(topic, topicRepo);
 	return `${topicPrompt}\nDivide the subtopics into no more than 3 categories with a title with a few words. The categories should allow adding more similar subtopics. Respond only in json format [{"title": "string", "summary": "string", "subtopics": ["string"]}]`;
+};
+
+export const getFinishExpansionPrompt = (topic: Topic, topicRepo: TopicRepo) => {
+	const rootTopicId = topicRepo.getRootTopicId(topic.id);
+	const rootPrompt = ROOT_PROMPTS[rootTopicId];
+
+	return `Based on the new information in our conversation, formulate a new subtopic. The subtopic should only contain new information that is not already in the summary. The new subtopic summary should be concise while being grammatically correct with subject, verb and object.${rootPrompt} The title should be only a few words long. Respond only with a title and summary for the new subtopic in the json format: {"title": "string", "summary": "string"}`;
 };

@@ -6,7 +6,7 @@ import {
 	getQuestionPrompt,
 	getSuggestionPrompt,
 	ACCEPT_SUGGESTION_PROMPT,
-	FINISH_EXPANSION_PROMPT,
+	getFinishExpansionPrompt,
 	FINISH_REFINEMENT_PROMPT,
 	getTopicPrompt
 } from '$lib/server/domain/prompts';
@@ -120,11 +120,13 @@ const finishExpansion = async (
 ) => {
 	const initialPrompt = getTopicPrompt(topic, topicRepo);
 
+	const finishPrompt = getFinishExpansionPrompt(topic, topicRepo);
+
 	const aiResponse = await getAiResponse({
 		messages: [
 			{ role: 'user', content: initialPrompt },
 			...development.messages,
-			{ role: 'user', content: FINISH_EXPANSION_PROMPT }
+			{ role: 'user', content: finishPrompt }
 		]
 	});
 	const newSubtopicJson = JSON.parse(aiResponse);

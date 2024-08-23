@@ -11,7 +11,9 @@ export const CATEGORIES: Category[] = [
 	{ title: 'Discovery', id: 'discovery', icon: 'mdi--telescope', background: 'bg-teal-500' }
 ];
 
-export const ROOT_TOPICS: Topic[] = [
+export type RootTopicId = 'goals' | 'ideas' | 'discovery';
+
+export const ROOT_TOPICS: (Topic & { id: RootTopicId })[] = [
 	{
 		id: 'goals',
 		title: 'Goals',
