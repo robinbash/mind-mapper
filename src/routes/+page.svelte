@@ -11,17 +11,22 @@
 </script>
 
 <div class="container">
-	<div class="absolute top-0 w-full flex pl-6 md:p-8 mt-6 pt-inset">
+	<div class="absolute top-0 w-full flex px-6 md:p-8 mt-6 pt-inset items-center justify-between">
 		<button class="btn btn-md btn-circle" on:click={logout}
 			><span class="iconify mdi--logout" /></button
 		>
+		<button class="switcher" data-toggle-theme="dracula,bumblebee">Toggle theme</button>
 	</div>
+
 	<div class="categories">
 		{#each CATEGORIES as category}
 			<TopicButton {category} />
 		{/each}
 	</div>
-	<button class="switcher" data-toggle-theme="dracula,bumblebee">Toggle theme</button>
+	<a href="/new" class="btn btn-lg w-48 font-normal">
+		<span class="iconify w-6 h-6 mdi--plus" />
+		Prompt</a
+	>
 </div>
 
 <style>
@@ -33,6 +38,6 @@
 		font-family: 'Playwrite AT';
 	}
 	.switcher {
-		@apply btn btn-sm;
+		@apply btn btn-sm font-semibold;
 	}
 </style>

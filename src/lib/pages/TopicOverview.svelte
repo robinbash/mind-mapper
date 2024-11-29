@@ -71,7 +71,7 @@
 			</span>
 			{#if !isRoot}
 				<div class="w-full flex pb-8 justify-center gap-4">
-					<a class="btn btn-sm" href={`/${topicId}/refine`}
+					<a class="btn btn-sm" href={`/topics/${topicId}/refine`}
 						><span class="iconify mdi--lead-pencil" /> Refine</a
 					>
 					<!-- <button class="btn btn-sm"
@@ -90,7 +90,7 @@
 			<div class="flex justify-center flex-col gap-4 pt-4 pb-6">
 				{#each children as child}
 					<a
-						href={`/${child.id}`}
+						href={`/topics/${child.id}`}
 						class="flex h-auto btn btn-lg w-full font-normal text-base overflow-hidden py-2"
 					>
 						{child.title}
@@ -98,7 +98,7 @@
 				{/each}
 
 				<a
-					href={`/${topicId}/expand`}
+					href={`/topics/${topicId}/expand`}
 					class="btn btn-lg text-opacity-65 w-full font-normal text-base gap-1"
 				>
 					<span class="iconify mdi--add w-5 h-5" />Add Subtopic

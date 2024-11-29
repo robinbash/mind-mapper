@@ -38,13 +38,13 @@
 	<a href="/" class="flex"><span class="iconify mdi--home h-6 w-6" /></a>
 	<BreadcrumbItem>
 		<div class={`badge badge-sm text-white p-2 ${category?.background}`}>
-			<a href={`/${category?.id}`} class="flex items-center">{category?.title}</a>
+			<a href={`/topics/${category?.id}`} class="flex items-center">{category?.title}</a>
 		</div>
 	</BreadcrumbItem>
 	{#if showAll}
 		{#each paths?.topics ?? [] as path}
 			<BreadcrumbItem>
-				<a href={`/${path.id}`} class="flex items-center">
+				<a href={`/topics/${path.id}`} class="flex items-center">
 					<span class="max-w-[5.5rem] truncate">{path.title}</span>
 				</a>
 			</BreadcrumbItem>
@@ -61,7 +61,7 @@
 			<span class="iconify mdi--chevron-right min-w-5 min-h-5" />
 		</button>
 
-		<a href={`/${paths?.topics.at(-1)?.id}`} class="flex items-center"
+		<a href={`/topics/${paths?.topics.at(-1)?.id}`} class="flex items-center"
 			><span class="max-w-24 truncate">{paths?.topics.at(-1)?.title}</span></a
 		>
 	{/if}
