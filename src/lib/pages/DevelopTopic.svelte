@@ -1,18 +1,15 @@
 <script lang="ts">
-	import { Breadcrumbs, AnimatedText } from '$lib/components';
+	import { Breadcrumbs, AnimatedText, PromptInput } from '$lib/components';
 	import { mindmap } from '$lib/stores';
 	import { goto } from '$app/navigation';
 
 	import type { DevelopmentStore } from '$lib/stores/develop';
 	import { onMount, onDestroy } from 'svelte';
-	import { scale, fade } from 'svelte/transition';
 
 	export let developTitle: string;
 	export let developIcon: string;
 	export let developStore: DevelopmentStore;
 	export let topicId: string;
-	let inputEl: HTMLDivElement;
-	let currentUserText: string | null;
 	let textAnimating: boolean;
 
 	$: {
@@ -33,13 +30,6 @@
 	$: showAI = $developStore.currentAiRespsonse || $developStore.aiResponseLoading;
 
 	$: topic = $mindmap.find((topic) => topic.id === topicId);
-	$: sendDisabled = !(currentUserText ?? '').trim();
-
-	$: {
-		if (currentUserText === '' || currentUserText === '\n') {
-			currentUserText = null;
-		}
-	}
 
 	// const focus = (element: HTMLDivElement) => {
 	// 	if (!element) return;
@@ -55,18 +45,11 @@
 		goto(`/${topicId}`, { replaceState: true });
 	};
 
-	const handleInputShortcuts = (event: KeyboardEvent) => {
-		if (event.key === 'Enter' && event.ctrlKey) {
-			event.preventDefault();
-			submitPrompt();
-		}
-	};
-
-	const submitPrompt = () => {
+	const submitPrompt = (currentUserText: string | null) => {
 		if (!currentUserText) return;
 		developStore.submitPrompt(topicId, currentUserText);
-		currentUserText = '';
 	};
+
 	const generate = () => developStore.generate(topicId);
 	const finish = () => developStore.finish(topicId);
 	const acceptSuggestion = () => developStore.acceptSuggestion(topicId);
@@ -199,33 +182,12 @@
 				</div>
 			{/if}
 			{#if showUserInput}
-				<div class="flex justify-center items-end py-8 w-full gap-1">
-					<div
-						in:scale={{ start: 0.9, duration: 200 }}
-						class="user-input"
-						contenteditable
-						bind:this={inputEl}
-						bind:innerText={currentUserText}
-						on:keydown={handleInputShortcuts}
-						role="textbox"
-						aria-multiline="true"
-						tabindex="0"
-						data-placeholder="Type prompt"
-					/>
-					<button
-						in:fade={{ duration: 200 }}
-						class="send-button btn btn-square btn-ghost btn-md"
-						on:click={submitPrompt}
-						disabled={sendDisabled}
-					>
-						<span class="iconify mdi--send h-6 w-6" />
-					</button>
-				</div>
+				<PromptInput {submitPrompt} />
 			{/if}
 
 			{#if $developStore.state === 'finishable' && showUserInput}
 				<div class="inline-block">
-					<button class="btn btn-sm text-opacity-65" on:click={finish} disabled={!!currentUserText}>
+					<button class="btn btn-sm text-opacity-65" on:click={finish}>
 						<div class="flex items-center">
 							<span class="iconify mdi--check-circle w-4 h-4 mr-1" />Finish
 						</div>
@@ -248,15 +210,5 @@
 <style>
 	.container {
 		@apply flex flex-col items-center justify-center min-h-full min-w-full;
-	}
-	.user-input {
-		@apply bg-base-200 rounded-btn px-4 w-full h-full py-3 break-words outline-none;
-	}
-	.user-input:empty:not(:focus):before {
-		content: attr(data-placeholder);
-		opacity: 0.6;
-	}
-	.send-button {
-		@apply w-9 h-12 mb-[1px] disabled:bg-transparent;
 	}
 </style>

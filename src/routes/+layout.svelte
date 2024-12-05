@@ -43,7 +43,7 @@
 	}
 	.app {
 		@apply flex w-screen h-screen pt-inset;
-		font-family: 'Roboto slab';
+		font-family: 'Lato';
 	}
 	.loading-screen {
 		width: 100vw;

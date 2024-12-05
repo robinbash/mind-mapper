@@ -6,3 +6,4 @@ export { default as AddTopicModal } from './AddTopicModal.svelte';
 export { default as Dropdown } from './Dropdown.svelte';
 export { default as Modal } from './Modal.svelte';
 export { default as TopicActionsDropdown } from './TopicActionsDropdown.svelte';
+export { default as PromptInput } from './PromptInput.svelte';
