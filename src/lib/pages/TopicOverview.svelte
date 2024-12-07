@@ -1,7 +1,25 @@
 <script lang="ts">
-	import { Breadcrumbs, TopicActionsDropdown, PromptInput } from '$lib/components';
-	import Messages from '$lib/components/Messages.svelte';
+	import { Breadcrumbs, TopicActionsDropdown, PromptInput, Messages } from '$lib/components';
 	import { mindmap } from '$lib/stores';
+	import { register } from 'swiper/element/bundle';
+	import { onMount } from 'svelte';
+	import type Swiper from 'swiper';
+	import 'swiper/css';
+	import 'swiper/css/navigation';
+	import 'swiper/css/pagination';
+
+	onMount(() => {
+		register();
+	});
+
+	let swiperEl: { swiper: Swiper } | null = null;
+
+	const swiperParams = {
+		slidesPerView: 1,
+		navigation: false,
+
+		spaceBetween: 50
+	};
 
 	export let topicId: string;
 	let expanded = false;
@@ -9,7 +27,24 @@
 	let scrolledToBottom = true;
 	let loading = false;
 
-	let tab: 'summary' | 'chat' = 'summary';
+	type Tab = 'summary' | 'chat';
+
+	let tab: Tab = 'summary';
+
+	const goToTab = (tab: Tab) => {
+		const swiper = swiperEl?.swiper;
+		if (swiper) {
+			swiper.slideTo(tab === 'summary' ? 0 : 1);
+		}
+	};
+
+	const handleSlideChange = (hi: any) => {
+		console.log(hi);
+		const swiper = swiperEl?.swiper;
+		if (swiper) {
+			tab = swiper.activeIndex === 0 ? 'summary' : 'chat';
+		}
+	};
 
 	let inputShowing = false;
 
@@ -72,15 +107,45 @@
 				class:shadow-top={scrolledToTop && !scrolledToBottom}
 				class:shadow-bottom={!scrolledToTop && scrolledToBottom}
 			>
-				{#if tab === 'summary'}
+				<swiper-container
+					{...swiperParams}
+					bind:this={swiperEl}
+					on:slidechange={handleSlideChange}
+					class="flex max-h-full h-full"
+				>
+					<swiper-slide class="flex h-full w-full py-6">
+						<span class="opacity-65 h-full max-h-full w-full overflow-y-scroll">
+							{topic?.description}
+						</span>
+					</swiper-slide>
+					<swiper-slide class="max-h-full h-full w-full">
+						<div class="flex flex-col py-4 max-h-full h-full w-full overflow-y-scroll">
+							<Messages messages={topic?.messages || []} />
+							{#if inputShowing}
+								<PromptInput submitPrompt={() => {}} />
+							{:else}
+								<div class="flex justify-end pt-2">
+									<button
+										class="send-button btn btn-square btn-md"
+										on:click={() => {
+											inputShowing = true;
+										}}
+									>
+										<span class="opacity-65 iconify mdi--send h-6 w-6" />
+									</button>
+								</div>
+							{/if}
+						</div>
+					</swiper-slide>
+				</swiper-container>
+
+				<!-- {#if tab === 'summary'}
 					<span class="opacity-65 my-6">
 						{topic?.description}
 					</span>
 				{/if}
+				
 				{#if tab === 'chat'}
-					<!-- {#if !topic?.messages}
-						<div class="w-full flex justify-center">No chat messages here</div>
-					{:else} -->
 					<div class="flex flex-col py-4">
 						<Messages messages={topic?.messages || []} />
 						{#if inputShowing}
@@ -98,46 +163,39 @@
 							</div>
 						{/if}
 					</div>
-					<!-- {/if} -->
-				{/if}
+				{/if} -->
 			</span>
 
-			{#if !isRoot}
-				<div class="w-full flex pb-4 justify-center gap-4">
-					<!-- <a class="btn btn-sm" href={`/topics/${topicId}/refine`}
+			<div class="w-full flex pb-4 justify-center gap-4">
+				<!-- <a class="btn btn-sm" href={`/topics/${topicId}/refine`}
 						><span class="iconify mdi--lead-pencil" /> Refine</a
 					> -->
-					<!-- <button class="btn btn-sm"
+				<!-- <button class="btn btn-sm"
 						><span class="iconify mdi--format-page-split w-5 h-5" /> Split</button
 					> -->
-					<div role="tablist" class="tabs tabs-bordered tabs-sm">
-						<button
-							role="tab"
-							class="tab"
-							class:tab-active={tab === 'summary'}
-							on:click={() => {
-								tab = 'summary';
-							}}>Summary</button
-						>
-						<button
-							role="tab"
-							class="tab"
-							class:tab-active={tab === 'chat'}
-							on:click={() => {
-								tab = 'chat';
-							}}>Chat</button
-						>
-					</div>
-					<div class="absolute right-8">
-						<TopicActionsDropdown
-							{topic}
-							setLoading={(value) => {
-								loading = value;
-							}}
-						/>
-					</div>
+				<div role="tablist" class="tabs tabs-bordered tabs-sm">
+					<button
+						role="tab"
+						class="tab"
+						class:tab-active={tab === 'summary'}
+						on:click={() => goToTab('summary')}>Summary</button
+					>
+					<button
+						role="tab"
+						class="tab"
+						class:tab-active={tab === 'chat'}
+						on:click={() => goToTab('chat')}>Chat</button
+					>
 				</div>
-			{/if}
+				<div class="absolute right-8">
+					<TopicActionsDropdown
+						{topic}
+						setLoading={(value) => {
+							loading = value;
+						}}
+					/>
+				</div>
+			</div>
 		{/if}
 		{#if !expanded && !loading}
 			<div class="flex justify-center flex-col gap-4 pt-4 pb-6">
@@ -175,5 +233,26 @@
 	}
 	.shadow-top {
 		box-shadow: inset 0px -8px 5px -5px rgba(0, 0, 0, 0.15);
+	}
+	swiper-container {
+		width: 100%;
+		height: 100vh;
+		display: block; /* This can help with visibility */
+	}
+
+	.slide-content {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		height: 100%;
+		background: #f4f4f4;
+	}
+
+	.loading {
+		width: 100%;
+		height: 100vh;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
 </style>
