@@ -3,13 +3,15 @@ export type UserMessage = {
 	content: string;
 };
 
-export type AIHelpType = 'suggestion' | 'question';
+export type AIHelpType = 'suggestion' | 'question' | 'answer';
 
 export type AssistantMessage = {
 	role: 'assistant';
 	type: AIHelpType;
 	content: string;
 };
+
+export type Message = UserMessage | AssistantMessage;
 
 export type DevelopmentMessage = UserMessage | AssistantMessage;
 export type DevelopmentType = 'expansion' | 'refinement';
@@ -33,5 +35,9 @@ export type Topic = {
 	title: string;
 	description: string;
 	parentId?: string;
+	messages: Message[];
+	// TODO
+	// contextAware?: boolean;
+	// embedding?: number[];
 	developments?: Development[];
 };

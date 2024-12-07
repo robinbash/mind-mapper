@@ -1,6 +1,19 @@
 import { ATHROPIC_API_KEY } from '$env/static/private';
 import Anthropic from '@anthropic-ai/sdk';
 import { SYSTEM_PROMPT } from './prompts';
+import { dev } from '$app/environment';
+
+const MOCKED_TEXT =
+	'This is mocked ai reponse text. To get a real response, start the app in production mode.';
+
+const mockedStreamResponse = () => {
+	return new ReadableStream<string>({
+		async start(controller) {
+			controller.enqueue(MOCKED_TEXT);
+			controller.close();
+		}
+	});
+};
 
 /**
  * merge consecutive user or assistant messages in order to assure alternating messages
@@ -30,6 +43,10 @@ export const streamAiResponse = ({
 	max_tokens?: number;
 	temperature?: number;
 }) => {
+	if (dev) {
+		return mockedStreamResponse();
+	}
+
 	if (!ATHROPIC_API_KEY) {
 		throw new Error('No Anthropic api key');
 	}
@@ -82,6 +99,9 @@ export const getAiResponse = async ({
 	max_tokens?: number;
 	temperature?: number;
 }) => {
+	if (dev) {
+		return MOCKED_TEXT;
+	}
 	if (!ATHROPIC_API_KEY) {
 		throw new Error('No Anthropic api key');
 	}

@@ -137,6 +137,7 @@ const finishExpansion = async (
 		title: newSubtopicJson.title,
 		description: newSubtopicJson.summary,
 		parentId: topic.id,
+		messages: [],
 		developments: [
 			{
 				messages: development.messages,

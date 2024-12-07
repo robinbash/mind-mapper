@@ -42,7 +42,7 @@
 
 	const cancel = () => {
 		developStore.reset();
-		goto(`/${topicId}`, { replaceState: true });
+		goto(`/topics/${topicId}`, { replaceState: true });
 	};
 
 	const submitPrompt = (currentUserText: string | null) => {

@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { Breadcrumbs, TopicActionsDropdown } from '$lib/components';
+	import { Breadcrumbs, TopicActionsDropdown, PromptInput } from '$lib/components';
+	import Messages from '$lib/components/Messages.svelte';
 	import { mindmap } from '$lib/stores';
 
 	export let topicId: string;
@@ -7,6 +8,10 @@
 	let scrolledToTop = true;
 	let scrolledToBottom = true;
 	let loading = false;
+
+	let tab: 'summary' | 'chat' = 'summary';
+
+	let inputShowing = false;
 
 	let descriptionEl: HTMLSpanElement;
 
@@ -19,7 +24,7 @@
 	}
 
 	$: {
-		if (descriptionEl) {
+		if (descriptionEl || tab) {
 			checkScroll();
 		}
 	}
@@ -37,7 +42,7 @@
 		<Breadcrumbs {topicId} />
 		<div class="flex w-full items-center">
 			<button
-				class="flex h-full relative font-bold text-base btn btn-lg btn-outline w-full rounded-btn px-9 py-2"
+				class="flex h-full relative font-bold text-base btn btn-lg btn-outline w-full px-9 py-2 rounded-md"
 				on:click={() => {
 					expanded = !expanded;
 				}}
@@ -58,7 +63,7 @@
 		{/if}
 		{#if expanded && !loading}
 			<span
-				class="flex max-h-full w-full opacity-65 overflow-y-scroll my-6"
+				class="flex h-full max-h-full w-full overflow-y-scroll"
 				on:scroll={() => {
 					checkScroll();
 				}}
@@ -67,22 +72,70 @@
 				class:shadow-top={scrolledToTop && !scrolledToBottom}
 				class:shadow-bottom={!scrolledToTop && scrolledToBottom}
 			>
-				{topic?.description}
+				{#if tab === 'summary'}
+					<span class="opacity-65 my-6">
+						{topic?.description}
+					</span>
+				{/if}
+				{#if tab === 'chat'}
+					<!-- {#if !topic?.messages}
+						<div class="w-full flex justify-center">No chat messages here</div>
+					{:else} -->
+					<div class="flex flex-col py-4">
+						<Messages messages={topic?.messages || []} />
+						{#if inputShowing}
+							<PromptInput submitPrompt={() => {}} />
+						{:else}
+							<div class="flex justify-end pt-2">
+								<button
+									class="send-button btn btn-square btn-md"
+									on:click={() => {
+										inputShowing = true;
+									}}
+								>
+									<span class="opacity-65 iconify mdi--send h-6 w-6" />
+								</button>
+							</div>
+						{/if}
+					</div>
+					<!-- {/if} -->
+				{/if}
 			</span>
+
 			{#if !isRoot}
-				<div class="w-full flex pb-8 justify-center gap-4">
-					<a class="btn btn-sm" href={`/topics/${topicId}/refine`}
+				<div class="w-full flex pb-4 justify-center gap-4">
+					<!-- <a class="btn btn-sm" href={`/topics/${topicId}/refine`}
 						><span class="iconify mdi--lead-pencil" /> Refine</a
-					>
+					> -->
 					<!-- <button class="btn btn-sm"
 						><span class="iconify mdi--format-page-split w-5 h-5" /> Split</button
 					> -->
-					<TopicActionsDropdown
-						{topic}
-						setLoading={(value) => {
-							loading = value;
-						}}
-					/>
+					<div role="tablist" class="tabs tabs-bordered tabs-sm">
+						<button
+							role="tab"
+							class="tab"
+							class:tab-active={tab === 'summary'}
+							on:click={() => {
+								tab = 'summary';
+							}}>Summary</button
+						>
+						<button
+							role="tab"
+							class="tab"
+							class:tab-active={tab === 'chat'}
+							on:click={() => {
+								tab = 'chat';
+							}}>Chat</button
+						>
+					</div>
+					<div class="absolute right-8">
+						<TopicActionsDropdown
+							{topic}
+							setLoading={(value) => {
+								loading = value;
+							}}
+						/>
+					</div>
 				</div>
 			{/if}
 		{/if}
@@ -91,7 +144,7 @@
 				{#each children as child}
 					<a
 						href={`/topics/${child.id}`}
-						class="flex h-auto btn btn-lg w-full font-normal text-base overflow-hidden py-2"
+						class="flex h-auto btn btn-lg w-full font-normal text-base overflow-hidden py-2 rounded-md"
 					>
 						{child.title}
 					</a>
@@ -99,7 +152,7 @@
 
 				<a
 					href={`/topics/${topicId}/expand`}
-					class="btn btn-lg text-opacity-65 w-full font-normal text-base gap-1"
+					class="btn btn-lg text-opacity-65 w-full font-normal text-base gap-1 rounded-md"
 				>
 					<span class="iconify mdi--add w-5 h-5" />Add Subtopic
 				</a>

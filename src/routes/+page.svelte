@@ -25,7 +25,7 @@
 	</div>
 	<a href="/new" class="btn btn-lg w-48 font-normal">
 		<span class="iconify w-6 h-6 mdi--plus" />
-		Prompt</a
+		New prompt</a
 	>
 </div>
 

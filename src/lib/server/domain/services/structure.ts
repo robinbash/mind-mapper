@@ -32,7 +32,8 @@ export const splitTopic: DomainService<{}, void> = async ({ topicId, userId }) =
 		await topicRepo.addTopic({
 			title: subtopic.title,
 			description: subtopic.summary,
-			parentId: topic.id
+			parentId: topic.id,
+			messages: []
 		});
 	}
 	topic.description = topicSplitJson.summary;
@@ -78,7 +79,8 @@ export const categorize: DomainService<{}, void> = async ({ topicId, userId }) =
 		const categoryId = await topicRepo.addTopic({
 			title,
 			description: '',
-			parentId: topic.id
+			parentId: topic.id,
+			messages: []
 		});
 
 		for (const subtopic of subtopics) {
