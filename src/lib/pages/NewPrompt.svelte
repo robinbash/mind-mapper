@@ -3,7 +3,7 @@
 	import { mindmap } from '$lib/stores';
 	import { goto } from '$app/navigation';
 
-	import { chat as chatStore } from '$lib/stores/chat';
+	import { chat, chat as chatStore } from '$lib/stores/chat';
 	import { onMount, onDestroy } from 'svelte';
 
 	export let topicId: string | null = null;
@@ -15,29 +15,30 @@
 		}
 	}
 	$: {
-		if (!$chatStore.aiResponseLoading && !$chatStore.currentAiRespsonse) {
+		if (!$chatStore.aiResponseLoading && !$chatStore.currentAiResponse) {
 			textAnimating = false;
 		}
 	}
 
 	$: showUserInput = !$chatStore.aiResponseLoading && !textAnimating;
 
-	$: showAI = $chatStore.currentAiRespsonse || $chatStore.aiResponseLoading;
+	$: showAI = $chatStore.currentAiResponse || $chatStore.aiResponseLoading;
 
 	$: topic = $mindmap.find((topic) => topic.id === topicId);
 
 	const onFinishedAnimating = () => {
 		textAnimating = false;
+		chatStore.consolidate();
 	};
 
 	const cancel = () => {
 		chatStore.reset();
-		goto(`/topics/${topicId}`, { replaceState: true });
+		goto(`/`, { replaceState: true });
 	};
 
 	const submitPrompt = (currentUserText: string | null) => {
 		if (!currentUserText) return;
-		// chatStore.submitPrompt(topicId, currentUserText);
+		chatStore.submitPrompt(currentUserText);
 	};
 
 	// const generate = () => chatStore.generate(topicId);
@@ -50,7 +51,7 @@
 
 <div class="flex flex-col h-full w-full md:w-[44rem] items-center justify-between">
 	<div class="flex justify-between w-full py-8">
-		<button class="btn btn-ghost btn-square btn-sm" on:click={() => goto(`/`)}
+		<button class="btn btn-ghost btn-square btn-sm" on:click={cancel}
 			><span class="iconify mdi--cancel-bold h-6 w-6" /></button
 		>
 		<button class="btn btn-ghost btn-sm"
@@ -76,7 +77,12 @@
 			/>
 		</div>
 	{:else}
-		<Messages messages={$chatStore.messages} />
+		<Messages
+			messages={$chatStore.messages}
+			aiResponseLoading={$chatStore.aiResponseLoading}
+			currentAiResponse={$chatStore.currentAiResponse}
+			{onFinishedAnimating}
+		/>
 
 		<!-- {#if showUserInput && showAI}
 				<div class="flex gap-4 items-center pt-6">
@@ -105,7 +111,7 @@
 			<PromptInput {submitPrompt} />
 		{/if}
 
-		{#if $chatStore.state === 'finishable' && showUserInput}
+		<!-- {#if $chatStore.state === 'finishable' && showUserInput}
 			<div class="inline-block">
 				<button class="btn btn-sm text-opacity-65" on:click={finish}>
 					<div class="flex items-center">
@@ -113,7 +119,7 @@
 					</div>
 				</button>
 			</div>
-		{/if}
+		{/if} -->
 	{/if}
 </div>
 

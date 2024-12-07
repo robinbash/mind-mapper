@@ -1,11 +1,18 @@
 <script lang="ts">
 	import type { Message } from '$lib/types';
 	import SparklesText from './SparklesText.svelte';
+	import AnimatedText from './AnimatedText.svelte';
 
 	export let messages: Message[];
+	export let currentAiResponse: string;
+	export let aiResponseLoading: boolean;
+	export let onFinishedAnimating: () => void;
 
 	const mockMessages: Message[] = [
-		{ role: 'user', content: 'Hi, Can you help me write a poem?' },
+		{
+			role: 'user',
+			content: 'Hi, Can you help me write a poem? It should be funny and witty and cool.'
+		},
 		{
 			role: 'assistant',
 			content: 'Sure thing, here it goes: Ottos mops trotzt. Otto: soso',
@@ -32,16 +39,27 @@
 	];
 </script>
 
-<div class="flex flex-col gap-4 h-full max-h-full overflow-y-scroll">
+<div class="flex flex-col gap-5 h-full max-h-full w-full overflow-y-scroll">
 	{#each mockMessages as message}
 		{#if message.role === 'assistant'}
-			<SparklesText text={message.content} />
+			<SparklesText>{message.content}</SparklesText>
 		{:else}
-			<div class="pl-12">
-				<div class="rounded-md px-3 py-1 bg-base-200">
+			<div class="flex w-full justify-end">
+				<div class="flex rounded-md px-4 py-2 bg-base-200 max-w-[80%]">
 					{message.content}
 				</div>
 			</div>
 		{/if}
 	{/each}
+	{#if currentAiResponse}
+		<SparklesText>
+			<AnimatedText
+				text={currentAiResponse}
+				delay={8}
+				duration={350}
+				textLoading={aiResponseLoading}
+				{onFinishedAnimating}
+			/>
+		</SparklesText>
+	{/if}
 </div>

@@ -9,14 +9,15 @@ import { authFetch, handleAIResponse } from '$lib/fetch';
 type ChatData = {
 	messages: Message[];
 	state: 'initial' | 'finishable' | 'finishing';
-	currentAiRespsonse: string;
+	currentAiResponse: string;
 	aiResponseLoading: boolean;
 };
 
 export type ChatStore = {
 	subscribe: (run: (value: ChatData) => void, invalidate?: any) => () => void;
 	reset: () => void;
-	submitPrompt: (topicId: string, prompt: string) => void;
+	submitPrompt: (prompt: string) => void;
+	consolidate: () => void;
 	finish: () => void;
 	destroy: () => void;
 };
@@ -24,7 +25,7 @@ export type ChatStore = {
 const createChatStore = (): ChatStore => {
 	const initial: ChatData = {
 		state: 'initial',
-		currentAiRespsonse: '',
+		currentAiResponse: '',
 		aiResponseLoading: false,
 		messages: []
 	};
@@ -40,7 +41,7 @@ const createChatStore = (): ChatStore => {
 	};
 
 	const addResponseChunk = (chunk: string) =>
-		update((store) => ({ ...store, currentAiRespsonse: store.currentAiRespsonse + chunk }));
+		update((store) => ({ ...store, currentAiResponse: store.currentAiResponse + chunk }));
 
 	const checkReload = () => {
 		const lastMessage = get(chatStore).messages.at(-1);
@@ -52,28 +53,29 @@ const createChatStore = (): ChatStore => {
 		}));
 	};
 
-	const submitPrompt = async (topicId: string, prompt: string) => {
+	const submitPrompt = async (prompt: string) => {
 		const current = get(chatStore);
 		if (current.aiResponseLoading || !get(user)) return;
 
 		update((store) => ({
 			...store,
-			currentAiRespsonse: '',
-			aiResponseLoading: true
+			currentAiResponse: '',
+			aiResponseLoading: true,
+			messages: [...store.messages, { role: 'user', content: prompt }]
 		}));
 
 		try {
 			if (eventSource) {
 				eventSource.close();
 			}
-			const response = await authFetch('/api/develop/prompt', {
+			const response = await authFetch('/api/new-topic/prompt', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({
-					topicId: topicId,
-					chat: get(chatStore),
+					topicId: 'new',
+					messages: get(chatStore).messages,
 					prompt
 				})
 			});
@@ -81,17 +83,7 @@ const createChatStore = (): ChatStore => {
 		} finally {
 			update((store) => ({
 				...store,
-				aiResponseLoading: false,
-				messages: [
-					...store.messages,
-					{ role: 'user', content: prompt },
-					{
-						role: 'assistant',
-						content: store.currentAiRespsonse,
-						type: 'answer'
-					}
-				],
-				state: 'finishable'
+				aiResponseLoading: false
 			}));
 		}
 	};
@@ -116,12 +108,30 @@ const createChatStore = (): ChatStore => {
 		goto(`/${result.result}`, { replaceState: true });
 	};
 
+	const consolidate = () => {
+		update((store) => ({
+			...store,
+			aiResponseLoading: false,
+			currentAiResponse: '',
+			messages: [
+				...store.messages,
+				{
+					role: 'assistant',
+					content: store.currentAiResponse,
+					type: 'answer'
+				}
+			],
+			state: 'finishable'
+		}));
+	};
+
 	return {
 		subscribe,
 		reset,
 		submitPrompt,
 		// generate,
 		finish: () => {},
+		consolidate,
 		destroy: () => {
 			if (unsubscribe) {
 				unsubscribe();

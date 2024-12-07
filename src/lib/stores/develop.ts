@@ -9,7 +9,7 @@ import { authFetch, handleAIResponse } from '$lib/fetch';
 
 type DevelopmentData = DevelopmentInProgress & {
 	state: 'initial' | 'finishable' | 'finishing';
-	currentAiRespsonse: string;
+	currentAiResponse: string;
 	aiResponseLoading: boolean;
 };
 
@@ -31,7 +31,7 @@ const createDevelopStore = (developmentType: DevelopmentType): DevelopmentStore 
 	const initial: DevelopmentData = {
 		state: 'initial',
 		mode: 'initial',
-		currentAiRespsonse: '',
+		currentAiResponse: '',
 		aiResponseLoading: false,
 		previousQuestions: [],
 		previousSuggestions: [],
@@ -65,12 +65,12 @@ const createDevelopStore = (developmentType: DevelopmentType): DevelopmentStore 
 		update((store) => ({
 			...store,
 			mode: store.mode === 'guide' ? 'tell' : 'guide',
-			currentAiRespsonse: ''
+			currentAiResponse: ''
 		}));
 	};
 
 	const addResponseChunk = (chunk: string) =>
-		update((store) => ({ ...store, currentAiRespsonse: store.currentAiRespsonse + chunk }));
+		update((store) => ({ ...store, currentAiResponse: store.currentAiResponse + chunk }));
 
 	const checkReload = () => {
 		const lastMessage = get(devStore).messages.at(-1);
@@ -99,7 +99,7 @@ const createDevelopStore = (developmentType: DevelopmentType): DevelopmentStore 
 		update((store) => ({
 			...store,
 			aiResponseLoading: true,
-			currentAiRespsonse: ''
+			currentAiResponse: ''
 		}));
 
 		try {
@@ -122,7 +122,7 @@ const createDevelopStore = (developmentType: DevelopmentType): DevelopmentStore 
 			update((store) => ({
 				...store,
 				aiResponseLoading: false,
-				currentAiRespsonse: ''
+				currentAiResponse: ''
 			}));
 			return;
 		}
@@ -131,7 +131,7 @@ const createDevelopStore = (developmentType: DevelopmentType): DevelopmentStore 
 				...store,
 				messages: [
 					...store.messages,
-					{ role: 'assistant', content: store.currentAiRespsonse, type }
+					{ role: 'assistant', content: store.currentAiResponse, type }
 				],
 				aiResponseLoading: false
 			}));
@@ -163,7 +163,7 @@ const createDevelopStore = (developmentType: DevelopmentType): DevelopmentStore 
 
 		update((store) => ({
 			...store,
-			currentAiRespsonse: '',
+			currentAiResponse: '',
 			aiResponseLoading: true
 		}));
 
@@ -192,7 +192,7 @@ const createDevelopStore = (developmentType: DevelopmentType): DevelopmentStore 
 					{ role: 'user', content: prompt },
 					{
 						role: 'assistant',
-						content: store.currentAiRespsonse,
+						content: store.currentAiResponse,
 						type: store.mode === 'guide' ? 'question' : 'suggestion'
 					}
 				],
@@ -225,7 +225,7 @@ const createDevelopStore = (developmentType: DevelopmentType): DevelopmentStore 
 		checkReload();
 		update((store) => ({
 			...store,
-			currentAiRespsonse: '',
+			currentAiResponse: '',
 			aiResponseLoading: false
 		}));
 	};

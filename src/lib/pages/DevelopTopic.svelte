@@ -18,7 +18,7 @@
 		}
 	}
 	$: {
-		if (!$developStore.aiResponseLoading && !$developStore.currentAiRespsonse) {
+		if (!$developStore.aiResponseLoading && !$developStore.currentAiResponse) {
 			textAnimating = false;
 		}
 	}
@@ -27,7 +27,7 @@
 
 	$: showUserInput = !$developStore.aiResponseLoading && !textAnimating && modeIsChosen;
 
-	$: showAI = $developStore.currentAiRespsonse || $developStore.aiResponseLoading;
+	$: showAI = $developStore.currentAiResponse || $developStore.aiResponseLoading;
 
 	$: topic = $mindmap.find((topic) => topic.id === topicId);
 
@@ -122,14 +122,14 @@
 							<span class="w-6 h-1 inline-block" />
 							<span class="opacity-65">
 								<AnimatedText
-									text={$developStore.currentAiRespsonse}
+									text={$developStore.currentAiResponse}
 									delay={13}
 									duration={350}
 									textLoading={$developStore.aiResponseLoading}
 									{onFinishedAnimating}
 								/>
 							</span>
-							<!-- {#if !$developStore.aiResponseLoading && !textAnimating && $developStore.currentAiRespsonse && false}
+							<!-- {#if !$developStore.aiResponseLoading && !textAnimating && $developStore.currentAiResponse && false}
 								<span class="inline-block relative h-3 w-6">
 									<div
 										class="flex items-center absolute top-1/2 -translate-y-1/2"

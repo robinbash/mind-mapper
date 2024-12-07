@@ -38,8 +38,7 @@
 		}
 	};
 
-	const handleSlideChange = (hi: any) => {
-		console.log(hi);
+	const handleSlideChange = () => {
 		const swiper = swiperEl?.swiper;
 		if (swiper) {
 			tab = swiper.activeIndex === 0 ? 'summary' : 'chat';
@@ -77,12 +76,12 @@
 		<Breadcrumbs {topicId} />
 		<div class="flex w-full items-center">
 			<button
-				class="flex h-full relative font-bold text-base btn btn-lg btn-outline w-full px-9 py-2 rounded-md"
+				class="flex h-full relative font-bold text-base btn btn-lg btn-ghost w-full px-9 py-2 rounded-md"
 				on:click={() => {
 					expanded = !expanded;
 				}}
 			>
-				<div class="absolute left-2 flex w-9 items-center">
+				<div class="absolute left-0 flex w-9 items-center">
 					<span
 						class="iconify mdi--chevron-right w-5 h-5 transition-all"
 						class:rotate-90={expanded}
@@ -110,21 +109,25 @@
 				<swiper-container
 					{...swiperParams}
 					bind:this={swiperEl}
-					on:slidechange={handleSlideChange}
+					on:swiperslidechange={handleSlideChange}
 					class="flex max-h-full h-full"
 				>
-					<swiper-slide class="flex h-full w-full py-6">
+					<swiper-slide class="flex h-full w-full py-4">
 						<span class="opacity-65 h-full max-h-full w-full overflow-y-scroll">
 							{topic?.description}
 						</span>
 					</swiper-slide>
 					<swiper-slide class="max-h-full h-full w-full">
 						<div class="flex flex-col py-4 max-h-full h-full w-full overflow-y-scroll">
-							<Messages messages={topic?.messages || []} />
+							{#if topic?.messages?.length || true}<Messages messages={topic?.messages || []} />
+							{:else}
+								<span class="h-full w-full flex items-center justify-center opacity-65"
+									>No Messages yet</span
+								>{/if}
 							{#if inputShowing}
 								<PromptInput submitPrompt={() => {}} />
 							{:else}
-								<div class="flex justify-end pt-2">
+								<div class="flex justify-end pt-3">
 									<button
 										class="send-button btn btn-square btn-md"
 										on:click={() => {
