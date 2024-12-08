@@ -13,7 +13,8 @@
 	export let submitPrompt: (text: string | null) => void;
 
 	$: if (inputEl) {
-		inputEl.focus();
+		// inputEl.focus();
+		setTimeout(() => inputEl.focus(), 200);
 	}
 
 	const handleInputShortcuts = (event: KeyboardEvent) => {
@@ -29,7 +30,7 @@
 	};
 </script>
 
-<div class="flex justify-center items-end py-8 w-full gap-1">
+<div class="flex justify-center items-end w-full gap-1">
 	<div
 		in:scale={{ start: 0.9, duration: 200 }}
 		class="user-input"

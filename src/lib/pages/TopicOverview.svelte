@@ -26,10 +26,18 @@
 	let scrolledToTop = true;
 	let scrolledToBottom = true;
 	let loading = false;
+	let inputShowing = false;
+	let descriptionEl: HTMLSpanElement;
 
 	type Tab = 'summary' | 'chat';
 
 	let tab: Tab = 'summary';
+
+	const toggleExpand = () => {
+		tab = 'summary';
+		inputShowing = false;
+		expanded = !expanded;
+	};
 
 	const goToTab = (tab: Tab) => {
 		const swiper = swiperEl?.swiper;
@@ -44,10 +52,6 @@
 			tab = swiper.activeIndex === 0 ? 'summary' : 'chat';
 		}
 	};
-
-	let inputShowing = false;
-
-	let descriptionEl: HTMLSpanElement;
 
 	$: topic = $mindmap.find((n) => n.id === topicId);
 	$: children = $mindmap.filter((n) => n.parentId === topicId);
@@ -76,14 +80,12 @@
 		<Breadcrumbs {topicId} />
 		<div class="flex w-full items-center">
 			<button
-				class="flex h-full relative font-bold text-base btn btn-lg btn-ghost w-full px-9 py-2 rounded-md"
-				on:click={() => {
-					expanded = !expanded;
-				}}
+				class="flex h-full relative font-bold text-base w-full px-6 py-5"
+				on:click={toggleExpand}
 			>
 				<div class="absolute left-0 flex w-9 items-center">
 					<span
-						class="iconify mdi--chevron-right w-5 h-5 transition-all"
+						class="iconify mdi--chevron-right w-6 h-6 transition-all"
 						class:rotate-90={expanded}
 					/>
 				</div>
@@ -125,11 +127,21 @@
 									>No Messages yet</span
 								>{/if}
 							{#if inputShowing}
-								<PromptInput submitPrompt={() => {}} />
-							{:else}
-								<div class="flex justify-end pt-3">
+								<div class="flex pt-3">
 									<button
-										class="send-button btn btn-square btn-md"
+										class="w-9 h-12 mb-[1px] flex items-center"
+										on:click={() => {
+											inputShowing = false;
+										}}><span class="iconify mdi--cancel-bold opacity-65 h-6 w-6" /></button
+									><PromptInput submitPrompt={() => {}} />
+								</div>
+							{:else}
+								<div class="flex justify-end pt-3 gap-4 pb-1">
+									<button class="btn btn-square btn-md">
+										<span class="opacity-65 iconify mdi--search h-6 w-6" />
+									</button>
+									<button
+										class="btn btn-square btn-md"
 										on:click={() => {
 											inputShowing = true;
 										}}
@@ -141,35 +153,9 @@
 						</div>
 					</swiper-slide>
 				</swiper-container>
-
-				<!-- {#if tab === 'summary'}
-					<span class="opacity-65 my-6">
-						{topic?.description}
-					</span>
-				{/if}
-				
-				{#if tab === 'chat'}
-					<div class="flex flex-col py-4">
-						<Messages messages={topic?.messages || []} />
-						{#if inputShowing}
-							<PromptInput submitPrompt={() => {}} />
-						{:else}
-							<div class="flex justify-end pt-2">
-								<button
-									class="send-button btn btn-square btn-md"
-									on:click={() => {
-										inputShowing = true;
-									}}
-								>
-									<span class="opacity-65 iconify mdi--send h-6 w-6" />
-								</button>
-							</div>
-						{/if}
-					</div>
-				{/if} -->
 			</span>
 
-			<div class="w-full flex pb-4 justify-center gap-4">
+			<div class="w-full flex pb-6 justify-center gap-4">
 				<!-- <a class="btn btn-sm" href={`/topics/${topicId}/refine`}
 						><span class="iconify mdi--lead-pencil" /> Refine</a
 					> -->
@@ -205,7 +191,7 @@
 				{#each children as child}
 					<a
 						href={`/topics/${child.id}`}
-						class="flex h-auto btn btn-lg w-full font-normal text-base overflow-hidden py-2 rounded-md"
+						class="flex h-auto btn btn-lg w-full font-normal text-base overflow-hidden rounded-md"
 					>
 						{child.title}
 					</a>

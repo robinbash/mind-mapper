@@ -15,7 +15,7 @@
 			if (!root.parentId) break;
 			const parent = $mindmap.find((n) => n.id === root.parentId);
 			if (!parent) break;
-			topics.unshift(root);
+			topics.unshift(parent);
 			root = parent;
 		}
 		return { root, topics };
@@ -36,11 +36,11 @@
 	class="flex max-w-full w-full text-xs pb-6 font-sans items-center pt-2 md:pt-6 flex-wrap gap-y-1"
 >
 	<a href="/" class="flex"><span class="iconify mdi--home h-6 w-6" /></a>
-	<BreadcrumbItem>
+	<!-- <BreadcrumbItem>
 		<div class={`badge badge-sm text-white p-2 ${category?.background}`}>
 			<a href={`/topics/${category?.id}`} class="flex items-center">{category?.title}</a>
 		</div>
-	</BreadcrumbItem>
+	</BreadcrumbItem> -->
 	{#if showAll}
 		{#each paths?.topics ?? [] as path}
 			<BreadcrumbItem>
