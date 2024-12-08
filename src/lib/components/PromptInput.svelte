@@ -13,8 +13,8 @@
 	export let submitPrompt: (text: string | null) => void;
 
 	$: if (inputEl) {
-		// inputEl.focus();
-		setTimeout(() => inputEl.focus(), 200);
+		inputEl.focus();
+		inputEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
 	}
 
 	const handleInputShortcuts = (event: KeyboardEvent) => {

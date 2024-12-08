@@ -39,7 +39,7 @@
 	];
 </script>
 
-<div class="flex flex-col gap-5 h-full max-h-full w-full overflow-y-scroll">
+<div class="flex flex-col gap-5 h-full max-h-full w-full overflow-y-scroll pb-4">
 	{#each mockMessages as message}
 		{#if message.role === 'assistant'}
 			<SparklesText>{message.content}</SparklesText>
