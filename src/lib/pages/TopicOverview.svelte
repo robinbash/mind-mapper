@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Breadcrumbs, TopicActionsDropdown, PromptInput, Messages } from '$lib/components';
+	import { Breadcrumbs, TopicActionsDropdown, PromptInputButton, Messages } from '$lib/components';
 	import { mindmap } from '$lib/stores';
 	import { register } from 'swiper/element/bundle';
 	import { onMount } from 'svelte';
@@ -32,6 +32,10 @@
 	type Tab = 'summary' | 'chat';
 
 	let tab: Tab = 'summary';
+
+	const setInputShowing = (value: boolean) => {
+		inputShowing = value;
+	};
 
 	const toggleExpand = () => {
 		tab = 'summary';
@@ -126,30 +130,14 @@
 								<span class="h-full w-full flex items-center justify-center opacity-65"
 									>No Messages yet</span
 								>{/if}
-							{#if inputShowing}
-								<div class="flex pt-3">
-									<button
-										class="w-9 h-12 mb-[1px] flex items-center"
-										on:click={() => {
-											inputShowing = false;
-										}}><span class="iconify mdi--cancel-bold opacity-65 h-6 w-6" /></button
-									><PromptInput submitPrompt={() => {}} />
-								</div>
-							{:else}
-								<div class="flex justify-end pt-3 gap-4 pb-1">
+							<div class="flex justify-end pt-3 gap-4 pb-1">
+								{#if !inputShowing}
 									<button class="btn btn-square btn-md">
 										<span class="opacity-65 iconify mdi--search h-6 w-6" />
 									</button>
-									<button
-										class="btn btn-square btn-md"
-										on:click={() => {
-											inputShowing = true;
-										}}
-									>
-										<span class="opacity-65 iconify mdi--send h-6 w-6" />
-									</button>
-								</div>
-							{/if}
+								{/if}
+								<PromptInputButton submitPrompt={() => {}} {setInputShowing} {inputShowing} />
+							</div>
 						</div>
 					</swiper-slide>
 				</swiper-container>

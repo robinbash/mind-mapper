@@ -108,7 +108,9 @@
 				</div>
 			{/if} -->
 		{#if showUserInput}
-			<PromptInput {submitPrompt} />
+			<div class="py-8 w-full">
+				<PromptInput {submitPrompt} />
+			</div>
 		{/if}
 
 		<!-- {#if $chatStore.state === 'finishable' && showUserInput}
