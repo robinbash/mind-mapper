@@ -44,6 +44,8 @@
 
 	.app {
 		@apply flex w-screen h-screen pt-inset;
+		touch-action: manipulation;
+		overscroll-behavior: none;
 		font-family: 'Lato';
 	}
 	.loading-screen {

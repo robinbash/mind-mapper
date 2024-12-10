@@ -32,8 +32,6 @@ const createChatStore = (): ChatStore => {
 	const chatStore = writable<ChatData>({ ...initial });
 	const { subscribe, set, update } = chatStore;
 
-	let unsubscribe: () => void;
-
 	let eventSource: EventSource;
 
 	const reset = () => {
@@ -65,9 +63,6 @@ const createChatStore = (): ChatStore => {
 		}));
 
 		try {
-			if (eventSource) {
-				eventSource.close();
-			}
 			const response = await authFetch('/api/new-topic/prompt', {
 				method: 'POST',
 				headers: {
@@ -132,14 +127,7 @@ const createChatStore = (): ChatStore => {
 		// generate,
 		finish: () => {},
 		consolidate,
-		destroy: () => {
-			if (unsubscribe) {
-				unsubscribe();
-			}
-			if (eventSource) {
-				eventSource.close();
-			}
-		}
+		destroy: () => {}
 	};
 };
 

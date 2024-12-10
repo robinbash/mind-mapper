@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Breadcrumbs, TopicActionsDropdown, PromptInputButton, Messages } from '$lib/components';
+	import { topicChat } from '$lib/stores/topicChat';
 	import { mindmap } from '$lib/stores';
 	import { register } from 'swiper/element/bundle';
 	import { onMount } from 'svelte';
@@ -7,6 +8,7 @@
 	import 'swiper/css';
 	import 'swiper/css/navigation';
 	import 'swiper/css/pagination';
+	import type { Message } from '$lib/types';
 
 	onMount(() => {
 		register();
@@ -28,6 +30,7 @@
 	let loading = false;
 	let inputShowing = false;
 	let descriptionEl: HTMLSpanElement;
+	let shownMessages: Message[] = [];
 
 	type Tab = 'summary' | 'chat';
 
@@ -57,12 +60,22 @@
 		}
 	};
 
+	const onFinishedAnimating = () => {
+		shownMessages = [
+			...shownMessages,
+			{ content: $topicChat.currentAiResponse, role: 'assistant', type: 'answer' }
+		];
+		topicChat.consolidate(topicId);
+	};
+
 	$: topic = $mindmap.find((n) => n.id === topicId);
 	$: children = $mindmap.filter((n) => n.parentId === topicId);
 	$: isRoot = topic?.parentId === undefined;
 
 	$: if (topic && topicId) {
 		expanded = children.length === 0 && !isRoot;
+		loading = false;
+		shownMessages = topic.messages;
 	}
 
 	$: {
@@ -76,6 +89,12 @@
 		scrolledToBottom =
 			descriptionEl.scrollHeight - descriptionEl.scrollTop < descriptionEl.clientHeight + 3;
 		scrolledToTop = descriptionEl.scrollTop <= 0;
+	};
+
+	const submitPrompt = (text: string | null) => {
+		if (!topic || !text) return;
+		shownMessages = [...shownMessages, { content: text, role: 'user' }];
+		topicChat.submitPrompt(topicId, text, topic.messages);
 	};
 </script>
 
@@ -125,7 +144,12 @@
 					</swiper-slide>
 					<swiper-slide class="max-h-full h-full w-full">
 						<div class="flex flex-col py-4 max-h-full h-full w-full overflow-y-scroll">
-							{#if topic?.messages?.length || true}<Messages messages={topic?.messages || []} />
+							{#if topic?.messages?.length || true}<Messages
+									messages={shownMessages}
+									currentAiResponse={$topicChat.currentAiResponse}
+									aiResponseLoading={$topicChat.aiResponseLoading}
+									{onFinishedAnimating}
+								/>
 							{:else}
 								<span class="h-full w-full flex items-center justify-center opacity-65"
 									>No Messages yet</span
@@ -136,7 +160,7 @@
 										<span class="opacity-65 iconify mdi--search h-6 w-6" />
 									</button>
 								{/if}
-								<PromptInputButton submitPrompt={() => {}} {setInputShowing} {inputShowing} />
+								<PromptInputButton {submitPrompt} {setInputShowing} {inputShowing} />
 							</div>
 						</div>
 					</swiper-slide>

@@ -3,10 +3,9 @@
 	import { mindmap } from '$lib/stores';
 	import { goto } from '$app/navigation';
 
-	import { chat, chat as chatStore } from '$lib/stores/chat';
+	import { chat as chatStore } from '$lib/stores/chat';
 	import { onMount, onDestroy } from 'svelte';
 
-	export let topicId: string | null = null;
 	let textAnimating: boolean;
 
 	$: {
@@ -23,8 +22,6 @@
 	$: showUserInput = !$chatStore.aiResponseLoading && !textAnimating;
 
 	$: showAI = $chatStore.currentAiResponse || $chatStore.aiResponseLoading;
-
-	$: topic = $mindmap.find((topic) => topic.id === topicId);
 
 	const onFinishedAnimating = () => {
 		textAnimating = false;

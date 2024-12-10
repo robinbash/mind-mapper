@@ -7,40 +7,11 @@
 	export let currentAiResponse: string;
 	export let aiResponseLoading: boolean;
 	export let onFinishedAnimating: () => void;
-
-	const mockMessages: Message[] = [
-		{
-			role: 'user',
-			content: 'Hi, Can you help me write a poem? It should be funny and witty and cool.'
-		},
-		{
-			role: 'assistant',
-			content: 'Sure thing, here it goes: Ottos mops trotzt. Otto: soso',
-			type: 'answer'
-		},
-		{ role: 'user', content: 'Thank you, very nice!' },
-		{ role: 'assistant', content: 'Youre welcome.', type: 'answer' },
-		{ role: 'user', content: 'Hi, Can you help me write a poem?' },
-		{
-			role: 'assistant',
-			content: 'Sure thing, here it goes: Ottos mops trotzt. Otto: soso',
-			type: 'answer'
-		},
-		{ role: 'user', content: 'Thank you, very nice!' },
-		{ role: 'assistant', content: 'Youre welcome.', type: 'answer' },
-		{ role: 'user', content: 'Hi, Can you help me write a poem?' },
-		{
-			role: 'assistant',
-			content: 'Sure thing, here it goes: Ottos mops trotzt. Otto: soso',
-			type: 'answer'
-		},
-		{ role: 'user', content: 'Thank you, very nice!' },
-		{ role: 'assistant', content: 'Youre welcome.', type: 'answer' }
-	];
+	$: lastMessageIsAi = messages.at(-1)?.role === 'assistant';
 </script>
 
 <div class="flex flex-col gap-5 h-full max-h-full w-full overflow-y-scroll pb-4">
-	{#each mockMessages as message}
+	{#each messages as message}
 		{#if message.role === 'assistant'}
 			<SparklesText>{message.content}</SparklesText>
 		{:else}
@@ -51,7 +22,7 @@
 			</div>
 		{/if}
 	{/each}
-	{#if currentAiResponse}
+	{#if currentAiResponse && !lastMessageIsAi}
 		<SparklesText>
 			<AnimatedText
 				text={currentAiResponse}

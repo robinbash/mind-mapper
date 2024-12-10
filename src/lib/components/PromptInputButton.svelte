@@ -20,10 +20,16 @@
 		inputEl.blur();
 	}
 
+	const submit = () => {
+		inputEl.blur();
+		submitPrompt(currentUserText);
+		currentUserText = '';
+	};
+
 	const handleInputShortcuts = (event: KeyboardEvent) => {
 		if (inputShowing && event.key === 'Enter' && event.ctrlKey) {
 			event.preventDefault();
-			submitPrompt(currentUserText);
+			submit();
 		}
 	};
 </script>
@@ -62,7 +68,7 @@
 		<button
 			in:fade={{ duration: 200 }}
 			class="send-button btn btn-square btn-ghost btn-md"
-			on:click={() => submitPrompt(currentUserText)}
+			on:click={submit}
 			disabled={sendDisabled}
 		>
 			<span class="iconify mdi--send h-6 w-6" />

@@ -63,6 +63,7 @@ export class TopicRepo {
 		return Object.values(this.topicsById).filter((t) => t.parentId === topicId);
 	};
 
+	//TODD: implement commit to make proper repo
 	updateTopic = async (topic: Topic) => {
 		const { id, ...update } = topic;
 		await adminDb

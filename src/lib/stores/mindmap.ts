@@ -55,7 +55,8 @@ function createMindmapStore() {
 			unsubscribe = onSnapshot(q, (snapshot) => {
 				const data = snapshot.docs.map((doc) => ({
 					id: doc.id,
-					...doc.data()
+					...doc.data(),
+					messages: doc.data().messages || [] // TODO
 				})) as Topic[];
 				set([...ROOT_TOPICS, ...data]);
 			});

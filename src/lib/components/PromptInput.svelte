@@ -21,6 +21,7 @@
 		if (event.key === 'Enter' && event.ctrlKey) {
 			event.preventDefault();
 			submitPrompt(currentUserText);
+			currentUserText = '';
 		}
 	};
 
