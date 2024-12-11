@@ -11,6 +11,9 @@
 </script>
 
 <div class="flex flex-col gap-5 h-full max-h-full w-full overflow-y-scroll pb-4">
+	{#if messages.length === 0}
+		<span class="h-full w-full flex items-center justify-center opacity-65">No Messages yet</span>
+	{/if}
 	{#each messages as message}
 		{#if message.role === 'assistant'}
 			<SparklesText>{message.content}</SparklesText>

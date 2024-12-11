@@ -38,9 +38,9 @@
 		chatStore.submitPrompt(currentUserText);
 	};
 
-	// const generate = () => chatStore.generate(topicId);
-	const finish = () => chatStore.finish();
-	// const acceptSuggestion = () => chatStore.acceptSuggestion(topicId);
+	const save = () => {
+		chatStore.save();
+	};
 
 	onDestroy(chatStore.destroy);
 	onMount(chatStore.reset);
@@ -51,7 +51,7 @@
 		<button class="btn btn-ghost btn-square btn-sm" on:click={cancel}
 			><span class="iconify mdi--cancel-bold h-6 w-6" /></button
 		>
-		<button class="btn btn-ghost btn-sm"
+		<button class="btn btn-ghost btn-sm" on:click={save}
 			><span class="iconify mdi--content-save h-6 w-6" />Save chat
 		</button>
 	</div>
@@ -68,8 +68,8 @@
 			</button>
 		</div> -->
 	{#if $chatStore.state === 'finishing'}
-		<div class="flex w-full justify-center pt-8 opacity-65">
-			<span class="font-semibold">Developing topic</span><span
+		<div class="flex w-full h-full justify-center items-center pt-8 opacity-65">
+			<span class="font-semibold">Saving topic</span><span
 				class="loading loading-dots loading-md ml-2 mt-1"
 			/>
 		</div>

@@ -144,16 +144,12 @@
 					</swiper-slide>
 					<swiper-slide class="max-h-full h-full w-full">
 						<div class="flex flex-col py-4 max-h-full h-full w-full overflow-y-scroll">
-							{#if topic?.messages?.length || true}<Messages
-									messages={shownMessages}
-									currentAiResponse={$topicChat.currentAiResponse}
-									aiResponseLoading={$topicChat.aiResponseLoading}
-									{onFinishedAnimating}
-								/>
-							{:else}
-								<span class="h-full w-full flex items-center justify-center opacity-65"
-									>No Messages yet</span
-								>{/if}
+							<Messages
+								messages={shownMessages}
+								currentAiResponse={$topicChat.currentAiResponse}
+								aiResponseLoading={$topicChat.aiResponseLoading}
+								{onFinishedAnimating}
+							/>
 							<div class="flex justify-end pt-3 gap-4 pb-1">
 								{#if !inputShowing}
 									<button class="btn btn-square btn-md">

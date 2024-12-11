@@ -18,7 +18,7 @@ export type ChatStore = {
 	reset: () => void;
 	submitPrompt: (prompt: string) => void;
 	consolidate: () => void;
-	finish: () => void;
+	save: () => void;
 	destroy: () => void;
 };
 
@@ -83,24 +83,23 @@ const createChatStore = (): ChatStore => {
 		}
 	};
 
-	const finish = async (topicId: string) => {
+	const save = async () => {
 		update((store) => ({
 			...store,
 			state: 'finishing'
 		}));
 		let messages = get(chatStore).messages;
-		if (messages.at(-1)?.role === 'assistant') messages.pop();
 
-		const response = await authFetch(`/api/develop/finish`, {
+		const response = await authFetch(`/api/new-topic/save`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify({ topicId: topicId, chat: get(chatStore) })
+			body: JSON.stringify({ topicId: 'new', messages })
 		});
 		const result = await response.json();
 		reset();
-		goto(`/${result.result}`, { replaceState: true });
+		goto(`topics/${result.result}`, { replaceState: true });
 	};
 
 	const consolidate = () => {
@@ -124,8 +123,7 @@ const createChatStore = (): ChatStore => {
 		subscribe,
 		reset,
 		submitPrompt,
-		// generate,
-		finish: () => {},
+		save,
 		consolidate,
 		destroy: () => {}
 	};

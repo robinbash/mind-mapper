@@ -3,6 +3,12 @@ import Anthropic from '@anthropic-ai/sdk';
 import { SYSTEM_PROMPT } from './prompts';
 import { dev } from '$app/environment';
 
+import { env } from '$env/dynamic/private';
+
+const useRealAi = env.USE_REAL_AI ?? false;
+
+import {} from '$env/static/public';
+
 const MOCKED_TEXT =
 	'This is mocked ai reponse text. To get a real response, start the app in production mode.';
 
@@ -43,7 +49,7 @@ export const streamAiResponse = ({
 	max_tokens?: number;
 	temperature?: number;
 }) => {
-	if (dev) {
+	if (dev && !useRealAi) {
 		return mockedStreamResponse();
 	}
 
@@ -99,7 +105,7 @@ export const getAiResponse = async ({
 	max_tokens?: number;
 	temperature?: number;
 }) => {
-	if (dev) {
+	if (dev && !useRealAi) {
 		return MOCKED_TEXT;
 	}
 	if (!ATHROPIC_API_KEY) {

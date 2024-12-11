@@ -120,3 +120,6 @@ export const getFinishExpansionPrompt = (topic: Topic, topicRepo: TopicRepo) => 
 
 	return `Based on the new information in our conversation, formulate a new subtopic. The subtopic should only contain new information that is not already in the summary. The new subtopic summary should be concise while being grammatically correct with subject, verb and object.${rootPrompt} The title should be only a few words long. Respond only with a title and summary for the new subtopic in the json format: {"title": "string", "summary": "string"}`;
 };
+
+export const NEW_TOPIC_PROMPT =
+	'Summarize this conversation. You should think of it as a topic in a connected graph of topics. The new topic summary should be concise while being grammatically correct with subject, verb and object. It should countain paragraphs where there are semantically distinct parts, if there are any, to increase readability. The title should be only a few words long. Respond only with a title and summary for the new topic in the json format: {"title": "string", "summary": "string"}';

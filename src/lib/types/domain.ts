@@ -34,7 +34,7 @@ export type Topic = {
 	id: string;
 	title: string;
 	description: string;
-	parentId?: string;
+	parentId: string | null;
 	messages: Message[];
 	// TODO
 	// contextAware?: boolean;
