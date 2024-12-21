@@ -1,8 +1,6 @@
 import type { Topic } from '$lib/types';
 import { adminDb } from '$lib/server/firebase-admin';
 
-import { ROOT_TOPICS, type RootTopicId } from '$lib/common';
-
 const TOPICS_COLLECTION = 'topics';
 
 export class TopicRepo {
@@ -19,7 +17,7 @@ export class TopicRepo {
 			...doc.data()
 		})) as Topic[];
 
-		this.topicsById = [...topics, ...ROOT_TOPICS].reduce(
+		this.topicsById = topics.reduce(
 			(acc, topic) => {
 				acc[topic.id] = topic;
 				return acc;
@@ -47,15 +45,6 @@ export class TopicRepo {
 			parentTopics.unshift(currentTopic);
 		}
 		return parentTopics;
-	};
-
-	getRootTopicId = (topicId: string): RootTopicId => {
-		if (!this.topicsById) throw new Error('Topics not loaded');
-		if (ROOT_TOPICS.some((t) => t.id === topicId)) {
-			return topicId as RootTopicId;
-		}
-		const parentTopics = this.getParentTopics(topicId);
-		return parentTopics[0].id as RootTopicId;
 	};
 
 	getSubtopics = (topicId: string): Topic[] => {

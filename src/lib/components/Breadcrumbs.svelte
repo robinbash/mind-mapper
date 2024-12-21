@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { mindmap } from '$lib/stores';
-	import { CATEGORIES } from '$lib/common';
 	import { page } from '$app/stores';
 	import BreadcrumbItem from './BreadcrumbItem.svelte';
 	import { type Topic } from '$lib/types';
@@ -21,7 +20,7 @@
 		return { root, topics };
 	};
 	$: paths = getPaths(topic);
-	$: category = CATEGORIES.find((cat) => cat.id === paths?.root.id);
+	// $: category = CATEGORIES.find((cat) => cat.id === paths?.root.id);
 	$: isExpand = $page.route.id?.endsWith('/expand');
 	$: isRefine = $page.route.id?.endsWith('/refine');
 

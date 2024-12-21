@@ -18,7 +18,8 @@ export default {
   daisyui: {
     themes: [
     "dracula",
-    "bumblebee",
+    "emerald"
+    // "bumblebee",
       // {
       //   dark: {
       //     ...require("daisyui/src/theming/themes")["dark"],

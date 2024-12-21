@@ -28,16 +28,13 @@ export const saveNewTopic: DomainService<
 	{ messages: Message[]; parentId: string | null },
 	string
 > = async ({ messages, parentId, userId }): Promise<string> => {
-	console.log('start');
 	const topicRepo = new TopicRepo();
 
 	await topicRepo.loadTopics(userId);
-	console.log('loaded');
 
 	const topicInfo = await getAiResponse({
 		messages: [...messages, { role: 'user', content: NEW_TOPIC_PROMPT }]
 	});
-	console.log('got response');
 	const topicInfoJson = JSON.parse(topicInfo);
 	if (!topicInfoJson.title || !topicInfoJson.summary) {
 		throw new Error('Invalid subtopic format');
@@ -51,6 +48,5 @@ export const saveNewTopic: DomainService<
 	};
 
 	const newTopicId = topicRepo.addTopic(topic);
-	console.log('added topic');
 	return newTopicId;
 };

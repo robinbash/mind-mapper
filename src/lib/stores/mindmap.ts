@@ -12,7 +12,6 @@ import {
 } from 'firebase/firestore';
 import { db } from '$lib/firebase';
 import { goto } from '$app/navigation';
-import { ROOT_TOPICS } from '$lib/common';
 
 const TOPICS_COLLECTION = 'topics';
 
@@ -21,8 +20,7 @@ function createMindmapStore() {
 
 	let unsubscribe: () => void;
 
-	const isTopicRoot = (topic?: Topic) =>
-		topic ? ROOT_TOPICS.some((root) => root.id === topic.id) : true;
+	const isTopicRoot = (topic?: Topic) => !!topic?.parentId;
 
 	const saveTopic = async ({
 		parentId,
@@ -58,7 +56,7 @@ function createMindmapStore() {
 					...doc.data(),
 					messages: doc.data().messages || [] // TODO
 				})) as Topic[];
-				set([...ROOT_TOPICS, ...data]);
+				set(data);
 			});
 		},
 		destroy: () => {

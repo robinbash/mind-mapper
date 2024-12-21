@@ -19,9 +19,9 @@
 			<SparklesText>{message.content}</SparklesText>
 		{:else}
 			<div class="flex w-full justify-end">
-				<div class="flex rounded-md px-4 py-2 bg-base-200 max-w-[80%]">
+				<span class="flex rounded-md px-4 py-2 bg-base-200 max-w-[80%]">
 					{message.content}
-				</div>
+				</span>
 			</div>
 		{/if}
 	{/each}
