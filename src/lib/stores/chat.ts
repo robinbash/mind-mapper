@@ -69,7 +69,6 @@ const createChatStore = (): ChatStore => {
 					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({
-					topicId: 'new',
 					messages: get(chatStore).messages,
 					prompt
 				})
@@ -95,7 +94,7 @@ const createChatStore = (): ChatStore => {
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify({ topicId: 'new', messages })
+			body: JSON.stringify({ messages })
 		});
 		const result = await response.json();
 		reset();

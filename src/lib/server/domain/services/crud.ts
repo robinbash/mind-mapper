@@ -2,7 +2,10 @@ import { TopicRepo } from '$lib/server/topicRepo';
 import type { Message } from '$lib/types';
 import type { DomainService } from './types';
 
-export const deleteTopic: DomainService<{}, void> = async ({ topicId, userId }) => {
+export const deleteTopic: DomainService<{ topicId: string }, void> = async ({
+	topicId,
+	userId
+}) => {
 	const topicRepo = new TopicRepo();
 	await topicRepo.loadTopics(userId);
 
@@ -16,7 +19,7 @@ export const deleteTopic: DomainService<{}, void> = async ({ topicId, userId }) 
 	await deleteWithSubtopics(topicId);
 };
 
-export const addMessages: DomainService<{ messages: Message[] }, void> = async ({
+export const addMessages: DomainService<{ topicId: string; messages: Message[] }, void> = async ({
 	topicId,
 	userId,
 	messages

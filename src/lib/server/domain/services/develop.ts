@@ -12,7 +12,7 @@ import {
 } from '$lib/server/domain/prompts';
 
 export const getDevelopmentQuestion: DomainService<
-	{ development: DevelopmentInProgress },
+	{ topicId: string; development: DevelopmentInProgress },
 	ReadableStream<string>
 > = async ({ topicId, userId, development }): Promise<ReadableStream<string>> => {
 	const topicRepo = new TopicRepo();
@@ -29,7 +29,7 @@ export const getDevelopmentQuestion: DomainService<
 };
 
 export const getDevelopmentSuggestion: DomainService<
-	{ development: DevelopmentInProgress },
+	{ topicId: string; development: DevelopmentInProgress },
 	ReadableStream<string>
 > = async ({ topicId, userId, development }): Promise<ReadableStream<string>> => {
 	const topicRepo = new TopicRepo();
@@ -47,7 +47,7 @@ export const getDevelopmentSuggestion: DomainService<
 };
 
 export const acceptDevelopmentSuggestion: DomainService<
-	{ development: DevelopmentInProgress },
+	{ topicId: string; development: DevelopmentInProgress },
 	ReadableStream<string>
 > = async ({ topicId, userId, development }): Promise<ReadableStream<string>> => {
 	const topicRepo = new TopicRepo();
@@ -65,7 +65,7 @@ export const acceptDevelopmentSuggestion: DomainService<
 };
 
 export const submitDevelopmentPrompt: DomainService<
-	{ prompt: string; development: DevelopmentInProgress },
+	{ topicId: string; prompt: string; development: DevelopmentInProgress },
 	ReadableStream<string>
 > = async ({ topicId, userId, prompt, development }): Promise<ReadableStream<string>> => {
 	const topicRepo = new TopicRepo();
@@ -149,7 +149,7 @@ const finishExpansion = async (
 };
 
 export const finishDeveloping: DomainService<
-	{ development: DevelopmentInProgress },
+	{ topicId: string; development: DevelopmentInProgress },
 	string
 > = async ({ topicId, userId, development }) => {
 	const topicRepo = new TopicRepo();

@@ -1,12 +1,5 @@
 import { TopicRepo } from '$lib/server/topicRepo';
 import type { Topic, DevelopmentInProgress } from '$lib/types';
-import { type RootTopicId } from '$lib/common';
-
-const ROOT_PROMPTS: Record<RootTopicId, string> = {
-	discovery: '',
-	goals: 'The topic summary should be formulated in first person.',
-	ideas: ''
-};
 
 export const SYSTEM_PROMPT =
 	'You are an assistant of an app designed to discover topics by structuring the users thoughts as well as providing information. You respond in a very concise manner while forming grammatically correct sentences. You do not act like a person would, you are a tool. You avoid greetings, thanks and other interpersonal phrases, focusing only on the topic.';
@@ -115,10 +108,7 @@ export const getCategorizePrompt = (topic: Topic, topicRepo: TopicRepo) => {
 };
 
 export const getFinishExpansionPrompt = (topic: Topic, topicRepo: TopicRepo) => {
-	const rootTopicId = topicRepo.getRootTopicId(topic.id);
-	const rootPrompt = ROOT_PROMPTS[rootTopicId];
-
-	return `Based on the new information in our conversation, formulate a new subtopic. The subtopic should only contain new information that is not already in the summary. The new subtopic summary should be concise while being grammatically correct with subject, verb and object.${rootPrompt} The title should be only a few words long. Respond only with a title and summary for the new subtopic in the json format: {"title": "string", "summary": "string"}`;
+	return `Based on the new information in our conversation, formulate a new subtopic. The subtopic should only contain new information that is not already in the summary. The new subtopic summary should be concise while being grammatically correct with subject, verb and object. The title should be only a few words long. Respond only with a title and summary for the new subtopic in the json format: {"title": "string", "summary": "string"}`;
 };
 
 export const NEW_TOPIC_PROMPT =

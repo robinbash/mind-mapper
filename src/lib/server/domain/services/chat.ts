@@ -7,7 +7,7 @@ import { NEW_TOPIC_PROMPT } from '$lib/server/domain/prompts';
 export const submitPrompt: DomainService<
 	{ messages: Message[]; prompt: string },
 	ReadableStream<string>
-> = async ({ topicId, messages, prompt }): Promise<ReadableStream<string>> => {
+> = async ({ messages, prompt }): Promise<ReadableStream<string>> => {
 	return streamAiResponse({
 		messages: [...messages, { role: 'user', content: prompt }],
 		temperature: 0.9

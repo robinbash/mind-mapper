@@ -7,7 +7,7 @@ import { getSplitTopicPrompt, getCategorizePrompt } from '$lib/server/domain/pro
 
 // TODO: Transaction or pre validate json reponse
 
-export const splitTopic: DomainService<{}, void> = async ({ topicId, userId }) => {
+export const splitTopic: DomainService<{ topicId: string }, void> = async ({ topicId, userId }) => {
 	const topicRepo = new TopicRepo();
 	await topicRepo.loadTopics(userId);
 	const topic = topicRepo.getTopic(topicId);
@@ -40,7 +40,7 @@ export const splitTopic: DomainService<{}, void> = async ({ topicId, userId }) =
 	await topicRepo.updateTopic(topic);
 };
 
-export const categorize: DomainService<{}, void> = async ({ topicId, userId }) => {
+export const categorize: DomainService<{ topicId: string }, void> = async ({ topicId, userId }) => {
 	const topicRepo = new TopicRepo();
 	await topicRepo.loadTopics(userId);
 	const topic = topicRepo.getTopic(topicId);

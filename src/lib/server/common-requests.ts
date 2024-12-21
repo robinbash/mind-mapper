@@ -29,7 +29,7 @@ export const PostSimple =
 
 			const data: (TParams & { topicId: string }) | undefined = await request.json();
 
-			if (!data || !data.topicId) {
+			if (!data) {
 				throw new Error('No request data');
 			}
 
@@ -48,7 +48,7 @@ export const PostStream =
 			const userId = await authenticateRequest(request);
 			const data: (TParams & { topicId: string }) | undefined = await request.json();
 
-			if (!data || !data.topicId) {
+			if (!data) {
 				throw new Error('No request data');
 			}
 
