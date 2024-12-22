@@ -101,14 +101,14 @@ const finishRefinement = async (
 		]
 	});
 
-	const newDescription = aiResponse;
+	const newSummary = aiResponse;
 	topic.developments = topic.developments ?? [];
 	topic.developments.push({
 		messages: development.messages,
-		newDescription,
+		newSummary,
 		type: development.type
 	});
-	topic.description = newDescription;
+	topic.summary = newSummary;
 	await topicRepo.updateTopic(topic);
 	return topic.id;
 };
@@ -135,13 +135,14 @@ const finishExpansion = async (
 	}
 	return await topicRepo.addTopic({
 		title: newSubtopicJson.title,
-		description: newSubtopicJson.summary,
+		summary: newSubtopicJson.summary,
 		parentId: topic.id,
 		messages: [],
+		embedding: [],
 		developments: [
 			{
 				messages: development.messages,
-				newDescription: newSubtopicJson.summary,
+				newSummary: newSubtopicJson.summary,
 				type: development.type
 			}
 		]

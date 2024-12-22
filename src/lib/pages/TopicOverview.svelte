@@ -29,7 +29,7 @@
 	let scrolledToBottom = true;
 	let loading = false;
 	let inputShowing = false;
-	let descriptionEl: HTMLSpanElement;
+	let summaryEl: HTMLSpanElement;
 	let shownMessages: Message[] = [];
 
 	type Tab = 'summary' | 'chat';
@@ -79,16 +79,15 @@
 	}
 
 	$: {
-		if (descriptionEl || tab) {
+		if (summaryEl || tab) {
 			checkScroll();
 		}
 	}
 
 	const checkScroll = () => {
-		if (!descriptionEl) return;
-		scrolledToBottom =
-			descriptionEl.scrollHeight - descriptionEl.scrollTop < descriptionEl.clientHeight + 3;
-		scrolledToTop = descriptionEl.scrollTop <= 0;
+		if (!summaryEl) return;
+		scrolledToBottom = summaryEl.scrollHeight - summaryEl.scrollTop < summaryEl.clientHeight + 3;
+		scrolledToTop = summaryEl.scrollTop <= 0;
 	};
 
 	const submitPrompt = (text: string | null) => {
@@ -126,7 +125,7 @@
 				on:scroll={() => {
 					checkScroll();
 				}}
-				bind:this={descriptionEl}
+				bind:this={summaryEl}
 				class:shadow-both={!scrolledToTop && !scrolledToBottom}
 				class:shadow-top={scrolledToTop && !scrolledToBottom}
 				class:shadow-bottom={!scrolledToTop && scrolledToBottom}
@@ -139,7 +138,7 @@
 				>
 					<swiper-slide class="flex h-full w-full py-4">
 						<span class="opacity-65 h-full max-h-full w-full overflow-y-scroll">
-							{topic?.description}
+							{topic?.summary}
 						</span>
 					</swiper-slide>
 					<swiper-slide class="max-h-full h-full w-full">

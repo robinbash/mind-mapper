@@ -4,6 +4,8 @@ import { SYSTEM_PROMPT } from './prompts';
 import { dev } from '$app/environment';
 
 import { env } from '$env/dynamic/private';
+import { VOYAGE_API_KEY } from '$env/static/private';
+import { VoyageAIClient } from 'voyageai';
 
 const useRealAi = env.USE_REAL_AI ?? false;
 
@@ -130,4 +132,16 @@ export const getAiResponse = async ({
 		.filter((c) => c.type === 'text')
 		.map((c) => c.text)
 		.join();
+};
+
+export const getEmbedding = async (text: string, type: 'document' | 'query' = 'document') => {
+	const client = new VoyageAIClient({ apiKey: VOYAGE_API_KEY });
+	const embedding = await client.embed({
+		input: text,
+		model: 'voyage-3',
+		inputType: type
+	});
+	if (!embedding.data || embedding.data.length != 1 || !embedding.data[0].embedding)
+		throw new Error('Error getting embedding');
+	return embedding.data[0].embedding;
 };

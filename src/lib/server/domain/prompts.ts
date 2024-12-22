@@ -10,7 +10,7 @@ export const getTopicPrompt = (topic: Topic, topicRepo: TopicRepo): string => {
 		subtopics.length > 0
 			? `The existing subtopics are: ${subtopics.map((t) => `"${t.title}"`).join(', ')}\n`
 			: '';
-	return `The title of our topic is: "${topic.title}".\n${subtopicPrompt} The summary text of our topic is: "${topic.description}"`;
+	return `The title of our topic is: "${topic.title}".\n${subtopicPrompt} The summary text of our topic is: "${topic.summary}"`;
 };
 
 export const getPreviousQuestionsPrompt = (topic: Topic, development: DevelopmentInProgress) => {

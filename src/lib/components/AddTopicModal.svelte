@@ -7,10 +7,10 @@
 		const userId = $user?.uid;
 		if (!userId) return;
 		const title = modal.querySelector('input')?.value ?? '';
-		const description = modal.querySelector('textarea')?.value ?? '';
+		const summary = modal.querySelector('textarea')?.value ?? '';
 		mindmap.saveTopic({
 			title,
-			description,
+			summary,
 			parentId: topicId,
 			userId
 		});
@@ -21,7 +21,7 @@
 <dialog class="modal" bind:this={modal}>
 	<div class="flex flex-col modal-box w-full items-end">
 		<input type="text" placeholder="Title" class="input input-bordered input-md w-full mb-3" />
-		<textarea class="textarea textarea-bordered w-full mb-3" placeholder="Description" />
+		<textarea class="textarea textarea-bordered w-full mb-3" placeholder="Summary" />
 		<button class="btn btn-outline" on:click={addTopic}>Add</button>
 	</div>
 	<form method="dialog" class="modal-backdrop">

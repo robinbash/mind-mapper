@@ -45,6 +45,7 @@
 		"firebase": "^10.12.2",
 		"firebase-admin": "^12.2.0",
 		"swiper": "^11.1.15",
-		"theme-change": "^2.5.0"
+		"theme-change": "^2.5.0",
+		"voyageai": "^0.0.3-1"
 	}
 }

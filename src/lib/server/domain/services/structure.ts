@@ -31,12 +31,13 @@ export const splitTopic: DomainService<{ topicId: string }, void> = async ({ top
 		}
 		await topicRepo.addTopic({
 			title: subtopic.title,
-			description: subtopic.summary,
+			summary: subtopic.summary,
 			parentId: topic.id,
-			messages: []
+			messages: [],
+			embedding: []
 		});
 	}
-	topic.description = topicSplitJson.summary;
+	topic.summary = topicSplitJson.summary;
 	await topicRepo.updateTopic(topic);
 };
 
@@ -78,9 +79,10 @@ export const categorize: DomainService<{ topicId: string }, void> = async ({ top
 	for (const [title, subtopics] of Object.entries(categoryMap)) {
 		const categoryId = await topicRepo.addTopic({
 			title,
-			description: '',
+			summary: '',
 			parentId: topic.id,
-			messages: []
+			messages: [],
+			embedding: []
 		});
 
 		for (const subtopic of subtopics) {

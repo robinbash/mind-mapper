@@ -26,18 +26,18 @@ export type DevelopmentInProgress = {
 
 export type Development = {
 	messages: DevelopmentMessage[];
-	newDescription: string;
+	newSummary: string;
 	type: DevelopmentType;
 };
 
 export type Topic = {
 	id: string;
 	title: string;
-	description: string;
+	summary: string;
 	parentId: string | null;
 	messages: Message[];
+	embedding: number[];
 	// TODO
 	// contextAware?: boolean;
-	// embedding?: number[];
 	developments?: Development[];
 };

@@ -24,19 +24,19 @@ function createMindmapStore() {
 
 	const saveTopic = async ({
 		parentId,
-		description,
+		summary,
 		title,
 		userId
 	}: {
 		parentId: string;
-		description: string;
+		summary: string;
 		title: string;
 		userId: string;
 	}) => {
 		const { id } = await addDoc(collection(db, TOPICS_COLLECTION), {
 			parentId,
 			title,
-			description,
+			summary,
 			userId,
 			created: serverTimestamp()
 		});
