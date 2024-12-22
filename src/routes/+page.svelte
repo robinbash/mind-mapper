@@ -3,8 +3,18 @@
 	import { onMount } from 'svelte';
 	import { logout } from '$lib/auth';
 	import { mindmap } from '$lib/stores';
+	import { AddCategoryModal } from '$lib/components';
 
-	$: rootTopics = $mindmap.filter((topic) => !topic.parentId);
+	$: rootNodes = $mindmap.filter((node) => !node.parentId);
+
+	$: topics = rootNodes.filter((node) => node.type === 'topic');
+	$: categories = rootNodes.filter((node) => node.type === 'category');
+
+	let categoryModalOpen = false;
+
+	const closeCategoryModal = () => {
+		categoryModalOpen = false;
+	};
 
 	onMount(() => {
 		themeChange(false);
@@ -32,9 +42,14 @@
 			</div>
 
 			<div class="flex w-1/2 justify-center opacity-75">
-				<a href="/new" class="w-full gap-1 btn btn-md font-normal text-base btn-outline">
+				<button
+					on:click={() => {
+						categoryModalOpen = true;
+					}}
+					class="w-full gap-1 btn btn-md font-normal text-base btn-outline"
+				>
 					<span class="iconify w-5 h-5 mdi--plus" />
-					Category</a
+					Category</button
 				>
 			</div>
 		</div>
@@ -46,13 +61,22 @@
 				<span class="iconify w-5 h-5 mdi--new-releases" />
 				New prompts
 			</a>
-			{#each rootTopics as topic}
+			{#each categories as category}
+				<a
+					href={`/topics/${category.id}`}
+					class="btn btn-lg w-full font-normal text-base rounded-md btn-outline opacity-75"
+				>
+					{category.title}
+				</a>
+			{/each}
+			{#each topics as topic}
 				<a href={`/topics/${topic.id}`} class="btn btn-lg w-full font-normal text-base rounded-md">
 					{topic.title}
 				</a>
 			{/each}
 		</div>
 	</div>
+	<AddCategoryModal open={categoryModalOpen} onClose={closeCategoryModal} />
 </div>
 
 <style>

@@ -1,4 +1,4 @@
-import type { Node, Topic } from '$lib/types';
+import type { Category, Node, Topic } from '$lib/types';
 import { adminDb } from '$lib/server/firebase-admin';
 
 const NODES_COLLECTION = 'nodes';
@@ -77,6 +77,14 @@ export class NodeRepo {
 		const newDoc = await adminDb
 			.collection(NODES_COLLECTION)
 			.add({ ...newNode, type: 'topic', userId: this.userId });
+		return newDoc.id;
+	};
+
+	addCategory = async (newNode: Omit<Category, 'id' | 'type'>): Promise<string> => {
+		if (!this.userId) throw new Error('Nodes not loaded');
+		const newDoc = await adminDb
+			.collection(NODES_COLLECTION)
+			.add({ ...newNode, type: 'category', userId: this.userId });
 		return newDoc.id;
 	};
 

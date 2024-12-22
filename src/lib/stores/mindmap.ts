@@ -1,61 +1,27 @@
 import { writable } from 'svelte/store';
-import type { Topic } from '$lib/types';
-import {
-	collection,
-	onSnapshot,
-	addDoc,
-	updateDoc,
-	doc,
-	query,
-	where,
-	serverTimestamp
-} from 'firebase/firestore';
+import type { Node } from '$lib/types';
+import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import { db } from '$lib/firebase';
-import { goto } from '$app/navigation';
 
-const TOPICS_COLLECTION = 'topics';
+const NODES_COLLECTION = 'nodes';
 
 function createMindmapStore() {
-	const { subscribe, set } = writable<Topic[]>([]);
+	const { subscribe, set } = writable<Node[]>([]);
 
 	let unsubscribe: () => void;
 
-	const isTopicRoot = (topic?: Topic) => !!topic?.parentId;
-
-	const saveTopic = async ({
-		parentId,
-		summary,
-		title,
-		userId
-	}: {
-		parentId: string;
-		summary: string;
-		title: string;
-		userId: string;
-	}) => {
-		const { id } = await addDoc(collection(db, TOPICS_COLLECTION), {
-			parentId,
-			title,
-			summary,
-			userId,
-			created: serverTimestamp()
-		});
-		goto(`/${id}`);
-		// updateDoc(doc(db, TOPICS_COLLECTION, Topic.id), { messages: Topic.messages });
-	};
+	const isNodeRoot = (node?: Node) => !!node?.parentId;
 
 	return {
 		subscribe,
-		saveTopic,
 		init: (userId: string) => {
-			const colRef = collection(db, TOPICS_COLLECTION);
+			const colRef = collection(db, NODES_COLLECTION);
 			const q = query(colRef, where('userId', '==', userId));
 			unsubscribe = onSnapshot(q, (snapshot) => {
 				const data = snapshot.docs.map((doc) => ({
 					id: doc.id,
-					...doc.data(),
-					messages: doc.data().messages || [] // TODO
-				})) as Topic[];
+					...doc.data()
+				})) as Node[];
 				set(data);
 			});
 		},
@@ -64,7 +30,7 @@ function createMindmapStore() {
 				unsubscribe();
 			}
 		},
-		isTopicRoot
+		isNodeRoot
 	};
 }
 
