@@ -23,10 +23,10 @@
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ topicId: topic.id })
+				body: JSON.stringify({ nodeId: topic.id })
 			});
 			if (response.ok) {
-				goto(`/${topic.parentId}`);
+				goto(`/${topic.parentId ?? ''}`);
 			}
 		} finally {
 			setLoading(false);

@@ -1,11 +1,11 @@
-import { TopicRepo } from '$lib/server/topicRepo';
+import { NodeRepo } from '$lib/server/nodeRepo';
 import type { Topic, DevelopmentInProgress } from '$lib/types';
 
 export const SYSTEM_PROMPT =
 	'You are an assistant of an app designed to discover topics by structuring the users thoughts as well as providing information. You respond in a very concise manner while forming grammatically correct sentences. You do not act like a person would, you are a tool. You avoid greetings, thanks and other interpersonal phrases, focusing only on the topic.';
 
-export const getTopicPrompt = (topic: Topic, topicRepo: TopicRepo): string => {
-	const subtopics = topicRepo.getSubtopics(topic.id);
+export const getTopicPrompt = (topic: Topic, nodeRepo: NodeRepo): string => {
+	const subtopics = nodeRepo.getChildren(topic.id);
 	const subtopicPrompt =
 		subtopics.length > 0
 			? `The existing subtopics are: ${subtopics.map((t) => `"${t.title}"`).join(', ')}\n`
@@ -67,10 +67,10 @@ export const FINISH_REFINEMENT_PROMPT =
 
 export const getQuestionPrompt = (
 	topic: Topic,
-	topicRepo: TopicRepo,
+	nodeRepo: NodeRepo,
 	development: DevelopmentInProgress
 ) => {
-	const topicPrompt = getTopicPrompt(topic, topicRepo);
+	const topicPrompt = getTopicPrompt(topic, nodeRepo);
 	const previousQuestionsPrompt = getPreviousQuestionsPrompt(topic, development);
 	const questionPrompt =
 		development.type === 'refinement'
@@ -83,10 +83,10 @@ export const getQuestionPrompt = (
 
 export const getSuggestionPrompt = (
 	topic: Topic,
-	topicRepo: TopicRepo,
+	nodeRepo: NodeRepo,
 	development: DevelopmentInProgress
 ) => {
-	const topicPrompt = getTopicPrompt(topic, topicRepo);
+	const topicPrompt = getTopicPrompt(topic, nodeRepo);
 	const previousSuggestionsPrompt = getPreviousSuggestionsPrompt(topic, development);
 	const suggestionPrompt =
 		development.type === 'refinement'
@@ -97,17 +97,17 @@ export const getSuggestionPrompt = (
 	return `${topicPrompt}\n${previousSuggestionsPrompt}\n${suggestionPrompt}`;
 };
 
-export const getSplitTopicPrompt = (topic: Topic, topicRepo: TopicRepo) => {
-	const topicPrompt = getTopicPrompt(topic, topicRepo);
+export const getSplitTopicPrompt = (topic: Topic, nodeRepo: NodeRepo) => {
+	const topicPrompt = getTopicPrompt(topic, nodeRepo);
 	return `${topicPrompt}\nYour task is to split out 2-4 new subtopics from the main topic. The new subtopic summaries should be as close to the corresponding text passages in the original summary as possible while being grammatically correct and forming full sentences. The titles should be only a few words long. The information that has been extracted into subtopics should be removed from the original topic summary. Respond only with the updated topic summary and the summaries and titles for the new subtopics in the json format: {"summary": "string", "subtopics": [{"summary": "string", "title": "string"}]}`;
 };
 
-export const getCategorizePrompt = (topic: Topic, topicRepo: TopicRepo) => {
-	const topicPrompt = getTopicPrompt(topic, topicRepo);
+export const getCategorizePrompt = (topic: Topic, nodeRepo: NodeRepo) => {
+	const topicPrompt = getTopicPrompt(topic, nodeRepo);
 	return `${topicPrompt}\nDivide the subtopics into no more than 3 categories with a title with a few words. The categories should allow adding more similar subtopics. Respond only in json format [{"title": "string", "summary": "string", "subtopics": ["string"]}]`;
 };
 
-export const getFinishExpansionPrompt = (topic: Topic, topicRepo: TopicRepo) => {
+export const getFinishExpansionPrompt = (topic: Topic, nodeRepo: NodeRepo) => {
 	return `Based on the new information in our conversation, formulate a new subtopic. The subtopic should only contain new information that is not already in the summary. The new subtopic summary should be concise while being grammatically correct with subject, verb and object. The title should be only a few words long. Respond only with a title and summary for the new subtopic in the json format: {"title": "string", "summary": "string"}`;
 };
 

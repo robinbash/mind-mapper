@@ -1,5 +1,5 @@
 import { streamAiResponse, getAiResponse, getEmbedding } from '$lib/server/domain/ai';
-import { TopicRepo } from '$lib/server/topicRepo';
+import { NodeRepo } from '$lib/server/nodeRepo';
 import type { Topic, Message } from '$lib/types';
 import type { DomainService } from './types';
 import { NEW_TOPIC_PROMPT } from '$lib/server/domain/prompts';
@@ -28,9 +28,8 @@ export const saveNewTopic: DomainService<
 	{ messages: Message[]; parentId: string | null },
 	string
 > = async ({ messages, parentId, userId }): Promise<string> => {
-	const topicRepo = new TopicRepo();
-
-	await topicRepo.loadTopics(userId);
+	const nodeRepo = new NodeRepo();
+	await nodeRepo.load(userId);
 
 	const topicInfo = await getAiResponse({
 		messages: [...messages, { role: 'user', content: NEW_TOPIC_PROMPT }]
@@ -53,6 +52,6 @@ export const saveNewTopic: DomainService<
 		embedding
 	};
 
-	const newTopicId = topicRepo.addTopic(topic);
+	const newTopicId = nodeRepo.addTopic(topic);
 	return newTopicId;
 };

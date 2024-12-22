@@ -31,6 +31,7 @@ export type Development = {
 };
 
 export type Topic = {
+	type: 'topic';
 	id: string;
 	title: string;
 	summary: string;
@@ -41,3 +42,15 @@ export type Topic = {
 	// contextAware?: boolean;
 	developments?: Development[];
 };
+
+export type Category = {
+	type: 'category';
+	id: string;
+	parentId: string | null;
+	title: string;
+	embedding: number[];
+	// TODO
+	// system prompt
+};
+
+export type Node = Topic | Category;

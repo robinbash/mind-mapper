@@ -1,22 +1,19 @@
-import { TopicRepo } from '$lib/server/topicRepo';
+import { NodeRepo } from '$lib/server/nodeRepo';
 import type { Message } from '$lib/types';
 import type { DomainService } from './types';
 
-export const deleteTopic: DomainService<{ topicId: string }, void> = async ({
-	topicId,
-	userId
-}) => {
-	const topicRepo = new TopicRepo();
-	await topicRepo.loadTopics(userId);
+export const deleteNode: DomainService<{ nodeId: string }, void> = async ({ nodeId, userId }) => {
+	const nodeRepo = new NodeRepo();
+	await nodeRepo.load(userId);
 
-	const deleteWithSubtopics = async (id: string) => {
-		for (const subtopic of topicRepo.getSubtopics(id)) {
-			await deleteWithSubtopics(subtopic.id);
+	const deleteWithChildren = async (id: string) => {
+		for (const child of nodeRepo.getChildren(id)) {
+			await deleteWithChildren(child.id);
 		}
-		await topicRepo.deleteTopic(id);
+		await nodeRepo.deleteNode(id);
 	};
 
-	await deleteWithSubtopics(topicId);
+	await deleteWithChildren(nodeId);
 };
 
 export const addMessages: DomainService<{ topicId: string; messages: Message[] }, void> = async ({
@@ -24,9 +21,9 @@ export const addMessages: DomainService<{ topicId: string; messages: Message[] }
 	userId,
 	messages
 }) => {
-	const topicRepo = new TopicRepo();
-	await topicRepo.loadTopics(userId);
-	const topic = topicRepo.getTopic(topicId);
+	const nodeRepo = new NodeRepo();
+	await nodeRepo.load(userId);
+	const topic = nodeRepo.getTopic(topicId);
 	topic.messages = [...(topic.messages ?? []), ...messages];
-	topicRepo.updateTopic(topic);
+	nodeRepo.updateNode(topic);
 };
