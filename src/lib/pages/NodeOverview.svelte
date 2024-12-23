@@ -1,16 +1,6 @@
 <script lang="ts">
-	import {
-		Breadcrumbs,
-		TopicActionsDropdown,
-		PromptInputButton,
-		Messages,
-		Topic,
-		Category
-	} from '$lib/components';
-	import { topicChat } from '$lib/stores/topicChat';
+	import { Breadcrumbs, Topic, Category } from '$lib/components';
 	import { mindmap } from '$lib/stores';
-	import { onMount } from 'svelte';
-	import type { Message } from '$lib/types';
 
 	export let nodeId: string;
 	$: node = $mindmap.find((n) => n.id === nodeId);

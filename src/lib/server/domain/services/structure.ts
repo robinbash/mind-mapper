@@ -64,6 +64,8 @@ export const categorize: DomainService<{ topicId?: string }, void> = async ({
 	// too many categories on root
 	// cluster them into 1-3 categories
 	// renaming might be necessary
+	// do what with mixed in topics?
+	// -> on root: leave them, on topics: move them to the new category
 
 	// case 3:
 

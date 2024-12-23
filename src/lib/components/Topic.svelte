@@ -160,18 +160,18 @@
 		<!-- <button class="btn btn-sm"
 						><span class="iconify mdi--format-page-split w-5 h-5" /> Split</button
 					> -->
-		<div role="tablist" class="tabs tabs-bordered tabs-sm">
-			<button
-				role="tab"
-				class="tab"
-				class:tab-active={tab === 'summary'}
-				on:click={() => goToTab('summary')}>Summary</button
-			>
-			<button
-				role="tab"
-				class="tab"
-				class:tab-active={tab === 'chat'}
-				on:click={() => goToTab('chat')}>Chat</button
+		<div class="flex gap-4">
+			<button on:click={() => goToTab('summary')}>
+				<span
+					class="iconify mdi--file-document-box-outline h-5 w-5"
+					class:opacity-65={tab !== 'summary'}
+				/>
+			</button>
+			<button on:click={() => goToTab('chat')}>
+				<span
+					class="iconify mdi--chat-bubble-outline h-5 w-5"
+					class:opacity-65={tab !== 'chat'}
+				/></button
 			>
 		</div>
 		<div class="absolute right-8">
