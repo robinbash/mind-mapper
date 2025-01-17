@@ -1,7 +1,7 @@
 import { getAiResponse } from '$lib/server/domain/ai';
 import { NodeRepo } from '$lib/server/nodeRepo';
 import type { DomainService } from './types';
-import type { Node, Topic } from '$lib/types';
+import type { Node } from '$lib/types';
 
 import { getSplitTopicPrompt, getCategorizePrompt } from '$lib/server/domain/prompts';
 
@@ -52,64 +52,4 @@ export const categorize: DomainService<{ topicId?: string }, void> = async ({
 	} else {
 		nodes = nodeRepo.getRootNodes();
 	}
-	// case 1:
-	// all topics, cluster them into 1-3 categories
-	// leave outlier topics
-	// unless there are too many outliers, then force them into categories
-	// special category for that?
-	// -> yes seems nice: "new topics" or "Uncategorized" or "Miscellaneous"
-	// needs to be special, its not in the db
-
-	// case 2:
-	// too many categories on root
-	// cluster them into 1-3 categories
-	// renaming might be necessary
-	// do what with mixed in topics?
-	// -> on root: leave them, on topics: move them to the new category
-
-	// case 3:
-
-	// const prompt = getCategorizePrompt(topic, nodeRepo);
-
-	// const aiResponse = await getAiResponse({
-	// 	messages: [{ role: 'user', content: prompt }]
-	// });
-
-	// const categorizeJson = JSON.parse(aiResponse);
-
-	// console.log(categorizeJson);
-
-	// if (!Array.isArray(categorizeJson)) {
-	// 	throw new Error('Invalid AI response format');
-	// }
-
-	// const categoryMap: Record<string, Topic[]> = categorizeJson.reduce((acc, category) => {
-	// 	if (!category.title || !category.subtopics) {
-	// 		throw new Error('Invalid category format');
-	// 	}
-	// 	const subtopics = category.subtopics.map((title: string) => {
-	// 		const subtopic = allSubtopics.find((t) => t.title === title);
-	// 		if (!subtopic) {
-	// 			throw new Error(`Subtopic "${category.title}" not found`);
-	// 		}
-	// 		return subtopic;
-	// 	});
-	// 	acc[category.title] = subtopics;
-	// 	return acc;
-	// }, {});
-
-	// for (const [title, subtopics] of Object.entries(categoryMap)) {
-	// 	const categoryId = await nodeRepo.addTopic({
-	// 		title,
-	// 		summary: '',
-	// 		parentId: topic.id,
-	// 		messages: [],
-	// 		embedding: []
-	// 	});
-
-	// 	for (const subtopic of subtopics) {
-	// 		subtopic.parentId = categoryId;
-	// 		await nodeRepo.updateTopic(subtopic);
-	// 	}
-	// }
 };

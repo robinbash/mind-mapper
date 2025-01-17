@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { authFetch } from '$lib/fetch';
-	import type { Topic } from '$lib/types';
+	import type { Node } from '$lib/types';
 	import Dropdown from './Dropdown.svelte';
 	import Modal from './Modal.svelte';
 
-	export let topic: Topic | undefined;
+	export let topic: Node | undefined;
 	export let setLoading: (value: boolean) => void;
 
 	let deleteModalOpen = false;

@@ -22,7 +22,7 @@ export async function authenticateRequest(request: Request) {
 }
 
 export const PostSimple =
-	<TParams>(service: DomainService<TParams, string | void>): RequestHandler =>
+	<TParams, TJsonable>(service: DomainService<TParams, TJsonable | void>): RequestHandler =>
 	async ({ request }) => {
 		try {
 			const userId = await authenticateRequest(request);

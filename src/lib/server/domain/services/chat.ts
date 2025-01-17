@@ -3,6 +3,7 @@ import { NodeRepo } from '$lib/server/nodeRepo';
 import type { Topic, Message } from '$lib/types';
 import type { DomainService } from './types';
 import { NEW_TOPIC_PROMPT } from '$lib/server/domain/prompts';
+import { multiply, transpose } from 'mathjs';
 
 export const submitPrompt: DomainService<
 	{ messages: Message[]; prompt: string },
@@ -12,6 +13,30 @@ export const submitPrompt: DomainService<
 		messages: [...messages, { role: 'user', content: prompt }],
 		temperature: 0.9
 	});
+};
+
+export const getQueryMatches: DomainService<{ query: string }, string[]> = async ({
+	query,
+	userId
+}) => {
+	const nodeRepo = new NodeRepo();
+	await nodeRepo.load(userId);
+	const topics = nodeRepo.getTopics();
+
+	const queryEmbedding = await getEmbedding(query, 'query');
+	const topicEmbeddings = topics.map((topic) => topic.embedding);
+
+	const thresh = 0.56;
+
+	const similarities = multiply(queryEmbedding, transpose(topicEmbeddings));
+	console.log('similarities', similarities);
+
+	const matches = similarities.reduce((acc, sim, idx) => {
+		if ((sim as number) >= thresh) acc.push(topics[idx].id);
+		return acc;
+	}, [] as string[]);
+
+	return matches;
 };
 
 export const submitPromptForNewTopic: DomainService<

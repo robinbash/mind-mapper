@@ -42,6 +42,12 @@ export class NodeRepo {
 		return node;
 	};
 
+	getTopics = (): Topic[] => {
+		if (!this.nodesById) throw new Error('Nodes not loaded');
+		return Object.values(this.nodesById).filter((node) => node.type === 'topic');
+		// return Object.values(this.nodesById).filter((t) => t.type === 'topic');
+	};
+
 	getRootNodes = (): Node[] => {
 		if (!this.nodesById) throw new Error('Nodes not loaded');
 		return Object.values(this.nodesById).filter((t) => !t.parentId);

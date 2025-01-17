@@ -44,6 +44,8 @@
 		"@firebase/auth": "^1.7.4",
 		"firebase": "^10.12.2",
 		"firebase-admin": "^12.2.0",
+		"mathjs": "^14.0.1",
+		"svelte-markdown": "^0.4.1",
 		"swiper": "^11.1.15",
 		"theme-change": "^2.5.0",
 		"voyageai": "^0.0.3-1"

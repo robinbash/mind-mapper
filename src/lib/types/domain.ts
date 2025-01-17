@@ -48,7 +48,6 @@ export type Category = {
 	id: string;
 	parentId: string | null;
 	title: string;
-	embedding: number[];
 	// TODO
 	// system prompt
 };

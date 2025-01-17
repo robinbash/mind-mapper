@@ -5,7 +5,6 @@ import { dev } from '$app/environment';
 
 import { env } from '$env/dynamic/private';
 import { VOYAGE_API_KEY } from '$env/static/private';
-import { VoyageAIClient } from 'voyageai';
 
 const useRealAi = env.USE_REAL_AI ?? false;
 
@@ -134,14 +133,29 @@ export const getAiResponse = async ({
 		.join();
 };
 
-export const getEmbedding = async (text: string, type: 'document' | 'query' = 'document') => {
-	const client = new VoyageAIClient({ apiKey: VOYAGE_API_KEY });
-	const embedding = await client.embed({
+export const getEmbedding = async (
+	text: string,
+	type: 'document' | 'query' = 'document'
+): Promise<number[]> => {
+	const headers = {
+		Authorization: `Bearer ${VOYAGE_API_KEY}`,
+		'Content-Type': 'application/json'
+	};
+	const data = {
 		input: text,
-		model: 'voyage-3',
-		inputType: type
+		model: 'voyage-3-large',
+		input_type: type,
+		output_dimension: 256
+	};
+
+	const response = await fetch('https://api.voyageai.com/v1/embeddings', {
+		method: 'POST',
+		headers,
+		body: JSON.stringify(data)
 	});
-	if (!embedding.data || embedding.data.length != 1 || !embedding.data[0].embedding)
-		throw new Error('Error getting embedding');
-	return embedding.data[0].embedding;
+
+	const responseData = await response.json();
+	console.log(responseData);
+
+	return responseData.data[0].embedding;
 };
