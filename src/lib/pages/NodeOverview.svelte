@@ -6,17 +6,13 @@
 	$: node = $mindmap.find((n) => n.id === nodeId);
 </script>
 
-<div class="container">
-	<div class="flex flex-col md:w-[44rem] w-full h-full p-5">
-		<Breadcrumbs topicId={nodeId} />
-		{#if node?.type === 'topic'}
-			<Topic topic={node} />
-		{/if}
-		{#if node?.type === 'category'}
-			<Category category={node} />
-		{/if}
-	</div>
-</div>
+<Breadcrumbs topicId={nodeId} />
+{#if node?.type === 'topic'}
+	<Topic topic={node} />
+{/if}
+{#if node?.type === 'category'}
+	<Category category={node} />
+{/if}
 
 <style>
 	.container {

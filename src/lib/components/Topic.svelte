@@ -1,5 +1,11 @@
 <script lang="ts">
-	import { Breadcrumbs, TopicActionsDropdown, PromptInputButton, Messages } from '$lib/components';
+	import {
+		Breadcrumbs,
+		TopicActionsDropdown,
+		PromptInputButton,
+		Messages,
+		AIText
+	} from '$lib/components';
 	import { topicChat } from '$lib/stores/topicChat';
 	import { mindmap } from '$lib/stores';
 	import { register } from 'swiper/element/bundle';
@@ -127,9 +133,9 @@
 			on:swiperslidechange={handleSlideChange}
 			class="flex max-h-full h-full"
 		>
-			<swiper-slide class="flex h-full w-full py-4">
-				<span class="opacity-65 h-full max-h-full w-full overflow-y-scroll">
-					{topic?.summary}
+			<swiper-slide class="flex h-full w-full pb-4">
+				<span class="h-full max-h-full w-full overflow-y-scroll pt-2 opacity-65">
+					<AIText text={topic?.summary} />
 				</span>
 			</swiper-slide>
 			<swiper-slide class="max-h-full h-full w-full">
@@ -163,13 +169,13 @@
 		<div class="flex gap-4">
 			<button on:click={() => goToTab('summary')}>
 				<span
-					class="iconify mdi--file-document-box-outline h-5 w-5"
+					class="iconify mdi--file-document-box-outline h-6 w-6"
 					class:opacity-65={tab !== 'summary'}
 				/>
 			</button>
 			<button on:click={() => goToTab('chat')}>
 				<span
-					class="iconify mdi--chat-bubble-outline h-5 w-5"
+					class="iconify mdi--chat-bubble-outline h-6 w-6"
 					class:opacity-65={tab !== 'chat'}
 				/></button
 			>
@@ -205,9 +211,6 @@
 {/if}
 
 <style>
-	.container {
-		@apply flex justify-center items-center min-w-full min-h-full;
-	}
 	.shadow-both {
 		box-shadow:
 			inset 0px -8px 5px -5px rgba(0, 0, 0, 0.15),

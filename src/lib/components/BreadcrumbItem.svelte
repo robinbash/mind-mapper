@@ -1,1 +1,3 @@
-<div class="flex"><span class="iconify mdi--chevron-right min-w-5 min-h-5" /><slot /></div>
+<div class="flex h-6 items-center">
+	<span class="iconify mdi--chevron-right min-w-4 min-h-4" /><slot />
+</div>

@@ -1,16 +1,29 @@
-import { writable } from 'svelte/store';
-import type { Node } from '$lib/types';
+import { writable, get } from 'svelte/store';
+import type { Node, Category } from '$lib/types';
 import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import { db } from '$lib/firebase';
 
 const NODES_COLLECTION = 'nodes';
 
 function createMindmapStore() {
-	const { subscribe, set } = writable<Node[]>([]);
+	const mindmapStore = writable<Node[]>([]);
+	const { subscribe, set } = mindmapStore;
 
 	let unsubscribe: () => void;
 
 	const isNodeRoot = (node?: Node) => !!node?.parentId;
+
+	const getNumChildren = (category: Category) => {
+		return get(mindmapStore).filter((node) => node.parentId === category.id).length;
+	};
+
+	const getNumSubtree = (category: Category): number => {
+		return get(mindmapStore).reduce((count, node) => {
+			if (node.parentId !== category.id) return count;
+			if (node.type === 'topic') return count + 1;
+			return count + getNumSubtree(node);
+		}, 0);
+	};
 
 	return {
 		subscribe,
@@ -30,7 +43,9 @@ function createMindmapStore() {
 				unsubscribe();
 			}
 		},
-		isNodeRoot
+		isNodeRoot,
+		getNumChildren,
+		getNumSubtree
 	};
 }
 

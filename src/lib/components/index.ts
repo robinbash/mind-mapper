@@ -10,3 +10,4 @@ export { default as PromptInputButton } from './PromptInputButton.svelte';
 export { default as Messages } from './Messages.svelte';
 export { default as Topic } from './Topic.svelte';
 export { default as Category } from './Category.svelte';
+export { default as AIText } from './AIText.svelte';

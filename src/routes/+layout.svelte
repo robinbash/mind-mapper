@@ -33,7 +33,9 @@
 	{:else if $user === null}
 		<Login />
 	{:else}
-		<slot />
+		<div class="flex flex-col md:w-[44rem] w-full h-full p-5 relative">
+			<slot />
+		</div>
 	{/if}
 </div>
 
@@ -43,7 +45,7 @@
 	}
 
 	.app {
-		@apply flex w-screen h-screen pt-inset;
+		@apply flex w-screen h-screen pt-inset justify-center;
 		touch-action: manipulation;
 		overscroll-behavior: none;
 		font-family: 'Lato';

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { mindmap } from '$lib/stores';
+	import { TopicActionsDropdown } from '$lib/components';
 	import { register } from 'swiper/element/bundle';
 	import { onMount } from 'svelte';
 	import 'swiper/css';
@@ -22,13 +23,16 @@
 		<span class="w-full">{category.title}</span>
 	</button>
 </div>
-<div class="flex justify-center flex-col gap-4 pt-4 pb-6">
+<div class="container pt-4 mb-12">
 	{#each childCategories as childCategory}
 		<a
 			href={`/topics/${childCategory.id}`}
-			class="flex h-auto btn btn-lg w-full font-normal text-base overflow-hidden rounded-md opcaity-75 button-outline"
+			class="relative flex h-auto btn btn-lg w-full font-normal text-base overflow-hidden rounded-md opacity-75 btn-outline"
 		>
 			{childCategory.title}
+			<span class="absolute left-3 badge badge-ghost badge-sm"
+				>{mindmap.getNumSubtree(childCategory)}</span
+			>
 		</a>
 	{/each}
 	{#each childTopics as childTopic}
@@ -44,10 +48,13 @@
 		<span class="iconify mdi--add w-5 h-5" />Add Subtopic
 	</button>
 </div>
+<div class="absolute flex bottom-6 right-2">
+	<TopicActionsDropdown topic={category} setLoading={(value) => {}} />
+</div>
 
 <style>
 	.container {
-		@apply flex justify-center items-center min-w-full min-h-full;
+		@apply flex flex-col min-w-full max-h-full h-full gap-4 w-full overflow-y-scroll;
 	}
 	.shadow-both {
 		box-shadow:

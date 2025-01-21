@@ -21,7 +21,7 @@
 	});
 </script>
 
-<div class="absolute top-0 w-full flex px-6 md:p-8 mt-4 pt-inset items-center justify-between">
+<div class="absolute top-0 left-0 px-8 w-full flex mt-4 items-center justify-between">
 	<button class="btn btn-md btn-circle" on:click={logout}
 		><span class="iconify mdi--logout" /></button
 	>
@@ -31,7 +31,7 @@
 		>
 	</div>
 </div>
-<div class="w-full pt-24 pb-8 px-4">
+<div class="w-full h-full pt-20 pb-8">
 	<div class="container">
 		<div class="flex w-full gap-3 pb-4">
 			<div class="flex w-1/2 justify-center">
@@ -55,7 +55,7 @@
 		</div>
 		<div class="container">
 			<a
-				href="/topics/miscellaneous"
+				href="/new-topics"
 				class="btn btn-lg btn-outline opacity-75 w-full font-normal text-base rounded-md"
 			>
 				<span class="iconify w-5 h-5 mdi--new-releases" />
@@ -64,9 +64,12 @@
 			{#each categories as category}
 				<a
 					href={`/topics/${category.id}`}
-					class="btn btn-lg w-full font-normal text-base rounded-md btn-outline opacity-75"
+					class="relative btn btn-lg w-full font-normal text-base rounded-md btn-outline opacity-75"
 				>
 					{category.title}
+					<span class="absolute left-3 badge badge-ghost badge-sm"
+						>{mindmap.getNumSubtree(category)}</span
+					>
 				</a>
 			{/each}
 			{#each topics as topic}
@@ -81,7 +84,7 @@
 
 <style>
 	.container {
-		@apply flex flex-col min-w-full max-h-full h-full gap-5 w-full  overflow-y-scroll;
+		@apply flex flex-col min-w-full max-h-full h-full gap-4 w-full overflow-y-scroll;
 	}
 	.categories {
 		@apply flex justify-center items-center gap-5 flex-col md:flex-row;

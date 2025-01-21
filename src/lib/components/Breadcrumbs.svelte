@@ -2,11 +2,11 @@
 	import { mindmap } from '$lib/stores';
 	import { page } from '$app/stores';
 	import BreadcrumbItem from './BreadcrumbItem.svelte';
-	import { type Topic } from '$lib/types';
+	import { type Node } from '$lib/types';
 
 	export let topicId: string;
 	$: topic = $mindmap.find((n) => n.id === topicId);
-	const getPaths = (n?: Topic) => {
+	const getPaths = (n?: Node) => {
 		if (!n) return;
 		let root = n;
 		let topics = [];
@@ -32,7 +32,7 @@
 </script>
 
 <div
-	class="flex max-w-full w-full text-xs pb-6 font-sans items-center pt-2 md:pt-6 flex-wrap gap-y-1"
+	class="flex max-w-full w-full text-xs pb-5 font-sans items-center pt-2 md:pt-6 flex-wrap gap-y-1"
 >
 	<a href="/" class="flex"><span class="iconify mdi--home h-6 w-6" /></a>
 	<!-- <BreadcrumbItem>
@@ -44,7 +44,7 @@
 		{#each paths?.topics ?? [] as path}
 			<BreadcrumbItem>
 				<a href={`/topics/${path.id}`} class="flex items-center">
-					<span class="max-w-[5.5rem] truncate">{path.title}</span>
+					<span class="max-w-30 truncate">{path.title}</span>
 				</a>
 			</BreadcrumbItem>
 		{/each}
