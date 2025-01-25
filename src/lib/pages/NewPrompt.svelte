@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Breadcrumbs, AnimatedText, PromptInput, Messages } from '$lib/components';
+	import { PromptInput, Messages } from '$lib/components';
 	import { mindmap } from '$lib/stores';
 	import { goto } from '$app/navigation';
 
@@ -46,7 +46,7 @@
 	onMount(chatStore.reset);
 </script>
 
-<div class="flex flex-col h-full w-full md:w-[44rem] items-center justify-between">
+<div class="flex flex-col h-full w-full md:w-desktop items-center justify-between">
 	<div class="flex justify-between w-full py-8">
 		<button class="btn btn-ghost btn-square btn-sm" on:click={cancel}
 			><span class="iconify mdi--cancel-bold h-6 w-6" /></button

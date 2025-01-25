@@ -33,7 +33,7 @@
 	{:else if $user === null}
 		<Login />
 	{:else}
-		<div class="flex flex-col md:w-[44rem] w-full h-full p-5 relative">
+		<div class="flex flex-col md:w-desktop w-full h-full p-5 relative">
 			<slot />
 		</div>
 	{/if}

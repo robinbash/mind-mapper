@@ -13,8 +13,9 @@ function createMindmapStore() {
 
 	const isNodeRoot = (node?: Node) => !!node?.parentId;
 
-	const getNumChildren = (category: Category) => {
-		return get(mindmapStore).filter((node) => node.parentId === category.id).length;
+	const getNumChildren = (categoryId: string | null) => {
+		return get(mindmapStore).filter((node) => node.parentId === categoryId && node.type === 'topic')
+			.length;
 	};
 
 	const getNumSubtree = (category: Category): number => {

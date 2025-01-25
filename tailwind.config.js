@@ -8,6 +8,9 @@ export default {
     extend: {
       spacing: {
         inset: "env(safe-area-inset-top)"
+      },
+      width: {
+        "desktop": "50rem"
       }
     },
   },

@@ -23,7 +23,7 @@
 		<span class="w-full">{category.title}</span>
 	</button>
 </div>
-<div class="container pt-4 mb-12">
+<div class="container mt-4 mb-12">
 	{#each childCategories as childCategory}
 		<a
 			href={`/topics/${childCategory.id}`}

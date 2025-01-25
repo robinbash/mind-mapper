@@ -4,12 +4,13 @@
 	import SvelteMarkdown from 'svelte-markdown';
 	// import Markdown from '@magidoc/plugin-svelte-marked';
 
+	export let addSparkes = false;
 	export let text;
 </script>
 
 <span class="markdown-text relative w-full opacity-65">
 	<SvelteMarkdown
-		source={'![](sparkles)' + text}
+		source={(addSparkes ? '![](sparkles)' : '') + text}
 		renderers={{ code: CodeRenderer, image: ImageRenderer }}
 	/>
 	<!-- <Markdown

@@ -32,8 +32,6 @@ const createChatStore = (): ChatStore => {
 	const chatStore = writable<ChatData>({ ...initial });
 	const { subscribe, set, update } = chatStore;
 
-	let eventSource: EventSource;
-
 	const reset = () => {
 		set(initial);
 	};
@@ -54,6 +52,30 @@ const createChatStore = (): ChatStore => {
 	const submitPrompt = async (prompt: string) => {
 		const current = get(chatStore);
 		if (current.aiResponseLoading || !get(user)) return;
+
+		// console.log('afds', current.state);
+
+		// if (current.state === 'initial') {
+		// 	try {
+		// 		const response = await authFetch('/api/new-topic/query-matches', {
+		// 			method: 'POST',
+		// 			headers: {
+		// 				'Content-Type': 'application/json'
+		// 			},
+		// 			body: JSON.stringify({
+		// 				query: prompt
+		// 			})
+		// 		});
+
+		// 		console.log(response.json());
+		// 	} finally {
+		// 		// update((store) => ({
+		// 		// 	...store,
+		// 		// 	aiResponseLoading: false
+		// 		// }));
+		// 	}
+		// 	return;
+		// }
 
 		update((store) => ({
 			...store,

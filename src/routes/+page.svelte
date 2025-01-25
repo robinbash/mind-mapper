@@ -5,10 +5,11 @@
 	import { mindmap } from '$lib/stores';
 	import { AddCategoryModal } from '$lib/components';
 
-	$: rootNodes = $mindmap.filter((node) => !node.parentId);
+	$: nodes = $mindmap.filter((node) => !node.parentId);
 
-	$: topics = rootNodes.filter((node) => node.type === 'topic');
-	$: categories = rootNodes.filter((node) => node.type === 'category');
+	$: categories = nodes.filter((node) => node.type === 'category');
+
+	$: topics = nodes.filter((node) => node.type === 'topic');
 
 	let categoryModalOpen = false;
 
@@ -54,13 +55,18 @@
 			</div>
 		</div>
 		<div class="container">
-			<a
-				href="/new-topics"
-				class="btn btn-lg btn-outline opacity-75 w-full font-normal text-base rounded-md"
-			>
-				<span class="iconify w-5 h-5 mdi--new-releases" />
-				New prompts
-			</a>
+			{#if topics.length > 0}
+				<a
+					href="/new-topics"
+					class="relative btn btn-lg btn-outline opacity-75 w-full font-normal text-base rounded-md"
+				>
+					<span class="iconify w-5 h-5 mdi--new-releases" />
+					<span class="absolute left-3 badge badge-ghost badge-sm"
+						>{mindmap.getNumChildren(null)}</span
+					>
+					New prompts
+				</a>
+			{/if}
 			{#each categories as category}
 				<a
 					href={`/topics/${category.id}`}
@@ -70,11 +76,6 @@
 					<span class="absolute left-3 badge badge-ghost badge-sm"
 						>{mindmap.getNumSubtree(category)}</span
 					>
-				</a>
-			{/each}
-			{#each topics as topic}
-				<a href={`/topics/${topic.id}`} class="btn btn-lg w-full font-normal text-base rounded-md">
-					{topic.title}
 				</a>
 			{/each}
 		</div>
