@@ -37,7 +37,7 @@
 <div class="flex justify-center items-end gap-1 relative" class:w-full={inputShowing}>
 	{#if inputShowing}
 		<button
-			class="absolute left-0 w-9 h-12 mb-[1px] flex items-center"
+			class="absolute left-1 w-9 h-12 mb-[1px] flex items-center"
 			on:click={() => setInputShowing(false)}
 			><span class="iconify mdi--cancel-bold opacity-65 h-6 w-6" /></button
 		>
@@ -78,7 +78,7 @@
 
 <style>
 	.user-input {
-		@apply bg-base-200 rounded-btn px-4 w-full h-full py-3 break-words outline-none ml-8;
+		@apply bg-base-200 rounded-btn pr-4 pl-8 w-full h-full py-3 break-words outline-none;
 	}
 	.user-input:empty:not(:focus):before {
 		content: attr(data-placeholder);
