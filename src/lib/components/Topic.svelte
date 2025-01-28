@@ -22,15 +22,6 @@
 
 	export let topic: Topic;
 
-	let swiperEl: { swiper: Swiper } | null = null;
-
-	const swiperParams = {
-		slidesPerView: 1,
-		navigation: false,
-
-		spaceBetween: 50
-	};
-
 	let expanded = false;
 	let scrolledToTop = true;
 	let scrolledToBottom = true;
@@ -45,26 +36,13 @@
 
 	const setInputShowing = (value: boolean) => {
 		inputShowing = value;
+		expanded = true;
 	};
 
 	const toggleExpand = () => {
 		tab = 'summary';
 		inputShowing = false;
 		expanded = !expanded;
-	};
-
-	const goToTab = (tab: Tab) => {
-		const swiper = swiperEl?.swiper;
-		if (swiper) {
-			swiper.slideTo(tab === 'summary' ? 0 : 1);
-		}
-	};
-
-	const handleSlideChange = () => {
-		const swiper = swiperEl?.swiper;
-		if (swiper) {
-			tab = swiper.activeIndex === 0 ? 'summary' : 'chat';
-		}
 	};
 
 	const onFinishedAnimating = () => {
@@ -79,7 +57,7 @@
 	$: isRoot = topic?.parentId === undefined;
 
 	$: if (topic && topic.id) {
-		expanded = children.length === 0 && !isRoot;
+		// expanded = children.length === 0 && !isRoot;
 		loading = false;
 		shownMessages = topic.messages;
 	}
@@ -116,7 +94,7 @@
 		<span class="loading loading-dots loading-md ml-2 mt-1" />
 	</div>
 {/if}
-{#if expanded && !loading}
+{#if !loading}
 	<span
 		class="flex h-full max-h-full w-full overflow-y-scroll"
 		on:scroll={() => {
@@ -127,115 +105,40 @@
 		class:shadow-top={scrolledToTop && !scrolledToBottom}
 		class:shadow-bottom={!scrolledToTop && scrolledToBottom}
 	>
-		<swiper-container
-			{...swiperParams}
-			bind:this={swiperEl}
-			on:swiperslidechange={handleSlideChange}
-			class="flex max-h-full h-full"
-		>
-			<swiper-slide class="flex h-full w-full pb-4">
-				<span class="h-full max-h-full w-full overflow-y-scroll pt-2 opacity-65">
-					<AIText text={topic?.summary} />
-				</span>
-			</swiper-slide>
-			<swiper-slide class="max-h-full h-full w-full">
-				<div class="flex flex-col py-4 max-h-full h-full w-full overflow-y-scroll">
-					<Messages
-						messages={shownMessages}
-						currentAiResponse={$topicChat.currentAiResponse}
-						aiResponseLoading={$topicChat.aiResponseLoading}
-						{onFinishedAnimating}
-					/>
-					<div class="flex justify-end pt-3 gap-4 pb-1">
-						{#if !inputShowing}
-							<button class="btn btn-square btn-md">
-								<span class="opacity-65 iconify mdi--search h-6 w-6" />
-							</button>
-						{/if}
-						<PromptInputButton {submitPrompt} {setInputShowing} {inputShowing} />
-					</div>
-				</div>
-			</swiper-slide>
-		</swiper-container>
+		{#if !expanded}
+			<span class="h-full max-h-full w-full overflow-y-scroll opacity-65">
+				<AIText text={topic?.summary} />
+			</span>
+		{:else}
+			<div class="flex flex-col py-4 max-h-full h-full w-full overflow-y-scroll">
+				<Messages
+					messages={shownMessages}
+					currentAiResponse={$topicChat.currentAiResponse}
+					aiResponseLoading={$topicChat.aiResponseLoading}
+					{onFinishedAnimating}
+				/>
+			</div>{/if}
 	</span>
 
-	<div class="w-full flex pb-6 justify-center gap-4">
-		<!-- <a class="btn btn-sm" href={`/topics/${topicId}/refine`}
-						><span class="iconify mdi--lead-pencil" /> Refine</a
-					> -->
-		<!-- <button class="btn btn-sm"
-						><span class="iconify mdi--format-page-split w-5 h-5" /> Split</button
-					> -->
-		<div class="flex gap-4">
-			<button on:click={() => goToTab('summary')}>
-				<span
-					class="iconify mdi--file-document-box-outline h-6 w-6"
-					class:opacity-65={tab !== 'summary'}
-				/>
+	<div class="w-full flex pb-4 justify-end itmes-center gap-4">
+		{#if !inputShowing}
+			<button class="btn btn-square btn-md">
+				<span class=" iconify mdi--search h-6 w-6" />
 			</button>
-			<button on:click={() => goToTab('chat')}>
-				<span
-					class="iconify mdi--chat-bubble-outline h-6 w-6"
-					class:opacity-65={tab !== 'chat'}
-				/></button
-			>
-		</div>
-		<div class="absolute right-8">
+		{/if}
+		<PromptInputButton {submitPrompt} {setInputShowing} {inputShowing} />
+		{#if !inputShowing}
 			<TopicActionsDropdown
 				{topic}
 				setLoading={(value) => {
 					loading = value;
 				}}
 			/>
-		</div>
-	</div>
-{/if}
-{#if !expanded && !loading}
-	<div class="flex justify-center flex-col gap-4 pt-4 pb-6">
-		{#each children as child}
-			<a
-				href={`/topics/${child.id}`}
-				class="flex h-auto btn btn-lg w-full font-normal text-base overflow-hidden rounded-md"
-			>
-				{child.title}
-			</a>
-		{/each}
-
-		<a
-			href={`/topics/${topic.id}/expand`}
-			class="btn btn-lg text-opacity-65 w-full font-normal text-base gap-1 rounded-md"
-		>
-			<span class="iconify mdi--add w-5 h-5" />Add Subtopic
-		</a>
+		{/if}
 	</div>
 {/if}
 
 <style>
-	.shadow-both {
-		box-shadow:
-			inset 0px -8px 5px -5px rgba(0, 0, 0, 0.15),
-			inset 0px 8px 5px -5px rgba(0, 0, 0, 0.15);
-	}
-	.shadow-bottom {
-		box-shadow: inset 0px 8px 5px -5px rgba(0, 0, 0, 0.15);
-	}
-	.shadow-top {
-		box-shadow: inset 0px -8px 5px -5px rgba(0, 0, 0, 0.15);
-	}
-	swiper-container {
-		width: 100%;
-		height: 100vh;
-		display: block; /* This can help with visibility */
-	}
-
-	.slide-content {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		height: 100%;
-		background: #f4f4f4;
-	}
-
 	.loading {
 		width: 100%;
 		height: 100vh;

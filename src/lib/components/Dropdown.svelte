@@ -8,7 +8,7 @@
 	export let actions: DropdownAction[];
 </script>
 
-<div class="dropdown dropdown-top dropdown-end">
+<div class="flex items-center dropdown dropdown-top dropdown-end">
 	<div tabindex="0" role="button" class="btn btn-ghost btn-square btn-sm">
 		<span class="iconify mdi--dots-vertical w-5 h-5" />
 	</div>
