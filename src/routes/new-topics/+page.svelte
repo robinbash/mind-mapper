@@ -4,7 +4,7 @@
 	$: rootTopics = $mindmap.filter((node) => !node.parentId).filter((node) => node.type === 'topic');
 </script>
 
-<!-- <Breadcrumbs /> -->
+<Breadcrumbs />
 <div class="flex w-full items-center">
 	<button
 		class="flex justify-center items-center h-full relative font-bold text-base w-full px-6 py-5"
@@ -15,7 +15,11 @@
 </div>
 <div class="container">
 	{#each rootTopics as topic}
-		<a href={`/topics/${topic.id}`} class="btn btn-lg w-full font-normal text-base rounded-md">
+		<div class="border-b opacity-75" />
+		<a
+			href={`/topics/${topic.id}`}
+			class="btn btn-lg btn-ghost w-full font-normal text-base rounded-md"
+		>
 			{topic.title}
 		</a>
 	{/each}
@@ -23,6 +27,6 @@
 
 <style>
 	.container {
-		@apply flex flex-col min-w-full max-h-full h-full gap-4 w-full overflow-y-scroll mt-4;
+		@apply flex flex-col min-w-full max-h-full h-full gap-1 w-full overflow-y-scroll mt-1;
 	}
 </style>

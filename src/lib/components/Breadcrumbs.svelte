@@ -4,11 +4,15 @@
 	import BreadcrumbItem from './BreadcrumbItem.svelte';
 	import { type Node } from '$lib/types';
 
-	export let topicId: string;
+	const newTopicsPath = 'new-topics';
+
+	export let topicId: string | undefined = undefined;
 	$: topic = $mindmap.find((n) => n.id === topicId);
 	const getPaths = (n?: Node) => {
 		if (!n) return;
 		let root = n;
+		if (!topic?.parentId && topic?.type === 'topic')
+			return { root, topics: [{ id: newTopicsPath, title: 'New Prompts' }] };
 		let topics = [];
 		while (true) {
 			if (!root.parentId) break;
@@ -32,7 +36,7 @@
 </script>
 
 <div
-	class="flex max-w-full w-full text-xs pb-5 font-sans items-center pt-2 md:pt-6 flex-wrap gap-y-1"
+	class="flex max-w-full w-full text-xs pb-5 font-sans items-center pt-2 md:pt-2 flex-wrap gap-y-1"
 >
 	<a href="/" class="flex"><span class="iconify mdi--home h-6 w-6" /></a>
 	<!-- <BreadcrumbItem>
@@ -43,7 +47,10 @@
 	{#if showAll}
 		{#each paths?.topics ?? [] as path}
 			<BreadcrumbItem>
-				<a href={`/topics/${path.id}`} class="flex items-center">
+				<a
+					href={`${path.id === newTopicsPath ? '' : '/topics'}/${path.id}`}
+					class="flex items-center"
+				>
 					<span class="max-w-30 truncate">{path.title}</span>
 				</a>
 			</BreadcrumbItem>

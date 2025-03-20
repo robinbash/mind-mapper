@@ -23,11 +23,13 @@
 		<span class="w-full">{category.title}</span>
 	</button>
 </div>
-<div class="container mt-4 mb-12">
+<div class="container mt-1 mb-12">
+	<div class="border-b opacity-75" />
 	{#each childCategories as childCategory}
+		<div class="border-b opacity-75" />
 		<a
 			href={`/topics/${childCategory.id}`}
-			class="relative flex h-auto btn btn-lg w-full font-normal text-base overflow-hidden rounded-md opacity-75 btn-outline"
+			class="relative flex h-auto btn btn-lg w-full font-normal text-base overflow-hidden rounded-md opacity-75 btn-ghost"
 		>
 			{childCategory.title}
 			<span class="absolute left-3 badge badge-ghost badge-sm"
@@ -36,15 +38,16 @@
 		</a>
 	{/each}
 	{#each childTopics as childTopic}
+		<div class="border-b opacity-75" />
 		<a
 			href={`/topics/${childTopic.id}`}
-			class="flex h-auto btn btn-lg w-full font-normal text-base overflow-hidden rounded-md"
+			class="flex h-auto btn btn-lg btn-ghost w-full font-normal text-base overflow-hidden rounded-md"
 		>
 			{childTopic.title}
 		</a>
 	{/each}
 
-	<button class="btn btn-lg text-opacity-65 w-full font-normal text-base gap-1 rounded-md">
+	<button class="btn btn-lg text-opacity-65 w-full font-normal text-base gap-1 rounded-md mt-1">
 		<span class="iconify mdi--add w-5 h-5" />Add Subtopic
 	</button>
 </div>
@@ -54,7 +57,7 @@
 
 <style>
 	.container {
-		@apply flex flex-col min-w-full max-h-full h-full gap-4 w-full overflow-y-scroll;
+		@apply flex flex-col min-w-full max-h-full h-full gap-1 w-full overflow-y-scroll;
 	}
 	.shadow-both {
 		box-shadow:

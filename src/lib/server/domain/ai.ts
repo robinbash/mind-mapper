@@ -41,7 +41,7 @@ const mergeMessages = (messages: Anthropic.MessageParam[]) => {
 
 export const streamAiResponse = ({
 	messages,
-	model = 'claude-3-5-sonnet-20240620',
+	model = 'claude-3-7-sonnet-20250219',
 	max_tokens = 2000,
 	temperature = 0.7
 }: {
@@ -97,7 +97,7 @@ export const streamAiResponse = ({
 
 export const getAiResponse = async ({
 	messages,
-	model = 'claude-3-5-sonnet-20240620',
+	model = 'claude-3-7-sonnet-20250219',
 	max_tokens = 2000,
 	temperature = 0.7
 }: {

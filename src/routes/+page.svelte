@@ -55,10 +55,10 @@
 			</div>
 		</div>
 		<div class="container">
-			{#if topics.length > 0}
+			{#if categories.length > 0}
 				<a
 					href="/new-topics"
-					class="relative btn btn-lg btn-outline opacity-75 w-full font-normal text-base rounded-md"
+					class="relative btn btn-lg btn-ghost opacity-75 w-full font-normal text-base rounded-md"
 				>
 					<span class="iconify w-5 h-5 mdi--new-releases" />
 					<span class="absolute left-3 badge badge-ghost badge-sm"
@@ -66,18 +66,31 @@
 					>
 					New prompts
 				</a>
-			{/if}
-			{#each categories as category}
-				<a
-					href={`/topics/${category.id}`}
-					class="relative btn btn-lg w-full font-normal text-base rounded-md btn-outline opacity-75"
-				>
-					{category.title}
-					<span class="absolute left-3 badge badge-ghost badge-sm"
-						>{mindmap.getNumSubtree(category)}</span
+				{#each categories as category}
+					<div class="border-b opacity-75" />
+					<a
+						href={`/topics/${category.id}`}
+						class="relative btn btn-lg w-full font-normal text-base rounded-md btn-ghost opacity-75"
 					>
-				</a>
-			{/each}
+						{category.title}
+						<span class="absolute left-3 badge badge-ghost badge-sm"
+							>{mindmap.getNumSubtree(category)}</span
+						>
+					</a>
+				{/each}
+			{:else}
+				{#each topics as topic, i}
+					{#if i !== 0}
+						<div class="border-b opacity-75" />
+					{/if}
+					<a
+						href={`/topics/${topic.id}`}
+						class="flex h-auto btn btn-lg btn-ghost w-full font-normal text-base overflow-hidden rounded-md"
+					>
+						{topic.title}
+					</a>
+				{/each}
+			{/if}
 		</div>
 	</div>
 	<AddCategoryModal open={categoryModalOpen} onClose={closeCategoryModal} />
@@ -85,7 +98,7 @@
 
 <style>
 	.container {
-		@apply flex flex-col min-w-full max-h-full h-full gap-4 w-full overflow-y-scroll;
+		@apply flex flex-col min-w-full max-h-full h-full gap-1 w-full overflow-y-scroll;
 	}
 	.categories {
 		@apply flex justify-center items-center gap-5 flex-col md:flex-row;
